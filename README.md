@@ -2,7 +2,7 @@
 
 You have what it takes. You have the grit.
 
-GRTS is a job application tracker at it's core. It auto-captures details of applications filled out and logs them in a database for review, acompanied by a wonderful dashboard which can be launched from the dropdown. As a WIP feature, it also has an autofill engine. I recommend turning it off for normal browser use, but it does a decent job filling in apps (targeted at Workday) _fast_.
+GRTS is a job application tracker at it's core. It auto-captures details of applications filled out and logs them in a database for review, accompanied by a wonderful dashboard which can be launched from the dropdown. This helps replace those manual Excel file entries. As a WIP feature, it also has an autofill engine. I recommend turning it off for normal browser use, but it does a decent job filling in apps (targeted at Workday) _fast_.
 
 This keeps you wonderfully informed about what worked and what didn't. You can stop forgetting what you applied to or what the job description was. As you progress, adding marker details is easy. All your numbers in one beautiful display.
 
@@ -19,6 +19,8 @@ The project has three main parts:
 - [`scout/`](./tests/README.md) - This is a coming proposal for universal job search that would aid in avoiding repetition. Never see a job you applied to already, scout only tells you what is fresh. _NOT WORKING_
 
 ---
+
+## <img src="dashboard-ex.png" alt="dashboard example">
 
 ## Quickstart
 
@@ -46,7 +48,9 @@ Backend runs at `http://127.0.0.1:8000`. API docs available at `http://127.0.0.1
 
 ### 3. Open the Dashboard
 
-Click the extension popup and hit **Open Full Dashboard**, or open `extension/dashboard.html` in your browser.
+<h1 style="color: red">Important</h1>
+
+Click the extension popup and hit **Open DB**, or open `extension/dashboard.html` in your browser.
 
 ### Local Data and Public Checkouts
 
