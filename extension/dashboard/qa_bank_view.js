@@ -5,14 +5,14 @@ function renderQABank(questions) {
   if (!qaGrid) return;
 
   if (questions.length === 0) {
-    qaGrid.innerHTML = `<div style="grid-column: 1/-1;" class="empty-state">
+    setSafeInnerHTML(qaGrid, `<div style="grid-column: 1/-1;" class="empty-state">
             <h3>Question Bank is Empty</h3>
             <p>Non-standard application questions and your answers will be automatically cataloged here for instant reuse.</p>
-        </div>`;
+        </div>`);
     return;
   }
 
-  qaGrid.innerHTML = questions
+  setSafeInnerHTML(qaGrid, questions
     .map((q) => {
       const isUnfilled = !q.answer_text || q.answer_text.trim() === "" || q.answer_text.trim() === "[Unfilled]";
       const cardBorder = isUnfilled ? "border: 1px solid #fdba74; background: #fff7ed;" : "";
@@ -58,7 +58,7 @@ function renderQABank(questions) {
         </div>
     `;
     })
-    .join("");
+    .join(""));
 }
 
 function initQABankActionListeners() {

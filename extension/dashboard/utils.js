@@ -103,3 +103,13 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
+
+function setSafeInnerHTML(el, html) {
+  if (!el) return;
+  el.textContent = "";
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  while (doc.body.firstChild) {
+    el.appendChild(doc.body.firstChild);
+  }
+}

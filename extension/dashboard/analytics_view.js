@@ -23,7 +23,7 @@ function renderAnalyticsTab() {
   // 2. ATS Breakdown
   const atsContainer = document.getElementById("atsBreakdownChart");
   if (atsContainer) {
-    atsContainer.innerHTML =
+    setSafeInnerHTML(atsContainer,
       (ats_breakdown || [])
         .map(
           (item) => `
@@ -34,13 +34,13 @@ function renderAnalyticsTab() {
         `,
         )
         .join("") ||
-      '<div style="color:var(--text-muted);">No ATS data yet.</div>';
+      '<div style="color:var(--text-muted);">No ATS data yet.</div>');
   }
 
   // 3. Priority Breakdown
   const priorityContainer = document.getElementById("priorityBreakdownChart");
   if (priorityContainer) {
-    priorityContainer.innerHTML =
+    setSafeInnerHTML(priorityContainer,
       (priority_breakdown || [])
         .map(
           (item) => `
@@ -51,14 +51,14 @@ function renderAnalyticsTab() {
         `,
         )
         .join("") ||
-      '<div style="color:var(--text-muted);">No priority data yet.</div>';
+      '<div style="color:var(--text-muted);">No priority data yet.</div>');
   }
 
   // 4. Role & Title Non-Rejection Response Rates & Interviews
   const titleContainer = document.getElementById("titleStatsTable");
   if (titleContainer) {
     if (!title_stats || title_stats.length === 0) {
-      titleContainer.innerHTML = `<div style="color:var(--text-muted); padding:10px 0;">No title stats yet.</div>`;
+      setSafeInnerHTML(titleContainer, `<div style="color:var(--text-muted); padding:10px 0;">No title stats yet.</div>`);
     } else {
       const sortedTitleStats = [...title_stats].sort((a, b) => {
         if (b.interviews !== a.interviews) return b.interviews - a.interviews;
@@ -66,7 +66,7 @@ function renderAnalyticsTab() {
           return b.positive_responses - a.positive_responses;
         return b.total - a.total;
       });
-      titleContainer.innerHTML = `
+      setSafeInnerHTML(titleContainer, `
                 <table style="font-size:0.82rem; width:100%;">
                     <thead>
                         <tr>
@@ -99,7 +99,7 @@ function renderAnalyticsTab() {
                           .join("")}
                     </tbody>
                 </table>
-            `;
+            `);
     }
   }
 
@@ -107,7 +107,7 @@ function renderAnalyticsTab() {
   const internContainer = document.getElementById("internVsFullTimeStats");
   if (internContainer) {
     if (!intern_vs_fulltime) {
-      internContainer.innerHTML = `<div style="color:var(--text-muted); padding:10px 0;">No comparison data available yet.</div>`;
+      setSafeInnerHTML(internContainer, `<div style="color:var(--text-muted); padding:10px 0;">No comparison data available yet.</div>`);
     } else {
       const intern = intern_vs_fulltime.internship || {
         total: 0,
@@ -134,7 +134,7 @@ function renderAnalyticsTab() {
         rejection_rate: 0,
       };
 
-      internContainer.innerHTML = `
+      setSafeInnerHTML(internContainer, `
                 <table style="font-size:0.82rem; width:100%;">
                     <thead>
                         <tr>
@@ -192,7 +192,7 @@ function renderAnalyticsTab() {
                         </tr>
                     </tbody>
                 </table>
-            `;
+            `);
     }
   }
 
@@ -200,7 +200,7 @@ function renderAnalyticsTab() {
   const locContainer = document.getElementById("locationBreakdownChart");
   const locMapSvg = document.getElementById("locationMapSvg");
   if (locContainer) {
-    locContainer.innerHTML =
+    setSafeInnerHTML(locContainer,
       (location_breakdown || [])
         .map(
           (item) => `
@@ -211,7 +211,7 @@ function renderAnalyticsTab() {
         `,
         )
         .join("") ||
-      '<div style="color:var(--text-muted);">No location data yet.</div>';
+      '<div style="color:var(--text-muted);">No location data yet.</div>');
   }
   if (locMapSvg && location_breakdown) {
     renderLocationMapSvg(locMapSvg, location_breakdown);
@@ -469,7 +469,7 @@ function renderLocationMapSvg(svg, locations) {
         </g>
     `;
 
-  svg.innerHTML = svgHtml;
+  setSafeInnerHTML(svg, svgHtml);
 
   if (container && tooltip) {
     container.querySelectorAll(".us-state-container").forEach((stateGroup) => {
@@ -519,7 +519,7 @@ function renderLocationMapSvg(svg, locations) {
         }
 
         tooltip.style.display = "block";
-        tooltip.innerHTML = tooltipContent;
+        setSafeInnerHTML(tooltip, tooltipContent);
       });
 
       stateGroup.addEventListener("mouseleave", () => {
@@ -551,7 +551,7 @@ function renderLocationMapSvg(svg, locations) {
  */
 function renderTimelineRangeSvg(svg, timelineData) {
   if (!timelineData || timelineData.length === 0) {
-    svg.innerHTML = `<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-size="13">No application activity recorded yet</text>`;
+    setSafeInnerHTML(svg, `<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-size="13">No application activity recorded yet</text>`);
     return;
   }
 
@@ -801,7 +801,7 @@ function renderTimelineRangeSvg(svg, timelineData) {
         </g>
     `;
 
-  svg.innerHTML = svgHtml;
+  setSafeInnerHTML(svg, svgHtml);
 
   const container = svg.closest("#timelineChartContainer") || svg.parentElement;
   let tooltip = document.getElementById("timelineTooltip");
@@ -860,7 +860,7 @@ function renderTimelineRangeSvg(svg, timelineData) {
           ? `<span style="font-size:0.7rem; color:#38bdf8; font-weight:600;">(+${d.applied || 0} applied)</span>`
           : `<span style="font-size:0.7rem; color:#94a3b8; font-weight:500;">(no applications)</span>`;
 
-      tooltip.innerHTML = `
+      setSafeInnerHTML(tooltip, `
                 <div style="font-weight:700; color:#f8fafc; margin-bottom:4px; font-size:0.82rem; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:3px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
                     <span style="display:flex; align-items:center; gap:4px;">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
@@ -880,7 +880,7 @@ function renderTimelineRangeSvg(svg, timelineData) {
                     <span style="display:inline-flex; align-items:center; gap:5px;"><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ef4444;"></span>Total Rejected:</span>
                     <strong>${ptBot.cumRej} <span style="font-size:0.7rem; color:#f87171;">(-${d.rejected || 0})</span></strong>
                 </div>
-            `;
+            `);
     }
   };
 

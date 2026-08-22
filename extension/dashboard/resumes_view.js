@@ -92,7 +92,7 @@ function initResumeManager() {
       reader.onload = () => {
         loadedPdfBase64 = reader.result;
         if (pdfStatus)
-          pdfStatus.innerHTML = `<span style="display:inline-flex; align-items:center; gap:4px; color:#166534;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Document loaded: ${escapeHtml(file.name)} (${Math.round(file.size / 1024)} KB)</span>`;
+          setSafeInnerHTML(pdfStatus, `<span style="display:inline-flex; align-items:center; gap:4px; color:#166534;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Document loaded: ${escapeHtml(file.name)} (${Math.round(file.size / 1024)} KB)</span>`);
       };
       reader.readAsDataURL(file);
     }
@@ -160,13 +160,13 @@ function renderResumesList(resumes) {
   if (!container) return;
 
   if (resumes.length === 0) {
-    container.innerHTML = `<div style="font-size:0.85rem; color:var(--text-muted); padding:16px 0;">
+    setSafeInnerHTML(container, `<div style="font-size:0.85rem; color:var(--text-muted); padding:16px 0;">
             No resume versions tracked yet. Click "+ New Version" to add your master YAML/PDF resume.
-        </div>`;
+        </div>`);
     return;
   }
 
-  container.innerHTML = resumes
+  setSafeInnerHTML(container, resumes
     .map((r) => {
       const isSelected =
         currentSelectedResume && currentSelectedResume.id === r.id;
@@ -195,7 +195,7 @@ function renderResumesList(resumes) {
         </div>
     `;
     })
-    .join("");
+    .join(""));
 
   if (resumes.length > 0 && !currentSelectedResume) {
     selectResumeVersion(resumes[0].id);
@@ -267,25 +267,25 @@ window.selectResumeVersion = async function (resumeId) {
       const isDocx =
         (r.pdf_file_name || "").endsWith(".docx") ||
         (r.pdf_file_name || "").endsWith(".doc");
-      badge.innerHTML = `<span style="color:#166534; font-weight:600; display:inline-flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Connected Resume File:</span> <strong>${escapeHtml(r.pdf_file_name || (isDocx ? "Resume.docx" : "Resume.pdf"))}</strong> (${sizeKb} KB)`;
+      setSafeInnerHTML(badge, `<span style="color:#166534; font-weight:600; display:inline-flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Connected Resume File:</span> <strong>${escapeHtml(r.pdf_file_name || (isDocx ? "Resume.docx" : "Resume.pdf"))}</strong> (${sizeKb} KB)`);
       toggleBtn.style.display = r.content ? "inline-flex" : "none";
       downloadBtn.style.display = "inline-flex";
 
       if (isDocx) {
         pdfFrame.style.display = "none";
         diffViewer.style.display = "block";
-        diffViewer.innerHTML = `<div style="padding:16px; background:#f8fafc; border-radius:8px;">
+        setSafeInnerHTML(diffViewer, `<div style="padding:16px; background:#f8fafc; border-radius:8px;">
                     <div style="font-weight:700; display:inline-flex; align-items:center; gap:5px; margin-bottom:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>DOCX Resume Document Connected: ${escapeHtml(r.pdf_file_name)}</div><br/>
                     <span style="color:var(--text-muted); font-size:0.82rem;">This DOCX file will be automatically attached during job applications.</span>
                     ${r.content ? `<div style="margin-top:12px; font-family:monospace; white-space:pre-wrap; font-size:0.8rem; background:#ffffff; padding:10px; border:1px solid #e2e8f0; border-radius:6px;">${escapeHtml(r.content)}</div>` : ""}
-                </div>`;
+                </div>`);
       } else {
         pdfFrame.style.display = "block";
         diffViewer.style.display = "none";
         pdfFrame.src = r.pdf_base64;
       }
     } else {
-      badge.innerHTML = `<span style="color:#854d0e; font-weight:600; display:inline-flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#854d0e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>No PDF/DOCX document uploaded</span> — Click "+ Replace PDF / DOCX" to connect your resume file.`;
+      setSafeInnerHTML(badge, `<span style="color:#854d0e; font-weight:600; display:inline-flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#854d0e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>No PDF/DOCX document uploaded</span> — Click "+ Replace PDF / DOCX" to connect your resume file.`);
       toggleBtn.style.display = "none";
       downloadBtn.style.display = "none";
       pdfFrame.style.display = "none";
@@ -313,14 +313,14 @@ window.deleteResumeVersion = async function (resumeId) {
 function populateParentResumeSelect() {
   const sel = document.getElementById("r_parent_id");
   if (!sel) return;
-  sel.innerHTML =
+  setSafeInnerHTML(sel,
     '<option value="">None (Master Base Resume)</option>' +
     resumesData
       .map(
         (r) =>
           `<option value="${r.id}">${escapeHtml(r.name)} (${escapeHtml(r.version_tag)})</option>`,
       )
-      .join("");
+      .join(""));
 }
 
 function computeSimpleDiff(oldText, newText) {

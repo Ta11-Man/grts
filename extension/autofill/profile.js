@@ -6,6 +6,16 @@ window.GRTS = window.GRTS || {};
 window.GRTS.Profile = (() => {
   let cachedProfile = null;
 
+  function setSafeInnerHTML(el, html) {
+      if (!el) return;
+      el.textContent = "";
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+      while (doc.body.firstChild) {
+          el.appendChild(doc.body.firstChild);
+      }
+  }
+
   /**
    * Parses structured YAML or Markdown Resume content into rich profile fields
    * Supports JSON Resume schema, nested YAML blocks, and flat format with multiple jobs and educations.
@@ -623,10 +633,10 @@ ${380 + streamContent.length}
             if (!parent.querySelector(".grts-file-badge")) {
               const badge = document.createElement("div");
               badge.className = "grts-file-badge";
-              badge.innerHTML = `
+              setSafeInnerHTML(badge, `
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 <span>GRTS Attached: <strong>${fileName}</strong></span>
-                            `;
+                            `);
               parent.appendChild(badge);
             }
           }

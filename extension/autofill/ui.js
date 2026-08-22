@@ -9,6 +9,16 @@ window.GRTS.UI = (() => {
     /**
      * Floating non-intrusive GRTS Quick-Fill Pill UI in Bottom-Left with Clean SVG Dismiss Button
      */
+    function setSafeInnerHTML(el, html) {
+        if (!el) return;
+        el.textContent = "";
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        while (doc.body.firstChild) {
+            el.appendChild(doc.body.firstChild);
+        }
+    }
+
     function renderFloatingBadge(count, onRerun) {
         if (badgeDismissed) return;
 
@@ -38,7 +48,7 @@ window.GRTS.UI = (() => {
             document.body.appendChild(badge);
         }
 
-        badge.innerHTML = `
+        setSafeInnerHTML(badge, `
             <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:#b6a25b; color:white; border-radius:50%; font-size:10px; font-weight:bold;">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
             </span>
@@ -47,7 +57,7 @@ window.GRTS.UI = (() => {
             <button id="grts-close-badge-btn" style="background:none; border:none; color:#94a3b8; font-size:14px; cursor:pointer; padding:0 4px; display:inline-flex; align-items:center; line-height:1;" title="Dismiss">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
-        `;
+        `);
 
         document.getElementById('grts-rerun-btn')?.addEventListener('click', async (e) => {
             e.stopPropagation();
@@ -73,7 +83,7 @@ window.GRTS.UI = (() => {
         if (badgeDismissed) return;
         const badgeText = document.querySelector('#grts-autofill-badge span:nth-child(2)');
         if (badgeText) {
-            badgeText.innerHTML = textHtml;
+            setSafeInnerHTML(badgeText, textHtml);
         }
     }
 

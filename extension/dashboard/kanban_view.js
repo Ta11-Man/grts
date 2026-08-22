@@ -44,7 +44,7 @@ function renderKanban(apps) {
     },
   ];
 
-  kanbanContainer.innerHTML = columns
+  setSafeInnerHTML(kanbanContainer, columns
     .map((col) => {
       const colApps = apps.filter((app) => {
         if (col.match.includes(app.status)) return true;
@@ -93,7 +93,7 @@ function renderKanban(apps) {
             </div>
         `;
     })
-    .join("");
+    .join(""));
 }
 
 /**

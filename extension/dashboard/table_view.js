@@ -216,14 +216,14 @@ function renderTable(apps) {
   if (!tbody) return;
 
   if (apps.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" class="empty-state">
+    setSafeInnerHTML(tbody, `<tr><td colspan="6" class="empty-state">
             <h3>No applications found</h3>
             <p>Applications will appear here automatically when submitted, or click "Add Application" to enter manually.</p>
-        </td></tr>`;
+        </td></tr>`);
     return;
   }
 
-  tbody.innerHTML = apps
+  setSafeInnerHTML(tbody, apps
     .map((app) => {
       const logoSrc = app.company_logo || "grts-logo-sqr.svg";
       const cleanStatus = getStatusClass(app.status);
@@ -287,7 +287,7 @@ function renderTable(apps) {
             </tr>
         `;
     })
-    .join("");
+    .join(""));
 
   tbody.querySelectorAll("tr.clickable-row").forEach((row) => {
     row.addEventListener("click", () => {
@@ -320,11 +320,11 @@ window.updatePriority = async function (appId, newPriority) {
         currentSelectedApp.priority = newPriority;
         const starsContainer = document.getElementById("dPriorityStars");
         if (starsContainer)
-          starsContainer.innerHTML = renderClickableStars(appId, newPriority);
+          setSafeInnerHTML(starsContainer, renderClickableStars(appId, newPriority));
         const priorityEl = document.getElementById("dViewPriority");
         if (priorityEl) {
           const stars = "★".repeat(newPriority) + "☆".repeat(5 - newPriority);
-          priorityEl.innerHTML = `<span style="color:#f59e0b; font-size:1.05rem; font-weight:700;">${stars}</span> <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">(${newPriority}/5)</span>`;
+          setSafeInnerHTML(priorityEl, `<span style="color:#f59e0b; font-size:1.05rem; font-weight:700;">${stars}</span> <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">(${newPriority}/5)</span>`);
         }
         const editPrioEl = document.getElementById("dEditPriority");
         if (editPrioEl) editPrioEl.value = newPriority;

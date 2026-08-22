@@ -1,6 +1,16 @@
 // Content Script for GRTS Tracking Extension & Autofill
 // Injected into job application pages across Greenhouse, Workday, Lever, Ashby, SmartRecruiters, LinkedIn, and generic ATS.
 
+function setSafeInnerHTML(el, html) {
+    if (!el) return;
+    el.textContent = "";
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    while (doc.body.firstChild) {
+        el.appendChild(doc.body.firstChild);
+    }
+}
+
 /**
  * Portal & Domain Classifier Guard
  * Ensures GRTS ONLY acts on real job boards and career portals,
@@ -630,7 +640,7 @@ function parseGenericATS() {
                 }
                 if (item.description) {
                     const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = item.description;
+                    setSafeInnerHTML(tempDiv, item.description);
                     data.description = tempDiv.innerText.trim();
                 }
                 break;

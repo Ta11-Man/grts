@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    function setSafeInnerHTML(el, html) {
+        if (!el) return;
+        el.textContent = "";
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        while (doc.body.firstChild) {
+            el.appendChild(doc.body.firstChild);
+        }
+    }
+
     let currentPriority = 3;
     let extractedExtras = {
         job_description: "",
@@ -155,9 +165,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                             return;
                         }
                         if (response && response.count !== undefined) {
-                            autofillBtn.innerHTML = `Auto-Filled ${response.count} Fields!`;
+                            autofillBtn.textContent = `Auto-Filled ${response.count} Fields!`;
                             setTimeout(() => {
-                                autofillBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Autofill Page`;
+                                setSafeInnerHTML(autofillBtn, `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Autofill Page`);
                             }, 2500);
                         }
                     });
@@ -191,9 +201,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                         return;
                     }
                     if (response && response.count !== undefined) {
-                        autofillBtn.innerHTML = `Auto-Filled ${response.count} Fields!`;
+                        autofillBtn.textContent = `Auto-Filled ${response.count} Fields!`;
                         setTimeout(() => {
-                            autofillBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Autofill Page`;
+                            setSafeInnerHTML(autofillBtn, `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Autofill Page`);
                         }, 2500);
                     }
                 });
@@ -499,11 +509,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const questions = data.data || [];
 
             if (questions.length === 0) {
-                container.innerHTML = `<div style="font-size:11.5px; color:#64748b; text-align:center; padding:20px;">No matching responses recorded yet. As you submit applications, custom Q&A will appear here!</div>`;
+                setSafeInnerHTML(container, `<div style="font-size:11.5px; color:#64748b; text-align:center; padding:20px;">No matching responses recorded yet. As you submit applications, custom Q&A will appear here!</div>`);
                 return;
             }
 
-            container.innerHTML = questions.slice(0, 15).map(q => `
+            setSafeInnerHTML(container, questions.slice(0, 15).map(q => `
                 <div class="qa-card">
                     <div class="qa-question">${escapeHTML(q.question_text)}</div>
                     <div class="qa-answer">${escapeHTML(q.answer_text)}</div>
@@ -512,9 +522,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <button class="qa-copy-btn" onclick="navigator.clipboard.writeText('${escapeAttr(q.answer_text)}'); alert('Copied answer to clipboard!');">Copy Answer</button>
                     </div>
                 </div>
-            `).join('');
+            `).join(''));
         } catch (e) {
-            container.innerHTML = `<div style="font-size:11.5px; color:#ef4444; text-align:center; padding:15px;">FastAPI server offline or unreachable.</div>`;
+            setSafeInnerHTML(container, `<div style="font-size:11.5px; color:#ef4444; text-align:center; padding:15px;">FastAPI server offline or unreachable.</div>`);
         }
     }
 

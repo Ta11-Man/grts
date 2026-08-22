@@ -103,13 +103,13 @@ async function initMasterProfileForm() {
   function renderEducationList() {
     if (!eduContainer) return;
     if (educationList.length === 0) {
-      eduContainer.innerHTML = `<div style="font-size:0.82rem; color:var(--text-muted); padding:10px; background:#f8fafc; border-radius:6px;">
+      setSafeInnerHTML(eduContainer, `<div style="font-size:0.82rem; color:var(--text-muted); padding:10px; background:#f8fafc; border-radius:6px;">
                 No education history added yet. Click "+ Add Education" above.
-            </div>`;
+            </div>`);
       return;
     }
 
-    eduContainer.innerHTML = educationList
+    setSafeInnerHTML(eduContainer, educationList
       .map((edu, idx) => {
         const isCollapsed = edu._collapsed === true;
         const isEnabled = edu.enabled !== false;
@@ -170,7 +170,7 @@ async function initMasterProfileForm() {
                 </div>
             `;
       })
-      .join("");
+      .join(""));
   }
 
   function formatDateToMMYYYY(val) {
@@ -187,13 +187,13 @@ async function initMasterProfileForm() {
   function renderExperienceList() {
     if (!expContainer) return;
     if (experienceList.length === 0) {
-      expContainer.innerHTML = `<div style="font-size:0.82rem; color:var(--text-muted); padding:10px; background:#f8fafc; border-radius:6px;">
+      setSafeInnerHTML(expContainer, `<div style="font-size:0.82rem; color:var(--text-muted); padding:10px; background:#f8fafc; border-radius:6px;">
                 No work experience history added yet. Click "+ Add Experience" above.
-            </div>`;
+            </div>`);
       return;
     }
 
-    expContainer.innerHTML = experienceList
+    setSafeInnerHTML(expContainer, experienceList
       .map((exp, idx) => {
         const isCollapsed = exp._collapsed === true;
         const isEnabled = exp.enabled !== false;
@@ -262,7 +262,7 @@ async function initMasterProfileForm() {
                 </div>
             `;
       })
-      .join("");
+      .join(""));
   }
 
   eduContainer?.addEventListener("input", (e) => {

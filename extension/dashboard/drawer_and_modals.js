@@ -41,7 +41,7 @@ function populateRoleDetailsView(app) {
   const urlEl = document.getElementById("dViewUrl");
   if (urlEl) {
     if (app.url) {
-      urlEl.innerHTML = `<a href="${escapeHtml(app.url)}" target="_blank" style="color:var(--primary); text-decoration:underline; word-break:break-all;">${escapeHtml(app.url)}</a>`;
+      setSafeInnerHTML(urlEl, `<a href="${escapeHtml(app.url)}" target="_blank" style="color:var(--primary); text-decoration:underline; word-break:break-all;">${escapeHtml(app.url)}</a>`);
     } else {
       urlEl.innerText = "No URL attached";
     }
@@ -51,7 +51,7 @@ function populateRoleDetailsView(app) {
   if (priorityEl) {
     const prio = app.priority || 1;
     const stars = "★".repeat(prio) + "☆".repeat(5 - prio);
-    priorityEl.innerHTML = `<span style="color:#f59e0b; font-size:1.05rem; font-weight:700;">${stars}</span> <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">(${prio}/5)</span>`;
+    setSafeInnerHTML(priorityEl, `<span style="color:#f59e0b; font-size:1.05rem; font-weight:700;">${stars}</span> <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">(${prio}/5)</span>`);
   }
 
   const oaWrapper = document.getElementById("dViewOaWrapper");
@@ -120,15 +120,15 @@ function renderLinksSection(app) {
   if (!container) return;
   const links = app.additional_links || [];
   if (links.length === 0) {
-    container.innerHTML = `<div style="font-size:0.8rem; color:var(--text-muted);">No additional tracking links added yet.</div>`;
+    setSafeInnerHTML(container, `<div style="font-size:0.8rem; color:var(--text-muted);">No additional tracking links added yet.</div>`);
     return;
   }
-  container.innerHTML = links.map((link, idx) => `
+  setSafeInnerHTML(container, links.map((link, idx) => `
     <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid var(--border-color); border-radius:6px; padding:6px 10px; font-size:0.82rem;">
       <a href="${escapeHtml(link.url)}" target="_blank" style="font-weight:700; color:var(--primary); text-decoration:underline; word-break:break-all;">${escapeHtml(link.label || link.url)}</a>
       <button type="button" class="action-btn action-btn-danger remove-link-btn" data-index="${idx}" style="padding:1px 6px; font-size:0.72rem;">Remove</button>
     </div>
-  `).join("");
+  `).join(""));
 }
 
 function renderContactsSection(app) {
@@ -136,10 +136,10 @@ function renderContactsSection(app) {
   if (!container) return;
   const contacts = app.contacts || [];
   if (contacts.length === 0) {
-    container.innerHTML = `<div style="font-size:0.8rem; color:var(--text-muted);">No key contacts added yet.</div>`;
+    setSafeInnerHTML(container, `<div style="font-size:0.8rem; color:var(--text-muted);">No key contacts added yet.</div>`);
     return;
   }
-  container.innerHTML = contacts.map((c, idx) => `
+  setSafeInnerHTML(container, contacts.map((c, idx) => `
     <div style="background:#f8fafc; border:1px solid var(--border-color); border-radius:8px; padding:8px 12px; font-size:0.82rem;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
         <span style="font-weight:700; color:var(--text-main);">${escapeHtml(c.name)}${c.role ? ` — <span style="font-weight:500; color:var(--text-muted);">${escapeHtml(c.role)}</span>` : ""}</span>
@@ -148,7 +148,7 @@ function renderContactsSection(app) {
       ${c.email ? `<div style="font-size:0.78rem; color:var(--primary); margin-bottom:2px;"><a href="mailto:${escapeHtml(c.email)}">${escapeHtml(c.email)}</a></div>` : ""}
       ${c.notes ? `<div style="font-size:0.78rem; color:var(--text-muted); white-space:pre-wrap;">${escapeHtml(c.notes)}</div>` : ""}
     </div>
-  `).join("");
+  `).join(""));
 }
 
 function initDetailDrawer() {
@@ -321,10 +321,10 @@ function initDetailDrawer() {
 
         const starsContainer = document.getElementById("dPriorityStars");
         if (starsContainer)
-          starsContainer.innerHTML = renderClickableStars(
+          setSafeInnerHTML(starsContainer, renderClickableStars(
             currentSelectedApp.id,
             currentSelectedApp.priority || 1,
-          );
+          ));
 
         populateRoleDetailsView(currentSelectedApp);
         setRoleDetailsEditMode(false);
@@ -780,11 +780,11 @@ function renderDrawerQAList(app) {
   if (!qaContainer) return;
   const customQAs = app.custom_answers || [];
   if (customQAs.length === 0) {
-    qaContainer.innerHTML = `<div style="font-size:0.82rem; color:var(--text-muted); padding:4px 0;">Standard fields used (no unique questions). Click "+ Add Q&A" to record custom questions for this application.</div>`;
+    setSafeInnerHTML(qaContainer, `<div style="font-size:0.82rem; color:var(--text-muted); padding:4px 0;">Standard fields used (no unique questions). Click "+ Add Q&A" to record custom questions for this application.</div>`);
     return;
   }
 
-  qaContainer.innerHTML = customQAs
+  setSafeInnerHTML(qaContainer, customQAs
     .map((qa) => {
       const isUnfilled =
         !qa.answer_text ||
@@ -836,7 +836,7 @@ function renderDrawerQAList(app) {
         </div>
       `;
     })
-    .join("");
+    .join(""));
 }
 
 window.openDetailDrawer = async function (appId) {
@@ -883,10 +883,10 @@ window.openDetailDrawer = async function (appId) {
 
     const starsContainer = document.getElementById("dPriorityStars");
     if (starsContainer) {
-      starsContainer.innerHTML = renderClickableStars(
+      setSafeInnerHTML(starsContainer, renderClickableStars(
         app.id,
         app.priority || 1,
-      );
+      ));
     }
 
     populateRoleDetailsView(app);
@@ -936,20 +936,21 @@ window.openDetailDrawer = async function (appId) {
     }
 
     const linksContainer = document.getElementById("dLinksContainer");
-    linksContainer.innerHTML = "";
+    let linksHtml = "";
     if (app.url) {
-      linksContainer.innerHTML += `<a href="${escapeHtml(app.url)}" target="_blank" class="action-btn">Job Post</a>`;
+      linksHtml += `<a href="${escapeHtml(app.url)}" target="_blank" class="action-btn">Job Post</a>`;
     }
     if (app.company_website) {
-      linksContainer.innerHTML += `<a href="${escapeHtml(app.company_website)}" target="_blank" class="action-btn">Company</a>`;
+      linksHtml += `<a href="${escapeHtml(app.company_website)}" target="_blank" class="action-btn">Company</a>`;
     }
+    setSafeInnerHTML(linksContainer, linksHtml);
 
     const timelineContainer = document.getElementById("dTimelineList");
     const timelineEvents = app.timeline || [];
     if (timelineEvents.length === 0) {
-      timelineContainer.innerHTML = `<div style="font-size:0.82rem; color:var(--text-muted); padding:8px 0;">No milestones logged yet.</div>`;
+      setSafeInnerHTML(timelineContainer, `<div style="font-size:0.82rem; color:var(--text-muted); padding:8px 0;">No milestones logged yet.</div>`);
     } else {
-      timelineContainer.innerHTML = timelineEvents
+      setSafeInnerHTML(timelineContainer, timelineEvents
         .map(
           (t, idx) => `
                 <div class="timeline-node" id="tnode-${t.id}">
@@ -979,7 +980,7 @@ window.openDetailDrawer = async function (appId) {
                 </div>
             `,
         )
-        .join("");
+        .join(""));
     }
   } catch (err) {
     console.error("Error opening detail drawer:", err);

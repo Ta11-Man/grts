@@ -36,4 +36,8 @@ Thumbs.db
 # How I made the icon
 drawing.svg
 
+# This is a bunch of stuff I have no rights to distribute
 tests/**/*
+
+# if you run the package script, it generates zips
+*.zip
