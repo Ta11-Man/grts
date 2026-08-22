@@ -16,6 +16,7 @@ help:
 	@echo   make test-server      - Run local HTTP test fixtures server (port 8001)
 	@echo   make backup           - Create a safe atomic DB snapshot and SQL dump
 	@echo   make restore          - Restore DB from an available backup
+	@echo   make zip              - Package addon into a zip file for distribution
 	@echo   make clean            - Remove Python cache files
 
 install:
@@ -55,6 +56,9 @@ backup:
 
 restore:
 	$(PYTHON) scripts/restore.py
+
+zip:
+	$(PYTHON) scripts/package_addon.py
 
 clean:
 	@$(PYTHON) -c "import pathlib, shutil; [shutil.rmtree(p) for p in pathlib.Path('.').rglob('__pycache__')]"
