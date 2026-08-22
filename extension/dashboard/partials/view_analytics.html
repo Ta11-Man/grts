@@ -1,0 +1,30 @@
+<!-- 3. ANALYTICS & INSIGHTS VIEW -->
+<div id="view-analytics" class="view-container">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+    <div class="analytics-card">
+      <div class="analytics-card-title">Pipeline Conversion Breakdown</div>
+      <div id="statusFunnelChart" style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;"></div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-card-title">Weekly Application Activity</div>
+      <div id="weeklyPacingChart" style="display: flex; align-items: flex-end; gap: 8px; height: 180px; margin-top: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;"></div>
+    </div>
+  </div>
+  <div style="display: grid; grid-template-columns: 1fr 1.4fr; gap: 20px; margin-bottom: 24px;">
+    <div class="analytics-card">
+      <div class="analytics-card-title">US Geographic Distribution</div>
+      <div id="usMapChart" style="margin-top: 14px; min-height: 240px; display: flex; align-items: center; justify-content: center;">
+        <svg id="usMapSvg" viewBox="0 0 960 600" style="width: 100%; height: auto; max-height: 280px;"></svg>
+      </div>
+      <div id="usStateList" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; font-size: 0.76rem;"></div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-card-title">Role Title Breakdown</div>
+      <div id="titleStatsTable" style="overflow-x: auto; margin-top: 10px;"></div>
+    </div>
+  </div>
+  <div class="analytics-card">
+    <div class="analytics-card-title">Workplace & Internship Pacing</div>
+    <div id="internVsFullTimeStats" style="overflow-x: auto; margin-top: 10px;"></div>
+  </div>
+</div>

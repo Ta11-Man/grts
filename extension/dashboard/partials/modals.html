@@ -1,0 +1,238 @@
+<!-- MANUAL APPLICATION ADD MODAL -->
+<div class="center-modal-overlay" id="addAppModal">
+  <div class="center-modal">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+      <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-main)">Manually Add Job Application</h2>
+      <button class="close-drawer-btn" id="closeAddModalBtn">&times;</button>
+    </div>
+    <form id="manualAppForm">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="form-group"><label>Company Name *</label><input type="text" id="m_company" required placeholder="e.g. Humana" /></div>
+        <div class="form-group"><label>Job Title *</label><input type="text" id="m_title" required placeholder="e.g. Software Engineer Intern" /></div>
+        <div class="form-group"><label>Location</label><input type="text" id="m_location" placeholder="City, ST or Remote" /></div>
+        <div class="form-group"><label>Workplace Type</label><select id="m_workplace"><option value="Remote">Remote</option><option value="Hybrid">Hybrid</option><option value="Onsite">Onsite</option></select></div>
+        <div class="form-group"><label>Days in Office / Wk</label><input type="number" id="m_days_in_office" min="0" max="5" placeholder="0 = Remote, 5 = Onsite" /></div>
+        <div class="form-group"><label>Current Status</label><select id="m_status"><option value="Applied">Applied</option><option value="Saved">Saved / Bookmarked</option><option value="Online Assessment (OA)">Online Assessment (OA)</option><option value="Recruiter Screen">Recruiter Screen</option><option value="Technical Interview">Technical Interview</option><option value="Final Round / Onsite">Final Round / Onsite</option><option value="Offer">Offer</option></select></div>
+        <div class="form-group"><label>Date Applied</label><input type="date" id="m_date" /></div>
+        <div class="form-group"><label>Salary Range</label><input type="text" id="m_salary" placeholder="e.g. $120k - $140k" /></div>
+        <div class="form-group"><label>Excitement / Priority</label><select id="m_priority"><option value="1">1 - Low</option><option value="2">2 - Medium-Low</option><option value="3" selected>3 - Good Match</option><option value="4">4 - High Interest</option><option value="5">5 - Top Choice</option></select></div>
+        <div class="form-group"><label>Job URL</label><input type="url" id="m_url" placeholder="https://..." /></div>
+      </div>
+      <div class="form-group"><label>Notes</label><textarea id="m_notes" rows="2" placeholder="Referral, recruiter contact, notes..."></textarea></div>
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+        <button type="button" class="action-btn" id="cancelAddBtn">Cancel</button>
+        <button type="submit" class="btn-primary-gold">Save Application</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CREATE RESUME VERSION MODAL -->
+<div class="center-modal-overlay" id="addResumeModal">
+  <div class="center-modal">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+      <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-main)">Create Resume Version (PDF & Markdown)</h2>
+      <button class="close-drawer-btn" id="closeAddResumeBtn">&times;</button>
+    </div>
+    <form id="addResumeForm">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="form-group"><label>Version Tag</label><input type="text" id="r_tag" value="v1.0" /></div>
+        <div class="form-group"><label>Parent Version</label><select id="r_parent_id"><option value="">None (Master Version)</option></select></div>
+      </div>
+      <div class="form-group"><label>Upload Resume File (PDF / DOCX)</label><input type="file" id="r_pdf_file" accept=".pdf,.docx,.doc" /></div>
+      <div class="form-group"><label>Version Notes / Focus</label><input type="text" id="r_commit_msg" placeholder="Highlights systems & cloud" /></div>
+      <div class="form-group"><label>Extracted Summary Notes</label><textarea id="r_content" rows="3" placeholder="Optional notes..."></textarea></div>
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+        <button type="button" class="action-btn" id="cancelAddResumeBtn">Cancel</button>
+        <button type="submit" class="btn-primary-gold">Save Resume Version</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- APPLICATION DETAIL DRAWER OVERLAY -->
+<div class="modal-overlay" id="appDetailModal">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <img id="dCompanyLogo" src="grts-logo-sqr.svg" style="width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--border-color); object-fit: contain;" />
+        <div>
+          <h2 id="dJobTitle" style="margin: 0; font-size: 1.25rem; color: var(--text-main);">Role Title</h2>
+          <div id="dCompanyName" style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Company</div>
+        </div>
+      </div>
+      <button class="close-drawer-btn" id="closeDrawerBtn">&times;</button>
+    </div>
+
+    <!-- Quick Status Bar -->
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px;">
+      <div>
+        <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Status:</span>
+        <div style="margin-top: 2px;">
+          <select id="dStatusSelect" class="filter-select" style="padding: 5px 8px; font-size: 0.82rem;">
+            <option value="Saved">Saved / Bookmarked</option>
+            <option value="Applied">Applied</option>
+            <option value="Online Assessment (OA)">Online Assessment (OA)</option>
+            <option value="Recruiter Screen">Recruiter Screen</option>
+            <option value="Technical Interview">Technical Interview</option>
+            <option value="Final Round / Onsite">Final Round / Onsite</option>
+            <option value="Offer">Offer</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div id="dLinksContainer" style="display: flex; gap: 6px;"></div>
+    </div>
+
+    <!-- Details View Mode -->
+    <div id="roleDetailsViewMode" style="margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-main);">Role Information</span>
+        <button type="button" id="editAppDetailsBtn" class="action-btn" style="padding: 2px 8px; font-size: 0.74rem;">Edit Details</button>
+      </div>
+      <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 12px; font-size: 0.82rem;">
+        <div id="dViewCompanyRole" style="font-weight: 700;">-</div>
+        <div id="dViewWorkplaceSchedule" style="color: var(--text-muted); margin-top: 2px;">-</div>
+        <div id="dViewTypeSalary" style="color: var(--text-muted); margin-top: 2px;">-</div>
+        <div id="dViewUrl" style="margin-top: 4px;">-</div>
+        <div id="dViewPriority" style="margin-top: 4px;">-</div>
+        <div id="dViewOaWrapper" style="display: none; margin-top: 4px; color: #c2410c; font-weight: 600;">OA Deadline: <span id="dViewOaExpiration">-</span></div>
+        <div id="dViewNotesWrapper" style="display: none; margin-top: 6px;"><div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">NOTES</div><div id="dViewNotes" style="white-space: pre-wrap;"></div></div>
+        <div style="margin-top: 8px;"><div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">JOB DESCRIPTION</div><div id="dViewJobDescription" style="max-height: 120px; overflow-y: auto; white-space: pre-wrap; font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;"></div></div>
+      </div>
+    </div>
+
+    <!-- Details Edit Mode -->
+    <div id="roleDetailsEditMode" style="display: none; margin-bottom: 16px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8rem;">
+        <div class="form-group"><label>Company Name</label><input type="text" id="dEditCompanyName" /></div>
+        <div class="form-group"><label>Job Title</label><input type="text" id="dEditJobTitle" /></div>
+        <div class="form-group"><label>Location</label><input type="text" id="dEditLocation" /></div>
+        <div class="form-group"><label>Workplace</label><select id="dEditWorkplace"><option value="Remote">Remote</option><option value="Hybrid">Hybrid</option><option value="Onsite">Onsite</option></select></div>
+        <div class="form-group"><label>Days in Office</label><input type="number" id="dEditDaysInOffice" min="0" max="5" /></div>
+        <div class="form-group"><label>Job Type</label><select id="dEditJobType"><option value="Full-time">Full-time</option><option value="Internship">Internship</option><option value="Contract">Contract</option><option value="Part-time">Part-time</option></select></div>
+        <div class="form-group"><label>Salary Range</label><input type="text" id="dEditSalary" /></div>
+        <div class="form-group"><label>Date Logged / Applied</label><input type="date" id="dEditDateApplied" /></div>
+        <div class="form-group"><label>OA Expiration</label><input type="date" id="dEditOaExpirationDate" /></div>
+        <div class="form-group"><label>Excitement (1-5)</label><select id="dEditPriority"><option value="1">1 - Low</option><option value="2">2 - Med-Low</option><option value="3">3 - Good</option><option value="4">4 - High</option><option value="5">5 - Dream Role</option></select></div>
+        <div class="form-group"><label>Job URL</label><input type="url" id="dEditUrl" /></div>
+      </div>
+      <div class="form-group" style="margin-top: 6px;"><label>Company Logo URL</label><input type="url" id="dEditCompanyLogo" /></div>
+      <div class="form-group" style="margin-top: 6px;"><label>Company Website</label><input type="url" id="dEditCompanyWebsite" /></div>
+      <div class="form-group" style="margin-top: 6px;"><label>Notes</label><textarea id="dEditNotes" rows="2"></textarea></div>
+      <div class="form-group" style="margin-top: 6px;"><label>Job Description</label><textarea id="dEditJobDescription" rows="4"></textarea></div>
+      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px;">
+        <button type="button" id="cancelAppDetailsBtn" class="action-btn">Cancel</button>
+        <button type="button" id="saveAppDetailsBtn" class="btn-primary-gold" style="padding: 4px 12px; font-size: 0.8rem;">Save Details</button>
+      </div>
+    </div>
+
+    <!-- COVER LETTER SECTION -->
+    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+      <div class="section-title" style="margin-bottom: 8px;">Cover Letter</div>
+      <div id="dCoverLetterDisplay" style="font-size: 0.84rem; color: var(--text-muted); background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; min-height: 50px; max-height: 180px; overflow-y: auto; white-space: pre-wrap; margin-bottom: 8px;">No cover letter attached.</div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <button type="button" id="toggleCoverLetterEditBtn" class="action-btn">Edit Cover Letter</button>
+        <button type="button" id="copyCoverLetterBtn" class="action-btn">Copy Text</button>
+        <label class="action-btn" style="cursor: pointer; margin: 0;">
+          Upload File
+          <input type="file" id="uploadCoverLetterFile" accept=".pdf,.docx,.txt" style="display: none;" />
+        </label>
+        <span id="dCoverLetterFileName" style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;"></span>
+      </div>
+      <div id="dCoverLetterEditArea" style="display: none; margin-top: 10px;">
+        <textarea id="dCoverLetterTextarea" rows="4" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 0.82rem;" placeholder="Paste or type cover letter content..."></textarea>
+        <div style="display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end;">
+          <button type="button" id="cancelCoverLetterBtn" class="action-btn">Cancel</button>
+          <button type="button" id="saveCoverLetterBtn" class="btn-primary-gold" style="padding: 4px 12px; font-size: 0.8rem;">Save Cover Letter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PORTALS & TRACKING LINKS -->
+    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+      <div class="section-title" style="margin-bottom: 8px;">Portals & Additional Links</div>
+      <div id="dLinksList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
+      <div style="display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 6px; align-items: center;">
+        <input type="text" id="newLinkLabel" placeholder="Label (e.g. Candidate Portal)" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+        <input type="url" id="newLinkUrl" placeholder="https://portal.company.com/..." style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+        <button type="button" id="addLinkBtn" class="action-btn" style="padding: 5px 10px;">Add Link</button>
+      </div>
+    </div>
+
+    <!-- CONTACTS & PEOPLE TO REMEMBER -->
+    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+      <div class="section-title" style="margin-bottom: 8px;">Contacts & People to Remember</div>
+      <div id="dContactsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;"></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+        <input type="text" id="newContactName" placeholder="Contact Name *" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+        <input type="text" id="newContactRole" placeholder="Role (e.g. Recruiter, HM)" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+      </div>
+      <div style="display: grid; grid-template-columns: 1.5fr 1fr auto; gap: 6px; align-items: center;">
+        <input type="text" id="newContactNotes" placeholder="Notes (e.g. Discussed team setup)" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+        <input type="email" id="newContactEmail" placeholder="email@company.com" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+        <button type="button" id="addContactBtn" class="action-btn" style="padding: 5px 10px;">Add Person</button>
+      </div>
+    </div>
+
+    <!-- MILESTONES TIMELINE -->
+    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+      <div class="section-title" style="margin-bottom: 8px;">Milestones & Interview History</div>
+      <div id="dTimelineList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;"></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+        <select id="logEventType" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;">
+          <option value="Applied">Applied</option>
+          <option value="Online Assessment (OA)">Online Assessment (OA)</option>
+          <option value="Recruiter Screen">Recruiter Screen</option>
+          <option value="Technical Interview">Technical Interview</option>
+          <option value="System Design">System Design</option>
+          <option value="Coding Assessment">Coding Assessment</option>
+          <option value="Final Round / Onsite">Final Round / Onsite</option>
+          <option value="Offer Received">Offer Received</option>
+          <option value="Offer Accepted">Offer Accepted</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+        <input type="date" id="logEventDate" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+        <select id="logOaPlatform" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;"><option value="CodeSignal">CodeSignal</option><option value="HackerRank">HackerRank</option><option value="LeetCode">LeetCode</option><option value="Other">Other Platform</option></select>
+        <input type="date" id="logOaExpirationDate" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" placeholder="OA Deadline" />
+      </div>
+      <div class="form-group"><input type="text" id="logMeetingLink" placeholder="Meeting / Assessment Link (https://...)" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" /></div>
+      <div class="form-group" style="margin-top: 4px;"><textarea id="logEventNotes" rows="2" placeholder="Notes, topics covered, difficulty..." style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;"></textarea></div>
+      <button type="button" id="saveMilestoneBtn" class="btn-primary-gold" style="margin-top: 6px; padding: 5px 12px; font-size: 0.8rem;">Log Milestone</button>
+    </div>
+
+    <!-- CUSTOM QUESTION RESPONSES -->
+    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div class="section-title" style="margin: 0; font-size: 0.88rem;">Recorded Application Q&A Responses</div>
+        <button type="button" id="dAddQABtn" class="action-btn" style="padding: 3px 10px; font-size: 0.75rem; font-weight: 600; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; transition: all 0.15s ease;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add Q&A
+        </button>
+      </div>
+      <div id="dNewQAForm" style="display: none; background: #fffbeb; border: 1px dashed #f59e0b; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+        <div style="font-weight: 700; font-size: 0.8rem; margin-bottom: 6px; color: #92400e;">Log Custom Question & Answer</div>
+        <input type="text" id="dNewQAQuestion" placeholder="Question text (e.g. Why are you interested in this role?)" style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 0.8rem; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 6px; background: #ffffff;" />
+        <textarea id="dNewQAAnswer" rows="2" placeholder="Answer text..." style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 0.8rem; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 8px; background: #ffffff;"></textarea>
+        <div style="display: flex; gap: 6px; justify-content: flex-end;">
+          <button type="button" id="dCancelNewQABtn" class="action-btn" style="padding: 3px 10px; font-size: 0.75rem; cursor: pointer;">Cancel</button>
+          <button type="button" id="dSaveNewQABtn" class="btn-primary-gold" style="padding: 3px 12px; font-size: 0.75rem; cursor: pointer;">Save Q&A</button>
+        </div>
+      </div>
+      <div id="dCustomQAList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+    </div>
+
+    <!-- DELETE ACTION -->
+    <div style="border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 8px; display: flex; justify-content: flex-start;">
+      <button type="button" id="deleteAppBtn" class="action-btn action-btn-danger" style="font-size: 0.8rem; padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        Delete Application Record
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATION CONTAINER -->
+<div id="toastNotification" class="grts-toast"></div>

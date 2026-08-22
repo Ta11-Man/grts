@@ -1,0 +1,39 @@
+# Local runtime data
+backend/grts.db
+backend/grts.pid
+backend/grts_service.log
+tracker.db
+scout/scout_feed.json
+backend/us_heatmap.png
+backups/
+*.sql
+
+# Local configuration and credentials
+scout/config.local.yaml
+backend/.env
+extension/autofill/config.local.js
+
+# Python environments and generated files
+backend/env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Captured ATS pages and uploads
+tests/**/*.htm
+tests/**/*.html
+tests/**/*_files/
+*.pdf
+*.docx
+
+# Local editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# How I made the icon
+drawing.svg
+
+tests/**/*

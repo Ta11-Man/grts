@@ -1,0 +1,11 @@
+# Target company career pages for the GRTS Scout engine
+targets:
+  - company: "ExampleTech"
+    url: "https://boards.greenhouse.io/exampletech"
+    type: "greenhouse"
+  - company: "SampleCorp"
+    url: "https://jobs.lever.co/samplecorp"
+    type: "lever"
+  - company: "UnknownStartup"
+    url: "https://unknownstartup.com/careers"
+    type: "custom" # Triggers the local LLM fallback

@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GRTS Extension</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --primary: #b6a25b;
+        --primary-dark: #8c7a3a;
+        --secondary: #6e6138;
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-main: #2d3436;
+        --text-muted: #636e72;
+        --border-color: #e2e8f0;
+        --accent: #eef7f6;
+        --accent-solid: #00b894;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        width: 360px;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        background: #fff;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo {
+        height: 28px;
+        width: 28px;
+      }
+      h3 {
+        margin: 0;
+        color: var(--primary);
+        font-size: 1.25rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .badge-version {
+        font-size: 10px;
+        font-weight: 700;
+        background: #f1f5f9;
+        color: var(--text-muted);
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+      .tabs {
+        display: flex;
+        background: #fff;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0 12px;
+      }
+      .tab-btn {
+        flex: 1;
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding: 10px 4px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+      }
+      .tab-btn:hover {
+        color: var(--primary);
+      }
+      .tab-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+      .tab-content {
+        padding: 14px 16px;
+        display: none;
+        max-height: 480px;
+        overflow-y: auto;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .field {
+        margin-bottom: 10px;
+      }
+      label {
+        display: block;
+        font-size: 10.5px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      input[type="date"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: var(--card-bg);
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 12.5px;
+        transition: all 0.2s;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(182, 162, 91, 0.15);
+      }
+      input[readonly] {
+        background-color: #f8fafc;
+        color: var(--text-muted);
+        cursor: default;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+      }
+      .btn-primary {
+        width: 100%;
+        padding: 10px;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+      }
+      .btn-autofill {
+        background-color: #00b894;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 9px;
+        font-weight: 700;
+        font-size: 12.5px;
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: background-color 0.2s;
+      }
+      .btn-autofill:hover {
+        background-color: #009879;
+      }
+      .btn-outline {
+        background-color: white;
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 9px;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        transition: all 0.2s;
+      }
+      .btn-outline:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .star-rating {
+        display: flex;
+        gap: 6px;
+        cursor: pointer;
+      }
+      .star {
+        font-size: 18px;
+        color: #cbd5e1;
+        transition: color 0.15s;
+      }
+      .star.active {
+        color: #f59e0b;
+      }
+      .status-box {
+        margin-top: 10px;
+        font-size: 11.5px;
+        text-align: center;
+        min-height: 16px;
+        font-weight: 600;
+      }
+      .qa-card {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 8px;
+      }
+      .qa-question {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 4px;
+      }
+      .qa-answer {
+        font-size: 12px;
+        color: var(--text-muted);
+        white-space: pre-wrap;
+        background: #f8fafc;
+        padding: 6px 8px;
+        border-radius: 6px;
+      }
+      .qa-copy-btn {
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 10.5px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0;
+        margin-top: 4px;
+      }
+      .qa-copy-btn:hover {
+        text-decoration: underline;
+      }
+      .backend-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        margin-top: 2px;
+        border-radius: 10px;
+        padding: 1px 6px;
+        line-height: 1.3;
+      }
+      .status-online {
+        background: #ecfdf5;
+        color: #059669;
+      }
+      .status-online .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #10b981;
+      }
+      .status-offline {
+        background: #fef2f2;
+        color: #dc2626;
+      }
+      .status-offline .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #ef4444;
+      }
+      .status-checking {
+        background: #f1f5f9;
+        color: #64748b;
+      }
+      .status-checking .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #94a3b8;
+      }
+      .queue-banner {
+        background: #fffbeb;
+        border-bottom: 1px solid #fef3c7;
+        padding: 6px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #b45309;
+        font-weight: 600;
+      }
+      .btn-sync-pill {
+        background: #f59e0b;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 10.5px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .btn-sync-pill:hover {
+        background: #d97706;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="brand">
+        <img src="grts-logo-sqr.svg" class="logo" alt="Logo" />
+        <div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <h3 style="line-height: 1;">GRTS</h3>
+            <span class="badge-version">v2.0</span>
+          </div>
+          <div id="backendStatusPill" class="backend-pill status-checking" title="Backend Server Connection Status">
+            <span class="status-dot"></span> <span id="statusPillText">Checking...</span>
+          </div>
+        </div>
+      </div>
+      <button id="headerDashboardBtn" class="btn-outline" style="padding: 4px 8px; font-size: 11px;">Open DB</button>
+    </div>
+
+    <div id="offlineQueueBanner" class="queue-banner" style="display: none;">
+      <span id="queueBannerText">⚠️ 1 item queued offline</span>
+      <button id="syncNowBtn" class="btn-sync-pill">Sync Now</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="tab-track">Track Job</button>
+      <button class="tab-btn" data-tab="tab-profile">Profile</button>
+      <button class="tab-btn" data-tab="tab-qa">Q&A Bank</button>
+    </div>
+
+    <!-- TAB 1: TRACK JOB -->
+    <div id="tab-track" class="tab-content active">
+      <div style="display: flex; gap: 6px; margin-bottom: 12px;">
+        <button id="autofillNowBtn" class="btn-autofill" style="flex: 1.2; margin-bottom: 0;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Autofill Page
+        </button>
+        <button id="saveJobForLaterBtn" class="btn-outline" style="flex: 1; padding: 7px 8px; font-weight: 700; color: #4f46e5; border-color: #c7d2fe; background: #eef2ff; display: flex; align-items: center; justify-content: center; gap: 5px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> Save for Later
+        </button>
+      </div>
+
+      <div class="field">
+        <label>Company</label>
+        <input type="text" id="company" placeholder="e.g. Acme Corp" />
+      </div>
+      <div class="field">
+        <label>Job Title</label>
+        <input type="text" id="title" placeholder="e.g. Senior Software Engineer" />
+      </div>
+      <div class="row">
+        <div class="field" style="flex: 1.4;">
+          <label>Location</label>
+          <input type="text" id="location" placeholder="e.g. Austin, TX" />
+        </div>
+        <div class="field" style="flex: 1;">
+          <label>Workplace</label>
+          <select id="workplace_type">
+            <option value="Remote">Remote</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="On-site">On-site</option>
+          </select>
+        </div>
+        <div class="field" style="flex: 0.9;">
+          <label>Days in Office</label>
+          <input type="number" id="days_in_office" min="0" max="5" placeholder="0-5" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field" style="flex: 1.1;">
+          <label>Status</label>
+          <select id="app_status">
+            <option value="Applied">Applied</option>
+            <option value="Saved">Saved (Not applied yet)</option>
+          </select>
+        </div>
+        <div class="field" style="flex: 1;">
+          <label>Date</label>
+          <input type="date" id="date_applied" />
+        </div>
+        <div class="field" style="flex: 0.9;">
+          <label>Priority</label>
+          <div class="star-rating" id="priorityStars" style="margin-top: 5px;">
+            <span class="star active" data-val="1">★</span>
+            <span class="star active" data-val="2">★</span>
+            <span class="star active" data-val="3">★</span>
+            <span class="star" data-val="4">★</span>
+            <span class="star" data-val="5">★</span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field" style="flex: 1;">
+          <label>Salary Range</label>
+          <input type="text" id="salary_range" placeholder="e.g. $150k-$170k" />
+        </div>
+        <div class="field" style="flex: 1;">
+          <label>Resume Version</label>
+          <input type="text" id="resume" placeholder="e.g. SWE_v2.pdf" />
+        </div>
+      </div>
+      <div class="field">
+        <label>URL</label>
+        <input type="text" id="url" readonly />
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <textarea id="notes" rows="2" placeholder="Referrals, recruiter contact, specific team..."></textarea>
+      </div>
+
+      <div class="row" style="margin-top: 14px;">
+        <button id="submitBtn" class="btn-primary" style="flex: 1.4;">Save Application</button>
+        <button id="dashboardBtn" class="btn-outline" style="flex: 0.9;">View DB</button>
+      </div>
+      <div id="status" class="status-box"></div>
+    </div>
+
+    <!-- TAB 2: USER PROFILE -->
+    <div id="tab-profile" class="tab-content">
+      <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">
+        Your master autofill profile. Automatically populated across application forms.
+      </div>
+      <div style="background: #fdfcf7; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <label for="prof_autofill_enabled" style="font-size: 11px; font-weight: 700; margin: 0; cursor: pointer; text-transform: none; color: var(--text-main);">
+            Autofill on Page Load
+          </label>
+          <div style="font-size: 10px; color: var(--text-muted);">Fill forms automatically without asking</div>
+        </div>
+        <input type="checkbox" id="prof_autofill_enabled" style="width: 16px; height: 16px; cursor: pointer;" />
+      </div>
+      <div class="row">
+        <div class="field" style="flex: 1;">
+          <label>First Name</label>
+          <input type="text" id="prof_first_name" />
+        </div>
+        <div class="field" style="flex: 1;">
+          <label>Last Name</label>
+          <input type="text" id="prof_last_name" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field" style="flex: 1;">
+          <label>Email</label>
+          <input type="email" id="prof_email" />
+        </div>
+        <div class="field" style="flex: 1;">
+          <label>Phone</label>
+          <input type="tel" id="prof_phone" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Street Address</label>
+        <input type="text" id="prof_address" />
+      </div>
+      <div class="row">
+        <div class="field" style="flex: 1;">
+          <label>City</label>
+          <input type="text" id="prof_city" />
+        </div>
+        <div class="field" style="flex: 1;">
+          <label>State / Prov</label>
+          <input type="text" id="prof_state" />
+        </div>
+        <div class="field" style="flex: 1;">
+          <label>Zip</label>
+          <input type="text" id="prof_postal_code" />
+        </div>
+      </div>
+      <div class="field">
+        <label>LinkedIn URL</label>
+        <input type="text" id="prof_linkedin" />
+      </div>
+      <div class="field">
+        <label>GitHub URL</label>
+        <input type="text" id="prof_github" />
+      </div>
+      <div class="field">
+        <label>Portfolio / Website</label>
+        <input type="text" id="prof_portfolio" />
+      </div>
+      <div class="row">
+        <div class="field" style="flex: 1;">
+          <label>US Work Auth</label>
+          <select id="prof_work_auth">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div class="field" style="flex: 1;">
+          <label>Require Visa</label>
+          <select id="prof_sponsorship">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field" style="flex: 1;">
+          <label>School / College</label>
+          <input type="text" id="prof_school" />
+        </div>
+        <div class="field" style="flex: 1;">
+          <label>Degree</label>
+          <input type="text" id="prof_degree" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field" style="flex: 1;">
+          <label>Target Salary</label>
+          <input type="text" id="prof_salary" placeholder="e.g. $160,000" />
+        </div>
+        <div class="field" style="flex: 1;">
+          <label>Notice Period</label>
+          <input type="text" id="prof_notice" placeholder="2 Weeks" />
+        </div>
+      </div>
+
+      <button id="saveProfileBtn" class="btn-primary" style="margin-top: 10px;">Save Profile</button>
+      <div id="profileStatus" class="status-box"></div>
+    </div>
+
+    <!-- TAB 3: Q&A BANK -->
+    <div id="tab-qa" class="tab-content">
+      <div class="field">
+        <label>Search Past Answers</label>
+        <input type="text" id="qaSearchInput" placeholder="Search by topic, e.g. ROS2, leadership, salary..." />
+      </div>
+      <div id="qaListContainer" style="margin-top: 10px;">
+        <div style="font-size: 11.5px; color: var(--text-muted); text-align: center; padding: 20px;">Loading questions...</div>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

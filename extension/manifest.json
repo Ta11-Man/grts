@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "GRTS",
+  "version": "2.0",
+  "description": "Gabe's Reverse Tracking System - Instant Autofill, Q&A Bank, and Application Lifecycle Tracker",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "*://*/*",
+    "http://127.0.0.1:8000/*",
+    "http://localhost:8000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "grts-logo-sqr.png"
+  },
+  "icons": {
+    "128": "grts-logo-sqr.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "scripts": ["background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "grts@gabesrts.local"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "autofill/config.js",
+        "autofill/profile.js",
+        "autofill/dom_utils.js",
+        "autofill/matcher.js",
+        "autofill/adapters/workday.js",
+        "autofill/adapters/greenhouse.js",
+        "autofill/adapters/generic.js",
+        "autofill/ui.js",
+        "autofill/core.js",
+        "content.js"
+      ]
+    }
+  ]
+}

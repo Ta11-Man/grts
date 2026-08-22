@@ -1,0 +1,100 @@
+<!-- TOP BRANDING & NAVIGATION HEADER -->
+<div class="header">
+  <div class="brand">
+    <img src="grts-logo.svg" class="logo" alt="GRTS Logo" />
+    <div>
+      <h1>GRTS <span>Workspace</span></h1>
+      <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 500;">
+        Reverse Tracking System, Pipeline Analytics, Resume Git & Autofill Engine
+      </div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-primary-gold" id="openAddModalBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      Add Application
+    </button>
+  </div>
+</div>
+
+<!-- METRICS SUMMARY CARDS -->
+<div class="metrics-grid">
+  <div class="metric-card active-filter" id="mcard-total" data-filter-status="">
+    <div class="metric-title">Total Pipeline</div>
+    <div class="metric-value" id="metricTotal">0</div>
+    <div class="metric-sub">Active Applications</div>
+  </div>
+  <div class="metric-card" id="mcard-oa" data-filter-status="Online Assessment (OA)">
+    <div class="metric-title">Active OAs</div>
+    <div class="metric-value" id="metricOA">0</div>
+    <div class="metric-sub">Pending Assessments</div>
+  </div>
+  <div class="metric-card" id="mcard-interview" data-filter-status="Interviewing">
+    <div class="metric-title">Interviewing</div>
+    <div class="metric-value" id="metricInterview">0</div>
+    <div class="metric-sub">Screens & Rounds</div>
+  </div>
+  <div class="metric-card" id="mcard-offer" data-filter-status="Offer">
+    <div class="metric-title">Offers</div>
+    <div class="metric-value" id="metricOffers">0</div>
+    <div class="metric-sub">Received</div>
+  </div>
+  <div class="metric-card" id="mcard-ghosted" data-filter-status="Ghosted">
+    <div class="metric-title">Ghosted</div>
+    <div class="metric-value" id="metricGhosted">0</div>
+    <div class="metric-sub">30+ Days Inactive</div>
+  </div>
+</div>
+
+<!-- CONTROLS & NAVIGATION TABS -->
+<div class="controls-bar">
+  <div class="view-tabs">
+    <button class="view-tab-btn active" data-view="view-table">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+      Table View
+    </button>
+    <button class="view-tab-btn" data-view="view-kanban">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1"></rect><rect x="14" y="3" width="7" height="10" rx="1"></rect></svg>
+      Kanban Board
+    </button>
+    <button class="view-tab-btn" data-view="view-analytics">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      Analytics
+    </button>
+    <button class="view-tab-btn" data-view="view-resumes">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+      Resume Versions
+    </button>
+    <button class="view-tab-btn" data-view="view-qa">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      Q&A Bank
+    </button>
+    <button class="view-tab-btn" data-view="view-profile">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      Autofill Profile
+    </button>
+  </div>
+
+  <div class="filter-tools">
+    <div class="search-box">
+      <input type="text" id="globalSearchInput" placeholder="Search company, role, notes..." />
+    </div>
+    <select id="sortBySelect" class="filter-select">
+      <option value="recency">Most Recent</option>
+      <option value="priority">Excitement Rating (1-5)</option>
+      <option value="company">Company (A-Z)</option>
+      <option value="status">Status Stage</option>
+    </select>
+    <select id="statusFilterSelect" class="filter-select">
+      <option value="">All Applications (Active)</option>
+      <option value="Saved">Saved / Bookmarked</option>
+      <option value="Applied">Applied</option>
+      <option value="Online Assessment (OA)">Online Assessment (OA)</option>
+      <option value="Recruiter Screen">Recruiter Screen</option>
+      <option value="Technical Interview">Technical Interview</option>
+      <option value="Final Round / Onsite">Final Round / Onsite</option>
+      <option value="Offer">Offer</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+  </div>
+</div>

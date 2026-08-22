@@ -1,0 +1,3473 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="grts-logo-sqr.svg" />
+    <title>GRTS - Application Lifecycle & Tracking Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #b6a25b;
+        --primary-dark: #8c7a3a;
+        --primary-light: #f7f4ea;
+        --secondary: #6e6138;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+        --accent: #eef7f6;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #3b82f6;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+        --shadow-md:
+          0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Outfit", "Inter", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 0;
+        line-height: 1.5;
+      }
+
+      .app-layout {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 24px 36px 60px;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .logo {
+        height: 40px;
+        width: 40px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.65rem;
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: -0.02em;
+      }
+
+      h1 span {
+        color: var(--primary);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .btn-primary-gold {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 16px;
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn-primary-gold:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+      }
+
+      /* Analytics Bar */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+        margin-bottom: 24px;
+      }
+
+      .metric-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: var(--shadow-sm);
+        cursor: pointer;
+        user-select: none;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary);
+      }
+
+      .metric-card.active-filter {
+        border: 2px solid var(--primary);
+        background: #fefdf9;
+        box-shadow: 0 0 0 2px rgba(182, 162, 91, 0.2);
+      }
+
+      .metric-title {
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 6px;
+      }
+
+      .metric-value {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--text-main);
+        line-height: 1.1;
+      }
+
+      .metric-sub {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+        font-weight: 500;
+      }
+
+      /* View Navigation & Controls */
+      .controls-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .view-tabs {
+        display: flex;
+        background: #e2e8f0;
+        padding: 4px;
+        border-radius: 10px;
+        gap: 4px;
+      }
+
+      .view-tab-btn {
+        background: none;
+        border: none;
+        padding: 8px 14px;
+        font-family: inherit;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .view-tab-btn.active {
+        background: #ffffff;
+        color: var(--text-main);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .filter-tools {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        max-width: 650px;
+        justify-content: flex-end;
+      }
+
+      .search-box {
+        position: relative;
+        flex: 1;
+      }
+
+      .search-box input {
+        width: 100%;
+        padding: 8px 14px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: #ffffff;
+        font-family: inherit;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+      }
+
+      .search-box input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(182, 162, 91, 0.15);
+      }
+
+      .filter-select {
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: #ffffff;
+        font-family: inherit;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-main);
+        cursor: pointer;
+      }
+
+      /* Views */
+      .view-container {
+        display: none;
+      }
+
+      .view-container.active {
+        display: block;
+      }
+
+      /* Table View */
+      .table-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      th {
+        background-color: #fcfcfd;
+        padding: 12px 18px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      td {
+        padding: 10px 16px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+        height: 60px;
+        box-sizing: border-box;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr.clickable-row {
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
+
+      tr.clickable-row:hover {
+        background-color: #f8fafc;
+      }
+
+      .company-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        color: var(--text-main);
+        max-width: 170px;
+      }
+
+      .company-cell span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .company-logo {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        border-radius: 6px;
+        object-fit: cover;
+        background-color: #ffffff;
+        border: 1px solid var(--border-color);
+        padding: 2px;
+      }
+
+      .role-title {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: var(--text-main);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 240px;
+      }
+
+      .role-meta {
+        font-size: 0.76rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 240px;
+      }
+
+      .location-cell-text {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+        display: block;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .status-Saved {
+        background: #e0e7ff;
+        color: #4338ca;
+        border: 1px solid #c7d2fe;
+      }
+      .status-Applied {
+        background: #f1f5f9;
+        color: #475569;
+      }
+      .status-OA,
+      .status-Screening {
+        background: #e0f2fe;
+        color: #0284c7;
+      }
+      .status-Technical {
+        background: #fef3c7;
+        color: #d97706;
+      }
+      .status-Final {
+        background: #ede9fe;
+        color: #7c3aed;
+      }
+      .status-Offer {
+        background: #dcfce7;
+        color: #15803d;
+      }
+      .status-Rejected {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+      .status-Skipped,
+      .status-Expired {
+        background: #f1f5f9;
+        color: #64748b;
+        border: 1px dashed #cbd5e1;
+      }
+
+      .oa-deadline-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 2px 7px;
+        border-radius: 5px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        margin-top: 4px;
+      }
+      .oa-deadline-badge.soon {
+        background: #fef3c7;
+        color: #b45309;
+        border: 1px solid #fde68a;
+      }
+      .oa-deadline-badge.expired {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+      }
+      .oa-deadline-badge.ok {
+        background: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+      }
+      .btn-skip-oa {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        color: #475569;
+        border-radius: 4px;
+        padding: 1px 6px;
+        font-size: 0.68rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-left: 4px;
+        transition: all 0.15s ease;
+      }
+      .btn-skip-oa:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+        border-color: #fca5a5;
+      }
+
+      .star-click {
+        cursor: pointer;
+        display: inline-block;
+        transition: transform 0.1s;
+        color: #f59e0b;
+        font-size: 15px;
+        padding: 0 1px;
+      }
+      .star-click:hover {
+        transform: scale(1.3);
+      }
+
+      .action-btn {
+        background: none;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-family: inherit;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-main);
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .action-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: #ffffff;
+      }
+
+      .action-btn-danger {
+        border-color: #fee2e2;
+        color: #ef4444;
+      }
+      .action-btn-danger:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+        border-color: #fca5a5;
+      }
+
+      /* Horizontal Single-Row Drag-and-Drop Kanban Board */
+      .kanban-board-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 12px;
+      }
+
+      .kanban-board {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 14px;
+        min-width: max-content;
+        align-items: stretch;
+      }
+
+      .kanban-col {
+        flex: 0 0 250px;
+        width: 250px;
+        background: #f1f5f9;
+        border: 2px dashed transparent;
+        border-radius: 12px;
+        padding: 12px;
+        min-height: 540px;
+        transition: all 0.2s ease;
+      }
+
+      .kanban-col.drag-over {
+        background: #eef7f6;
+        border-color: var(--primary);
+      }
+
+      .kanban-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #e2e8f0;
+      }
+
+      .kanban-count {
+        background: #ffffff;
+        color: var(--text-main);
+        padding: 2px 7px;
+        border-radius: 10px;
+        font-size: 0.72rem;
+      }
+
+      .kanban-card {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 8px;
+        box-shadow: var(--shadow-sm);
+        cursor: grab;
+        transition: all 0.15s ease;
+        user-select: none;
+      }
+
+      .kanban-card:active {
+        cursor: grabbing;
+      }
+
+      .kanban-card.dragging {
+        opacity: 0.35;
+        transform: scale(0.96);
+      }
+
+      .kanban-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary);
+      }
+
+      .kanban-card-company {
+        font-weight: 800;
+        font-size: 0.82rem;
+        color: var(--secondary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .kanban-card-title {
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin: 4px 0 6px;
+        color: var(--text-main);
+      }
+
+      .kanban-card-date {
+        font-size: 0.74rem;
+        color: var(--text-muted);
+      }
+
+      /* Analytics View Time-Series Range Chart */
+      .analytics-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .analytics-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .chart-title {
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-main);
+        margin-bottom: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      /* Chronological Range Timeline Chart */
+      .time-chart-container {
+        width: 100%;
+        overflow: hidden;
+        padding-top: 10px;
+      }
+
+      .time-chart-svg {
+        width: 100%;
+        min-width: 0;
+        height: 260px;
+        display: block;
+        overflow: hidden;
+      }
+
+      /* Resume Manager */
+      .resume-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 18px;
+      }
+
+      .diff-viewer {
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 16px;
+        font-family: monospace;
+        font-size: 0.82rem;
+        line-height: 1.5;
+        max-height: 520px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+      }
+
+      .diff-added {
+        background-color: #dcfce7;
+        color: #166534;
+        display: block;
+        padding: 2px 4px;
+        border-radius: 4px;
+      }
+
+      .diff-removed {
+        background-color: #fee2e2;
+        color: #991b1b;
+        display: block;
+        padding: 2px 4px;
+        border-radius: 4px;
+        text-decoration: line-through;
+      }
+
+      /* Q&A Bank View */
+      .qa-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 14px;
+      }
+
+      .qa-bank-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .qa-bank-question {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 8px;
+      }
+
+      .qa-bank-answer {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 10px;
+        white-space: pre-wrap;
+        margin-bottom: 12px;
+        flex: 1;
+      }
+
+      .qa-bank-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+      }
+
+      /* Modals and Drawers */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(4px);
+        display: none;
+        justify-content: flex-end;
+        z-index: 9999;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+
+      .center-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+      }
+      .center-modal-overlay.open {
+        display: flex;
+      }
+
+      .center-modal {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 26px;
+        max-width: 600px;
+        width: 90vw;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .drawer {
+        width: 660px;
+        max-width: 92vw;
+        background: #ffffff;
+        height: 100vh;
+        overflow-y: auto;
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: slideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+
+      .drawer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 16px;
+      }
+
+      .close-drawer-btn {
+        background: none;
+        border: none;
+        font-size: 1.4rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+
+      .close-drawer-btn:hover {
+        background: #f1f5f9;
+        color: var(--text-main);
+      }
+
+      .section-title {
+        font-size: 0.8rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--secondary);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* Journey Timeline in Drawer */
+      .timeline-flow {
+        position: relative;
+        padding-left: 18px;
+        margin-left: 8px;
+        border-left: 2px solid #e2e8f0;
+      }
+
+      .timeline-node {
+        position: relative;
+        margin-bottom: 14px;
+      }
+
+      .timeline-node:last-child {
+        margin-bottom: 0;
+      }
+
+      .timeline-marker {
+        position: absolute;
+        left: -25px;
+        top: 4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--primary);
+        border: 2px solid #ffffff;
+        box-shadow: 0 0 0 3px rgba(182, 162, 91, 0.2);
+      }
+
+      .timeline-card {
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 12px 14px;
+      }
+
+      .timeline-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+
+      .timeline-event-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--text-main);
+      }
+
+      .timeline-date-str {
+        font-size: 0.74rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      .timeline-detail-text {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        white-space: pre-wrap;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 10px;
+      }
+
+      .form-group label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 8px 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 0.85rem;
+        background: #ffffff;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(182, 162, 91, 0.15);
+      }
+
+      .profile-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .profile-section-card {
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #ffffff;
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition:
+          box-shadow 0.2s ease,
+          border-color 0.2s ease;
+      }
+      .profile-section-card:hover {
+        border-color: #cbd5e1;
+      }
+      .profile-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        background: #f8fafc;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.15s ease;
+      }
+      .profile-section-header:hover {
+        background: #f1f5f9;
+      }
+      .profile-section-title {
+        margin: 0;
+        font-size: 1.05rem;
+        color: var(--text-main);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .profile-section-body {
+        padding: 18px;
+        border-top: 1px solid var(--border-color);
+      }
+      .sec-chevron {
+        display: inline-block;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        transition: transform 0.2s ease;
+      }
+      .profile-section-card.collapsed .sec-chevron {
+        transform: rotate(-90deg);
+      }
+      .profile-section-card.collapsed .profile-section-body {
+        display: none;
+      }
+
+      .exp-entry-card,
+      .edu-entry-card {
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 12px;
+        overflow: hidden;
+        transition: border-color 0.15s ease;
+      }
+      .exp-entry-card:hover,
+      .edu-entry-card:hover {
+        border-color: #cbd5e1;
+      }
+      .exp-card-header,
+      .edu-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        background: #ffffff;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.15s ease;
+      }
+      .exp-card-header:hover,
+      .edu-card-header:hover {
+        background: #f8fafc;
+      }
+      .exp-card-body,
+      .edu-card-body {
+        padding: 14px;
+      }
+      .card-chevron {
+        display: inline-block;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        transition: transform 0.2s ease;
+      }
+      .exp-entry-card.collapsed .card-chevron,
+      .edu-entry-card.collapsed .card-chevron {
+        transform: rotate(-90deg);
+      }
+      .exp-entry-card.collapsed .exp-card-body,
+      .edu-entry-card.collapsed .edu-card-body {
+        display: none;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: var(--text-muted);
+      }
+
+      .empty-state h3 {
+        margin: 8px 0 4px;
+        color: var(--text-main);
+      }
+
+      /* Toast Notification */
+      .grts-toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #1e293b;
+        color: #ffffff;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transform: translateY(12px);
+        transition: all 0.25s ease;
+        z-index: 999999;
+        pointer-events: none;
+      }
+      .grts-toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-layout">
+      <!-- HEADER -->
+      <div class="header">
+        <div class="brand">
+          <img src="grts-logo.svg" class="logo" alt="GRTS Logo" />
+          <div>
+            <h1>GRTS <span>Workspace</span></h1>
+            <div
+              style="
+                font-size: 0.82rem;
+                color: var(--text-muted);
+                font-weight: 500;
+              "
+            >
+              Reverse Tracking System, Pipeline Analytics, Resume Git & Autofill
+              Engine
+            </div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary-gold" id="openAddModalBtn">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Application
+          </button>
+          <button class="action-btn" id="refreshBtn">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path
+                d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
+              ></path>
+            </svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- ANALYTICS FUNNEL METRICS BAR (CLICK TO FILTER) -->
+      <div
+        class="metrics-grid"
+        id="metricsBar"
+        style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr))"
+      >
+        <div
+          class="metric-card"
+          id="mTotalAppsCard"
+          title="Click to show all applications"
+        >
+          <div class="metric-title">Total Applications</div>
+          <div class="metric-value" id="mTotalApps">-</div>
+          <div class="metric-sub" id="mActiveApps">- unique companies</div>
+        </div>
+        <div
+          class="metric-card"
+          id="mSavedCard"
+          title="Click to filter Saved Jobs"
+        >
+          <div class="metric-title">Saved Jobs</div>
+          <div class="metric-value" id="mSavedApps" style="color: #4f46e5">
+            0
+          </div>
+          <div class="metric-sub">Bookmarked for later</div>
+        </div>
+        <div
+          class="metric-card"
+          id="mInterviewingCard"
+          title="Click to show upcoming / active interviewing rounds"
+        >
+          <div class="metric-title">Interviewing</div>
+          <div
+            class="metric-value"
+            id="mInterviews"
+            style="color: var(--warning)"
+          >
+            -
+          </div>
+          <div class="metric-sub">Active rounds</div>
+        </div>
+        <div
+          class="metric-card"
+          id="mOffersCard"
+          title="Click to filter offers"
+        >
+          <div class="metric-title">Offers</div>
+          <div class="metric-value" id="mOffers" style="color: var(--success)">
+            -
+          </div>
+          <div class="metric-sub" id="mOfferRate">0% offer rate</div>
+        </div>
+        <div
+          class="metric-card"
+          id="mHearbackCard"
+          title="Click to filter roles with company responses"
+        >
+          <div class="metric-title">Hearback Rate</div>
+          <div class="metric-value" id="mResponseRate">-</div>
+          <div class="metric-sub" id="mResponseSub">- including rejections</div>
+        </div>
+      </div>
+
+      <!-- CONTROLS & VIEWS NAVIGATION -->
+      <div class="controls-bar">
+        <div class="view-tabs">
+          <button class="view-tab-btn active" data-view="view-table">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            Table
+          </button>
+          <button class="view-tab-btn" data-view="view-kanban">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+              <line x1="15" y1="3" x2="15" y2="21"></line>
+            </svg>
+            Kanban
+          </button>
+          <button class="view-tab-btn" data-view="view-analytics">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            Analytics & Stats
+          </button>
+          <button class="view-tab-btn" data-view="view-resumes">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              ></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Resume Versions
+          </button>
+          <button class="view-tab-btn" data-view="view-qa">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Q&A Bank
+          </button>
+          <button class="view-tab-btn" data-view="view-profile">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Autofill Profile
+          </button>
+        </div>
+
+        <div class="filter-tools">
+          <div class="search-box">
+            <input
+              type="text"
+              id="globalSearchInput"
+              placeholder="Search company, role, notes..."
+            />
+          </div>
+          <select id="sortBySelect" class="filter-select">
+            <option value="recency">Most Recent</option>
+            <option value="priority">Excitement Rating (1-5)</option>
+            <option value="company">Company (A-Z)</option>
+            <option value="status">Status Stage</option>
+          </select>
+          <select id="statusFilterSelect" class="filter-select">
+            <option value="">All Applications (Active)</option>
+            <option value="Saved">Saved / Bookmarked</option>
+            <option value="Applied">Applied</option>
+            <option value="Online Assessment (OA)">
+              Online Assessment (OA)
+            </option>
+            <option value="Recruiter Screen">Recruiter Screen</option>
+            <option value="Technical Interview">Technical Interview</option>
+            <option value="Final Round / Onsite">Final Round / Onsite</option>
+            <option value="Offer">Offer</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 1. TABLE VIEW -->
+      <div id="view-table" class="view-container active">
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 22%">Company</th>
+                <th style="width: 28%">Role & Workplace</th>
+                <th style="width: 14%">Excitement</th>
+                <th style="width: 14%">Location</th>
+                <th style="width: 10%">Date Applied</th>
+                <th style="width: 12%; text-align: right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="applicationsTableBody">
+              <tr>
+                <td colspan="6" class="empty-state">
+                  Loading applications from local database...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. HORIZONTAL SINGLE-ROW KANBAN BOARD VIEW -->
+      <div id="view-kanban" class="view-container">
+        <div
+          style="
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+          "
+        >
+          Drag and drop cards horizontally across stages to update your
+          application lifecycle.
+        </div>
+        <div class="kanban-board-wrapper">
+          <div class="kanban-board" id="kanbanBoardContainer"></div>
+        </div>
+      </div>
+
+      <!-- 3. ANALYTICS & STATISTICS VIEW -->
+      <div id="view-analytics" class="view-container">
+        <!-- Chronological Range Timeline Chart -->
+        <div class="analytics-card" style="margin-bottom: 16px">
+          <div class="chart-title">
+            <span>Application & Rejection Lifecycle Timeline</span>
+            <span
+              style="
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 12px;
+              "
+            >
+              <span style="display: inline-flex; align-items: center; gap: 4px">
+                <span
+                  style="
+                    width: 10px;
+                    height: 10px;
+                    background: #0284c7;
+                    border-radius: 2px;
+                  "
+                ></span>
+                Total Applied (Top)
+              </span>
+              <span style="display: inline-flex; align-items: center; gap: 4px">
+                <span
+                  style="
+                    width: 10px;
+                    height: 10px;
+                    background: rgba(2, 132, 199, 0.25);
+                    border: 1px solid #0284c7;
+                    border-radius: 2px;
+                  "
+                ></span>
+                Active Pipeline Range
+              </span>
+              <span style="display: inline-flex; align-items: center; gap: 4px">
+                <span
+                  style="
+                    width: 10px;
+                    height: 10px;
+                    background: #ef4444;
+                    border-radius: 2px;
+                  "
+                ></span>
+                Rejections (Bottom)
+              </span>
+            </span>
+          </div>
+          <div
+            class="time-chart-container"
+            id="timelineChartContainer"
+            style="position: relative"
+          >
+            <svg
+              id="timelineRangeSvg"
+              class="time-chart-svg"
+              style="width: 100%; height: 260px"
+            ></svg>
+          </div>
+        </div>
+
+        <div class="analytics-grid">
+          <!-- ATS Breakdown -->
+          <div class="analytics-card">
+            <div class="chart-title">ATS & Career Portal Distribution</div>
+            <div
+              id="atsBreakdownChart"
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding-top: 6px;
+              "
+            ></div>
+          </div>
+
+          <!-- Excitement Distribution -->
+          <div class="analytics-card">
+            <div class="chart-title">Excitement / Priority Breakdown</div>
+            <div
+              id="priorityBreakdownChart"
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding-top: 6px;
+              "
+            ></div>
+          </div>
+        </div>
+
+        <div class="analytics-grid">
+          <!-- Role & Title Breakdown (Non-Rejection Hearback & Interviews) -->
+          <div class="analytics-card">
+            <div class="chart-title">Role & Title Response Rates</div>
+            <div id="titleStatsTable" style="overflow-x: auto"></div>
+          </div>
+
+          <!-- Internship vs. Full-Time Performance Breakdown -->
+          <div class="analytics-card">
+            <div class="chart-title">Internship vs. Full-Time Performance</div>
+            <div id="internVsFullTimeStats" style="overflow-x: auto"></div>
+          </div>
+        </div>
+
+        <div class="analytics-grid" style="margin-top: 16px">
+          <!-- Top Hiring Locations & Geo Map (Full Span) -->
+          <div class="analytics-card" style="grid-column: span 2">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+              "
+            >
+              <div class="chart-title" style="margin-bottom: 0">
+                US Application Geo Heatmap & Hiring Hubs
+              </div>
+              <div
+                id="mapTotalAppsBadge"
+                style="
+                  font-size: 0.75rem;
+                  background: #f1f5f9;
+                  padding: 2px 8px;
+                  border-radius: 4px;
+                  font-weight: 700;
+                  color: var(--text-muted);
+                "
+              >
+                Interactive State & Metro Density
+              </div>
+            </div>
+
+            <div
+              id="locationMapSvgContainer"
+              style="
+                width: 100%;
+                height: 320px;
+                position: relative;
+                background: #fcfdfd;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                overflow: hidden;
+              "
+            >
+              <svg
+                id="locationMapSvg"
+                viewBox="0 0 960 600"
+                preserveAspectRatio="xMidYMid meet"
+                style="width: 100%; height: 100%; display: block"
+              ></svg>
+              <div
+                id="mapTooltip"
+                style="
+                  position: absolute;
+                  display: none;
+                  pointer-events: none;
+                  background: rgba(15, 23, 42, 0.92);
+                  color: #ffffff;
+                  padding: 6px 12px;
+                  border-radius: 6px;
+                  font-size: 0.78rem;
+                  font-weight: 600;
+                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+                  z-index: 100;
+                "
+              ></div>
+            </div>
+
+            <div style="margin-top: 12px">
+              <div
+                style="
+                  font-size: 0.8rem;
+                  font-weight: 700;
+                  color: var(--text-muted);
+                  margin-bottom: 6px;
+                "
+              >
+                Top Application Locations
+              </div>
+              <div
+                id="locationBreakdownChart"
+                style="display: flex; flex-direction: column; gap: 6px"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. RESUME VERSION MANAGER (PDF & DOCX FOCUSED) -->
+      <div id="view-resumes" class="view-container">
+        <div class="resume-grid">
+          <!-- Resume Versions List -->
+          <div class="analytics-card">
+            <div class="chart-title">
+              <span>Resume Documents & Versions</span>
+              <button
+                class="btn-primary-gold"
+                id="openAddResumeBtn"
+                style="padding: 4px 10px; font-size: 0.75rem"
+              >
+                + Upload New Version
+              </button>
+            </div>
+            <div
+              style="
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                margin-top: 2px;
+                margin-bottom: 8px;
+              "
+            >
+              Upload PDF or DOCX tailored versions (SWE, Embedded, Robotics,
+              etc.)
+            </div>
+            <div
+              id="resumesListContainer"
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 6px;
+              "
+            ></div>
+          </div>
+
+          <!-- Resume Document Preview & Details -->
+          <div
+            class="analytics-card"
+            style="display: flex; flex-direction: column; gap: 12px"
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px;
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 10px;
+              "
+            >
+              <div>
+                <div
+                  class="chart-title"
+                  id="resumeViewerTitle"
+                  style="margin-bottom: 2px"
+                >
+                  Resume Document Viewer
+                </div>
+                <div
+                  id="resumePdfBadge"
+                  style="font-size: 0.75rem; color: var(--text-muted)"
+                ></div>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center">
+                <button
+                  class="action-btn"
+                  id="togglePdfViewBtn"
+                  style="
+                    display: none;
+                    font-size: 0.75rem;
+                    padding: 4px 10px;
+                    align-items: center;
+                    gap: 5px;
+                  "
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                    ></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                  </svg>
+                  <span>Preview Document</span>
+                </button>
+                <button
+                  class="action-btn"
+                  id="downloadPdfBtn"
+                  style="
+                    display: none;
+                    font-size: 0.75rem;
+                    padding: 4px 10px;
+                    align-items: center;
+                    gap: 5px;
+                  "
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>Download File</span>
+                </button>
+                <button
+                  class="btn-primary-gold"
+                  id="attachPdfToActiveBtn"
+                  style="font-size: 0.75rem; padding: 4px 10px"
+                >
+                  + Replace PDF / DOCX
+                </button>
+              </div>
+            </div>
+
+            <iframe
+              id="resumePdfPreviewFrame"
+              style="
+                width: 100%;
+                height: 550px;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                background: #ffffff;
+              "
+            ></iframe>
+            <div
+              class="diff-viewer"
+              id="resumeDiffViewer"
+              style="display: none"
+            >
+              Select a resume version on the left to view notes.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Q&A BANK VIEW -->
+      <div id="view-qa" class="view-container">
+        <div
+          style="
+            margin-bottom: 14px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+          "
+        >
+          Questions and responses automatically captured when submitting
+          application forms. Passwords and credentials are never captured.
+        </div>
+        <div class="qa-grid" id="qaBankGrid"></div>
+      </div>
+
+      <!-- 6. PROFILE SETTINGS VIEW (ORDERED & INTUITIVE MULTI-ENTRY) -->
+      <div id="view-profile" class="view-container">
+        <div
+          class="table-card"
+          style="padding: 28px; max-width: 960px; margin: 0 auto"
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: 20px;
+              border-bottom: 1px solid var(--border-color);
+              padding-bottom: 14px;
+            "
+          >
+            <div>
+              <h2 style="margin: 0; font-size: 1.3rem; color: var(--secondary)">
+                Master Autofill Profile
+              </h2>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.85rem;
+                  margin: 4px 0 0 0;
+                "
+              >
+                Ordered source of truth used to instantly auto-populate
+                Greenhouse, Workday, Lever, Ashby, SmartRecruiters, and custom
+                job applications.
+              </p>
+            </div>
+            <span
+              style="
+                font-size: 0.75rem;
+                background: #ecfdf5;
+                color: #065f46;
+                font-weight: 700;
+                padding: 4px 10px;
+                border-radius: 6px;
+                border: 1px solid #a7f3d0;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+              "
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#059669"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Synced with Auto-Filler</span>
+            </span>
+          </div>
+
+          <form id="masterProfileForm">
+            <!-- Global Profile Accordion Controls -->
+            <div
+              style="
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                margin-bottom: 14px;
+              "
+            >
+              <button
+                type="button"
+                class="action-btn"
+                id="expandAllSectionsBtn"
+                style="font-size: 0.75rem; padding: 4px 10px"
+              >
+                Expand All Sections
+              </button>
+              <button
+                type="button"
+                class="action-btn"
+                id="collapseAllSectionsBtn"
+                style="font-size: 0.75rem; padding: 4px 10px"
+              >
+                Collapse All
+              </button>
+            </div>
+
+            <!-- AUTOFILL AUTOMATION SETTINGS -->
+            <div
+              class="profile-section-card"
+              id="profile-sec-auto"
+              style="border-left: 4px solid var(--primary); background: #fdfcf7"
+            >
+              <div class="profile-section-header" data-section="auto">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>⚡ Autofill Automation & Behavior</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >Automatic page filling & trigger control</span
+                >
+              </div>
+              <div class="profile-section-body">
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 6px 0;
+                  "
+                >
+                  <div>
+                    <label
+                      for="p_autofill_enabled"
+                      style="
+                        font-weight: 700;
+                        font-size: 0.88rem;
+                        color: var(--text-main);
+                        margin: 0;
+                        cursor: pointer;
+                        display: block;
+                      "
+                    >
+                      Enable Automatic Autofill on Page Load
+                    </label>
+                    <p
+                      style="
+                        margin: 2px 0 0 0;
+                        font-size: 0.78rem;
+                        color: var(--text-muted);
+                      "
+                    >
+                      When disabled, GRTS will wait for you to click "⚡
+                      Autofill Application" instead of filling or advancing
+                      automatically when visiting career pages.
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    id="p_autofill_enabled"
+                    style="width: 18px; height: 18px; cursor: pointer"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- 1. PERSONAL & CONTACT INFORMATION -->
+            <div class="profile-section-card" id="profile-sec-1">
+              <div class="profile-section-header" data-section="1">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>1. Personal & Contact Information</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >Name, phone, email & location</span
+                >
+              </div>
+              <div class="profile-section-body">
+                <div class="profile-grid">
+                  <div class="form-group">
+                    <label>First Name *</label>
+                    <input type="text" id="p_first_name" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Last Name *</label>
+                    <input type="text" id="p_last_name" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="p_email" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" id="p_phone" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Phone Device Type</label>
+                    <select id="p_phone_type">
+                      <option value="Mobile">Mobile</option>
+                      <option value="Home">Home</option>
+                      <option value="Work">Work</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>How Did You Hear About Us?</label>
+                    <select id="p_how_heard">
+                      <option value="LinkedIn">LinkedIn</option>
+                      <option value="Company Career Site">
+                        Company Career Site
+                      </option>
+                      <option value="University / Campus">
+                        University / Campus
+                      </option>
+                      <option value="Career Fair">Career Fair</option>
+                      <option value="Job Board">Job Board</option>
+                      <option value="Referral">Referral</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="grid-column: span 2">
+                    <label>Street Address</label>
+                    <input type="text" id="p_address" />
+                  </div>
+                  <div class="form-group">
+                    <label>City</label>
+                    <input type="text" id="p_city" />
+                  </div>
+                  <div class="form-group">
+                    <label>State / Province</label>
+                    <input type="text" id="p_state" />
+                  </div>
+                  <div class="form-group">
+                    <label>Postal / Zip Code</label>
+                    <input type="text" id="p_postal_code" />
+                  </div>
+                  <div class="form-group">
+                    <label>Country</label>
+                    <input type="text" id="p_country" value="United States" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. ONLINE PROFILES & PORTFOLIOS -->
+            <div class="profile-section-card" id="profile-sec-2">
+              <div class="profile-section-header" data-section="2">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>2. Online Profiles & Portfolios</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >LinkedIn, GitHub & portfolio links</span
+                >
+              </div>
+              <div class="profile-section-body">
+                <div class="profile-grid">
+                  <div class="form-group">
+                    <label>LinkedIn URL</label>
+                    <input
+                      type="text"
+                      id="p_linkedin"
+                      placeholder="https://www.linkedin.com/in/..."
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>GitHub URL</label>
+                    <input
+                      type="text"
+                      id="p_github"
+                      placeholder="https://github.com/..."
+                    />
+                  </div>
+                  <div class="form-group" style="grid-column: span 2">
+                    <label>Portfolio / Personal Website</label>
+                    <input
+                      type="text"
+                      id="p_portfolio"
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. EDUCATION HISTORY (MULTI-ENTRY) -->
+            <div class="profile-section-card" id="profile-sec-3">
+              <div class="profile-section-header" data-section="3">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>3. Education History</span>
+                </div>
+                <div
+                  style="display: flex; align-items: center; gap: 8px"
+                  onclick="event.stopPropagation()"
+                >
+                  <button
+                    type="button"
+                    class="btn-primary-gold"
+                    id="addEducationBtn"
+                    style="padding: 4px 10px; font-size: 0.75rem"
+                  >
+                    + Add Education
+                  </button>
+                </div>
+              </div>
+              <div class="profile-section-body">
+                <div
+                  id="educationEntriesList"
+                  style="display: flex; flex-direction: column; gap: 10px"
+                ></div>
+              </div>
+            </div>
+
+            <!-- 4. WORK EXPERIENCE HISTORY (MULTI-ENTRY) -->
+            <div class="profile-section-card" id="profile-sec-4">
+              <div class="profile-section-header" data-section="4">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>4. Work Experience & Internships</span>
+                </div>
+                <div
+                  style="display: flex; align-items: center; gap: 8px"
+                  onclick="event.stopPropagation()"
+                >
+                  <button
+                    type="button"
+                    class="btn-primary-gold"
+                    id="addExperienceBtn"
+                    style="padding: 4px 10px; font-size: 0.75rem"
+                  >
+                    + Add Experience
+                  </button>
+                </div>
+              </div>
+              <div class="profile-section-body">
+                <div
+                  id="experienceEntriesList"
+                  style="display: flex; flex-direction: column; gap: 10px"
+                ></div>
+              </div>
+            </div>
+
+            <!-- 5. TECHNICAL SKILLS & COMPENSATION PREFERENCES -->
+            <div class="profile-section-card" id="profile-sec-5">
+              <div class="profile-section-header" data-section="5">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>5. Skills & Preferences</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >Skills keywords, target compensation & notice</span
+                >
+              </div>
+              <div class="profile-section-body">
+                <div class="profile-grid">
+                  <div class="form-group" style="grid-column: span 2">
+                    <label>Technical Skills & Keywords</label>
+                    <input
+                      type="text"
+                      id="p_skills"
+                      placeholder="e.g. Python, Go, C++, Linux, Docker, SQL, React"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>Target Compensation</label>
+                    <input
+                      type="text"
+                      id="p_salary"
+                      placeholder="e.g. $165,000"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>Notice Period</label>
+                    <input
+                      type="text"
+                      id="p_notice"
+                      placeholder="Immediate / 2 Weeks"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. WORK AUTHORIZATION & EEO DISCLOSURES -->
+            <div class="profile-section-card" id="profile-sec-6">
+              <div class="profile-section-header" data-section="6">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>6. Work Authorization & Demographics (Voluntary)</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >Work auth, visa sponsorship, voluntary EEO</span
+                >
+              </div>
+              <div class="profile-section-body">
+                <div class="profile-grid">
+                  <div class="form-group">
+                    <label>Legally Authorized to Work in US?</label>
+                    <select id="p_work_auth">
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Will You Require Visa Sponsorship?</label>
+                    <select id="p_sponsorship">
+                      <option value="No">No</option>
+                      <option value="Yes">Yes</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Gender (EEO)</label>
+                    <select id="p_gender">
+                      <option value="Decline to Self-Identify">
+                        Decline to Self-Identify
+                      </option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Non-Binary">Non-Binary</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Race / Ethnicity (EEO)</label>
+                    <select id="p_race">
+                      <option value="White">White / Caucasian</option>
+                      <option value="Asian">Asian</option>
+                      <option value="Black or African American">
+                        Black or African American
+                      </option>
+                      <option value="Hispanic or Latino">
+                        Hispanic or Latino
+                      </option>
+                      <option value="American Indian or Alaska Native">
+                        American Indian or Alaska Native
+                      </option>
+                      <option value="Native Hawaiian or Other Pacific Islander">
+                        Native Hawaiian or Other Pacific Islander
+                      </option>
+                      <option value="Two or More Races">
+                        Two or More Races
+                      </option>
+                      <option value="Decline to Self-Identify">
+                        Decline to Self-Identify
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Hispanic / Latino? (EEO)</label>
+                    <select id="p_hispanic">
+                      <option value="No">No, not Hispanic or Latino</option>
+                      <option value="Yes">Yes, Hispanic or Latino</option>
+                      <option value="Decline to Self-Identify">
+                        Decline to Self-Identify
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Veteran Status (EEO)</label>
+                    <select id="p_veteran">
+                      <option value="I am not a protected veteran">
+                        I am not a protected veteran
+                      </option>
+                      <option
+                        value="I identify as one or more classifications of protected veteran"
+                      >
+                        Protected Veteran
+                      </option>
+                      <option value="I do not wish to self-identify">
+                        Decline to Self-Identify
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="grid-column: span 2">
+                    <label>Disability Status (EEO)</label>
+                    <select id="p_disability">
+                      <option
+                        value="No, I do not have a disability and have not had one in the past"
+                      >
+                        No disability
+                      </option>
+                      <option
+                        value="Yes, I have a disability (or previously had a disability)"
+                      >
+                        Yes, I have a disability
+                      </option>
+                      <option value="I do not wish to answer">
+                        Decline to Self-Identify
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SAVE BUTTON -->
+            <div
+              style="
+                margin-top: 24px;
+                border-top: 1px solid var(--border-color);
+                padding-top: 18px;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+              "
+            >
+              <button
+                type="submit"
+                class="btn-primary-gold"
+                style="padding: 10px 24px; font-size: 0.95rem"
+              >
+                Save Master Profile
+              </button>
+              <span
+                id="profileSaveMsg"
+                style="font-size: 0.88rem; font-weight: 600"
+              ></span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANUAL APPLICATION ADD MODAL -->
+    <div class="center-modal-overlay" id="addAppModal">
+      <div class="center-modal">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+          "
+        >
+          <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-main)">
+            Log Job Application
+          </h2>
+          <button class="close-drawer-btn" id="closeAddModalBtn">
+            &times;
+          </button>
+        </div>
+
+        <form id="manualAppForm">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+            <div class="form-group">
+              <label>Company Name *</label>
+              <input
+                type="text"
+                id="m_company"
+                required
+                placeholder="e.g. Google, Chevron, Stripe"
+              />
+            </div>
+            <div class="form-group">
+              <label>Job Title *</label>
+              <input
+                type="text"
+                id="m_title"
+                required
+                placeholder="e.g. Senior Software Engineer"
+              />
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input
+                type="text"
+                id="m_location"
+                placeholder="e.g. Austin, TX (Hybrid)"
+              />
+            </div>
+            <div class="form-group">
+              <label>Workplace Type</label>
+              <select id="m_workplace">
+                <option value="Remote">Remote</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="On-site">On-site</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Days in Office / Wk</label>
+              <input
+                type="number"
+                id="m_days_in_office"
+                min="0"
+                max="5"
+                placeholder="0 = Remote, 5 = Onsite"
+              />
+            </div>
+            <div class="form-group">
+              <label>Current Status</label>
+              <select id="m_status">
+                <option value="Applied">Applied</option>
+                <option value="Saved">
+                  Saved / Bookmarked (Not applied yet)
+                </option>
+                <option value="Online Assessment (OA)">
+                  Online Assessment (OA)
+                </option>
+                <option value="Skipped / Expired OA">
+                  Skipped / Expired OA
+                </option>
+                <option value="Recruiter Screen">Recruiter Screen</option>
+                <option value="Technical Interview">Technical Interview</option>
+                <option value="Final Round / Onsite">
+                  Final Round / Onsite
+                </option>
+                <option value="Offer Received">Offer Received</option>
+                <option value="Offer Accepted">Offer Accepted</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>OA Expiration / Deadline (Optional)</label>
+              <input type="date" id="m_oa_expiration_date" />
+            </div>
+            <div class="form-group">
+              <label>Date Logged / Applied</label>
+              <input type="date" id="m_date" />
+            </div>
+            <div class="form-group">
+              <label>Salary / Comp Range</label>
+              <input
+                type="text"
+                id="m_salary"
+                placeholder="e.g. $150k - $175k"
+              />
+            </div>
+            <div class="form-group">
+              <label>Excitement / Priority</label>
+              <select id="m_priority">
+                <option value="1" selected>1 - Low Priority</option>
+                <option value="2">2 - Medium-Low</option>
+                <option value="3">3 - Good Match</option>
+                <option value="4">4 - High Interest</option>
+                <option value="5">5 - Top Choice / Dream Role</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Job Listing URL</label>
+            <input type="text" id="m_url" placeholder="https://..." />
+          </div>
+          <div class="form-group">
+            <label>Company Website (Optional)</label>
+            <input
+              type="text"
+              id="m_company_website"
+              placeholder="https://company.com"
+            />
+          </div>
+          <div class="form-group" style="grid-column: span 2">
+            <label>Company Logo Image URL (Optional)</label>
+            <div style="display: flex; align-items: center; gap: 10px">
+              <input
+                type="text"
+                id="m_company_logo"
+                placeholder="https://logo.clearbit.com/company.com"
+                style="flex: 1"
+              />
+              <img
+                id="m_logo_preview"
+                src=""
+                alt=""
+                style="
+                  width: 36px;
+                  height: 36px;
+                  border-radius: 6px;
+                  object-fit: contain;
+                  border: 1px solid var(--border-color);
+                  display: none;
+                "
+                onerror="this.style.display = 'none'"
+              />
+            </div>
+            <div
+              style="
+                font-size: 0.72rem;
+                color: var(--text-muted);
+                margin-top: 3px;
+              "
+            >
+              Tip: Use <code>https://logo.clearbit.com/company.com</code> for
+              auto-fetching logos
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Notes</label>
+            <textarea
+              id="m_notes"
+              rows="2"
+              placeholder="Referral, recruiter name, OA link..."
+            ></textarea>
+          </div>
+
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              gap: 8px;
+              margin-top: 16px;
+            "
+          >
+            <button type="button" class="action-btn" id="cancelAddBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary-gold">
+              Save to Database
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- CREATE RESUME VERSION MODAL (WITH PDF UPLOAD) -->
+    <div class="center-modal-overlay" id="addResumeModal">
+      <div class="center-modal">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+          "
+        >
+          <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-main)">
+            Create Resume Version (YAML / Markdown & PDF)
+          </h2>
+          <button class="close-drawer-btn" id="closeAddResumeBtn">
+            &times;
+          </button>
+        </div>
+
+        <form id="createResumeForm">
+          <div class="form-group">
+            <label>Version Name *</label>
+            <input
+              type="text"
+              id="r_name"
+              required
+              placeholder="e.g. Software Engineer 2026, Embedded Systems, Robotics"
+            />
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px">
+            <div class="form-group">
+              <label>Version Tag</label>
+              <input type="text" id="r_tag" value="v1.0" />
+            </div>
+            <div class="form-group">
+              <label>Parent Version (Optional)</label>
+              <select id="r_parent_id">
+                <option value="">None (Master Version)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Upload Resume File (PDF or DOCX) *</label>
+            <input
+              type="file"
+              id="r_pdf_file"
+              accept=".pdf,.docx,.doc,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            />
+            <div
+              id="pdfUploadStatus"
+              style="
+                font-size: 0.74rem;
+                color: var(--text-muted);
+                margin-top: 2px;
+              "
+            ></div>
+          </div>
+          <div class="form-group">
+            <label>Version Notes / Target Focus</label>
+            <input
+              type="text"
+              id="r_commit_msg"
+              placeholder="e.g. Highlights systems programming & cloud validation"
+            />
+          </div>
+          <div class="form-group">
+            <label>Optional Text / Extracted Summary Notes</label>
+            <textarea
+              id="r_content"
+              rows="3"
+              placeholder="Optional notes or text keywords..."
+            ></textarea>
+          </div>
+
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              gap: 8px;
+              margin-top: 14px;
+            "
+          >
+            <button type="button" class="action-btn" id="cancelAddResumeBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary-gold">
+              Save Resume Version
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- APPLICATION DETAIL & LIFECYCLE DRAWER -->
+    <div class="modal-overlay" id="appDetailModal">
+      <div class="drawer">
+        <div class="drawer-header">
+          <div style="display: flex; gap: 12px; align-items: center">
+            <img
+              id="dCompanyLogo"
+              src="grts-logo-sqr.svg"
+              class="company-logo"
+              style="width: 40px; height: 40px"
+              alt=""
+            />
+            <div>
+              <div
+                style="
+                  font-size: 1.2rem;
+                  font-weight: 800;
+                  color: var(--text-main);
+                "
+                id="dJobTitle"
+              >
+                Software Engineer
+              </div>
+              <div
+                style="
+                  font-size: 0.88rem;
+                  font-weight: 600;
+                  color: var(--secondary);
+                "
+                id="dCompanyName"
+              >
+                Company
+              </div>
+            </div>
+          </div>
+          <button class="close-drawer-btn" id="closeDrawerBtn">&times;</button>
+        </div>
+
+        <!-- Quick Status & Excitement -->
+        <div
+          style="
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+          "
+        >
+          <div>
+            <span
+              style="
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: var(--text-muted);
+                text-transform: uppercase;
+              "
+              >Status:</span
+            >
+            <div style="margin-top: 2px">
+              <select
+                id="dStatusSelect"
+                class="filter-select"
+                style="padding: 5px 8px; font-size: 0.82rem"
+              >
+                <option value="Saved">Saved / Bookmarked</option>
+                <option value="Applied">Applied</option>
+                <option value="Online Assessment (OA)">
+                  Online Assessment (OA)
+                </option>
+                <option value="Skipped / Expired OA">
+                  Skipped / Expired OA
+                </option>
+                <option value="Recruiter Screen">Recruiter Screen</option>
+                <option value="Technical Interview">Technical Interview</option>
+                <option value="System Design">System Design</option>
+                <option value="Coding Assessment">Coding Assessment</option>
+                <option value="Final Round / Onsite">
+                  Final Round / Onsite
+                </option>
+                <option value="Offer Received">Offer Received</option>
+                <option value="Offer Accepted">Offer Accepted</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Ghosted">Ghosted</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <span
+              style="
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: var(--text-muted);
+                text-transform: uppercase;
+              "
+              >Excitement Rating:</span
+            >
+            <div id="dPriorityStars" style="margin-top: 2px"></div>
+          </div>
+          <div id="dLinksContainer" style="display: flex; gap: 6px"></div>
+        </div>
+
+        <!-- Quick Info Summary Grid -->
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            font-size: 0.82rem;
+          "
+        >
+          <div class="timeline-card">
+            <div
+              style="
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                font-weight: 700;
+              "
+            >
+              LOCATION & WORKPLACE
+            </div>
+            <div id="dLocation" style="font-weight: 600; margin-top: 2px">
+              Remote
+            </div>
+          </div>
+          <div class="timeline-card">
+            <div
+              style="
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                font-weight: 700;
+              "
+            >
+              SALARY / COMP
+            </div>
+            <div id="dSalary" style="font-weight: 600; margin-top: 2px">-</div>
+          </div>
+          <div class="timeline-card">
+            <div
+              style="
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                font-weight: 700;
+              "
+            >
+              DATE LOGGED
+            </div>
+            <div id="dDateApplied" style="font-weight: 600; margin-top: 2px">
+              -
+            </div>
+          </div>
+        </div>
+
+        <!-- APPLICATION & ROLE DETAILS (VIEW / EDIT TOGGLE) -->
+        <div
+          class="timeline-card"
+          style="
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 10px;
+              border-bottom: 1px solid var(--border-color);
+              padding-bottom: 8px;
+            "
+          >
+            <div class="section-title" style="margin: 0; font-size: 0.88rem">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                ></path>
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                ></path>
+              </svg>
+              Role & Job Details
+            </div>
+            <div id="roleDetailsHeaderActions">
+              <button
+                type="button"
+                id="editAppDetailsBtn"
+                class="action-btn"
+                style="padding: 4px 10px; font-size: 0.75rem"
+              >
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                  ></path>
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                  ></path>
+                </svg>
+                Edit
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. VIEW MODE (DEFAULT) -->
+          <div id="roleDetailsViewMode">
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                font-size: 0.82rem;
+                margin-bottom: 10px;
+              "
+            >
+              <div>
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Company & Role:</span
+                >
+                <div
+                  style="
+                    font-weight: 700;
+                    color: var(--text-main);
+                    margin-top: 2px;
+                  "
+                  id="dViewCompanyRole"
+                >
+                  -
+                </div>
+              </div>
+              <div>
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Workplace & Schedule:</span
+                >
+                <div
+                  style="
+                    font-weight: 600;
+                    color: var(--text-main);
+                    margin-top: 2px;
+                  "
+                  id="dViewWorkplaceSchedule"
+                >
+                  -
+                </div>
+              </div>
+              <div>
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Job Type & Salary:</span
+                >
+                <div
+                  style="
+                    font-weight: 600;
+                    color: var(--text-main);
+                    margin-top: 2px;
+                  "
+                  id="dViewTypeSalary"
+                >
+                  -
+                </div>
+              </div>
+              <div>
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Posting Link:</span
+                >
+                <div style="margin-top: 2px" id="dViewUrl">-</div>
+              </div>
+              <div>
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Excitement Priority:</span
+                >
+                <div style="margin-top: 2px" id="dViewPriority">-</div>
+              </div>
+              <div
+                id="dViewOaWrapper"
+                style="display: none; grid-column: span 2"
+              >
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >OA Expiration / Deadline:</span
+                >
+                <div style="margin-top: 2px" id="dViewOaExpiration">-</div>
+              </div>
+            </div>
+
+            <div
+              id="dViewNotesWrapper"
+              style="margin-bottom: 10px; font-size: 0.82rem"
+            >
+              <span
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-muted);
+                  font-weight: 700;
+                  text-transform: uppercase;
+                "
+                >Notes & Context:</span
+              >
+              <div
+                id="dViewNotes"
+                style="
+                  color: var(--text-main);
+                  margin-top: 2px;
+                  background: #f8fafc;
+                  padding: 6px 10px;
+                  border-radius: 6px;
+                  border: 1px solid var(--border-color);
+                  white-space: pre-wrap;
+                "
+              >
+                -
+              </div>
+            </div>
+
+            <div style="font-size: 0.82rem">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 4px;
+                "
+              >
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Job Description:</span
+                >
+              </div>
+              <div
+                id="dViewJobDescription"
+                style="
+                  max-height: 220px;
+                  overflow-y: auto;
+                  font-size: 0.8rem;
+                  line-height: 1.5;
+                  color: var(--text-main);
+                  background: #f8fafc;
+                  padding: 10px 12px;
+                  border-radius: 6px;
+                  border: 1px solid var(--border-color);
+                  white-space: pre-wrap;
+                "
+              >
+                No job description captured.
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. EDIT MODE (HIDDEN BY DEFAULT) -->
+          <div id="roleDetailsEditMode" style="display: none">
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                font-size: 0.82rem;
+              "
+            >
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Company Name</label>
+                <input
+                  type="text"
+                  id="dEditCompanyName"
+                  placeholder="e.g. Example Company"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Job Title</label>
+                <input
+                  type="text"
+                  id="dEditJobTitle"
+                  placeholder="e.g. Business Informatics Intern"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Location</label>
+                <input
+                  type="text"
+                  id="dEditLocation"
+                  placeholder="e.g. Remote, Indianapolis, IN"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Workplace Type</label>
+                <select id="dEditWorkplace">
+                  <option value="Remote">Remote</option>
+                  <option value="Hybrid">Hybrid</option>
+                  <option value="On-site">On-site</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Days in Office (0-5)</label>
+                <input
+                  type="number"
+                  id="dEditDaysInOffice"
+                  min="0"
+                  max="5"
+                  placeholder="0 = Remote, 5 = Onsite"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Job Type</label>
+                <select id="dEditJobType">
+                  <option value="Full-time">Full-time</option>
+                  <option value="Internship">Internship</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Part-time">Part-time</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Salary / Comp Range</label>
+                <input
+                  type="text"
+                  id="dEditSalary"
+                  placeholder="e.g. $150k - $175k"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Date Logged / Applied</label>
+                <input type="date" id="dEditDateApplied" />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>OA Expiration / Deadline</label>
+                <input type="date" id="dEditOaExpirationDate" />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Excitement Priority (1-5)</label>
+                <select id="dEditPriority">
+                  <option value="5">★★★★★ (5 - Dream / Top Choice)</option>
+                  <option value="4">★★★★☆ (4 - High Priority)</option>
+                  <option value="3">★★★☆☆ (3 - Target / Solid)</option>
+                  <option value="2">★★☆☆☆ (2 - Backup / Neutral)</option>
+                  <option value="1">★☆☆☆☆ (1 - Baseline / Low)</option>
+                </select>
+              </div>
+              <div
+                class="form-group"
+                style="grid-column: span 2; margin-bottom: 6px"
+              >
+                <label>Job Listing URL</label>
+                <input type="text" id="dEditUrl" placeholder="https://..." />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Company Website</label>
+                <input
+                  type="text"
+                  id="dEditCompanyWebsite"
+                  placeholder="https://company.com"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Company Logo URL</label>
+                <div style="display: flex; align-items: center; gap: 8px">
+                  <input
+                    type="text"
+                    id="dEditCompanyLogo"
+                    placeholder="https://logo.clearbit.com/company.com"
+                    style="flex: 1; font-size: 0.78rem"
+                  />
+                  <img
+                    id="dEditLogoPreview"
+                    src=""
+                    alt=""
+                    style="
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 5px;
+                      object-fit: contain;
+                      border: 1px solid var(--border-color);
+                      display: none;
+                    "
+                    onerror="this.style.display = 'none'"
+                  />
+                </div>
+              </div>
+              <div
+                class="form-group"
+                style="grid-column: span 2; margin-bottom: 6px"
+              >
+                <label>Notes / Referral / Context</label>
+                <textarea
+                  id="dEditNotes"
+                  rows="2"
+                  placeholder="Referral, recruiter notes, team info..."
+                ></textarea>
+              </div>
+              <div
+                class="form-group"
+                style="grid-column: span 2; margin-bottom: 0"
+              >
+                <label>Job Description (Editable)</label>
+                <textarea
+                  id="dEditJobDescription"
+                  rows="8"
+                  placeholder="Paste or edit the full job description text here..."
+                  style="
+                    font-family: inherit;
+                    font-size: 0.82rem;
+                    line-height: 1.45;
+                    width: 100%;
+                    box-sizing: border-box;
+                  "
+                ></textarea>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                margin-top: 12px;
+                padding-top: 8px;
+                border-top: 1px solid var(--border-color);
+              "
+            >
+              <button type="button" id="cancelAppDetailsBtn" class="action-btn">
+                Cancel
+              </button>
+              <button
+                type="button"
+                id="saveAppDetailsBtn"
+                class="btn-primary-gold"
+                style="padding: 4px 14px; font-size: 0.78rem"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- THE JOURNEY (TIMELINE) -->
+        <div>
+          <div class="section-title">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"
+              ></path>
+              <line x1="4" y1="22" x2="4" y2="15"></line>
+            </svg>
+            The Journey & Interview Milestones
+          </div>
+          <div class="timeline-flow" id="dTimelineList"></div>
+        </div>
+
+        <!-- LOG NEW MILESTONE (DEFAULT: OA) -->
+        <div
+          class="timeline-card"
+          style="border: 1px dashed var(--primary); background: #fefdf9"
+        >
+          <div class="section-title" style="margin-bottom: 6px">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Log Milestone (Default: Online Assessment)
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+            <div class="form-group">
+              <label>Milestone Type</label>
+              <select
+                id="logEventType"
+                style="padding: 6px 8px; border-radius: 6px; font-size: 0.82rem"
+              >
+                <option value="Applied">
+                  Application Submitted / Applied
+                </option>
+                <option value="Online Assessment (OA)" selected>
+                  Online Assessment (OA)
+                </option>
+                <option value="Skipped / Expired OA">
+                  Skipped / Expired OA
+                </option>
+                <option value="Recruiter Screen">Recruiter Screen</option>
+                <option value="Technical Interview">Technical Interview</option>
+                <option value="System Design">System Design</option>
+                <option value="Coding Challenge">Coding Challenge</option>
+                <option value="Final Round / Onsite">
+                  Final Round / Onsite
+                </option>
+                <option value="Offer Received">Offer Received</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>OA Platform / Tool</label>
+              <select
+                id="logOaPlatform"
+                style="padding: 6px 8px; border-radius: 6px; font-size: 0.82rem"
+              >
+                <option value="CodeSignal">CodeSignal</option>
+                <option value="HackerRank">HackerRank</option>
+                <option value="LeetCode">LeetCode</option>
+                <option value="Karat">Karat</option>
+                <option value="Codility">Codility</option>
+                <option value="TestGorilla">TestGorilla</option>
+                <option value="Other">Other / Custom</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Event Date</label>
+              <input
+                type="date"
+                id="logEventDate"
+                style="padding: 5px 8px; border-radius: 6px; font-size: 0.82rem"
+              />
+            </div>
+            <div class="form-group">
+              <label>OA Expiration / Deadline (Optional)</label>
+              <input
+                type="date"
+                id="logOaExpirationDate"
+                style="padding: 5px 8px; border-radius: 6px; font-size: 0.82rem"
+              />
+            </div>
+            <div class="form-group" style="grid-column: span 2">
+              <label>Meeting / Assessment Link</label>
+              <input
+                type="text"
+                id="logMeetingLink"
+                placeholder="https://..."
+                style="padding: 6px 8px; border-radius: 6px; font-size: 0.82rem"
+              />
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 6px">
+            <label>Notes / Questions / Score</label>
+            <textarea
+              id="logEventNotes"
+              rows="2"
+              placeholder="Scores, topics covered, difficulty level..."
+              style="padding: 6px 8px; border-radius: 6px; font-size: 0.82rem"
+            ></textarea>
+          </div>
+          <button
+            id="saveMilestoneBtn"
+            class="btn-primary-gold"
+            style="margin-top: 8px; padding: 7px 14px; font-size: 0.82rem"
+          >
+            Save Milestone
+          </button>
+        </div>
+
+        <!-- CAPTURED NON-STANDARD APPLICATION QUESTIONS -->
+        <div
+          style="
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 10px;
+            "
+          >
+            <div
+              class="section-title"
+              style="
+                margin: 0;
+                font-size: 0.88rem;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+              "
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                ></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              Recorded Application Q&A Responses
+            </div>
+            <button
+              type="button"
+              id="dAddQABtn"
+              class="action-btn"
+              style="
+                padding: 3px 10px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: #b45309;
+                background: #fef3c7;
+                border: 1px solid #fde68a;
+                border-radius: 6px;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
+                transition: all 0.15s ease;
+              "
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Q&A
+            </button>
+          </div>
+
+          <div
+            id="dNewQAForm"
+            style="
+              display: none;
+              background: #fffbeb;
+              border: 1px dashed #f59e0b;
+              border-radius: 8px;
+              padding: 12px;
+              margin-bottom: 12px;
+            "
+          >
+            <div
+              style="
+                font-weight: 700;
+                font-size: 0.8rem;
+                margin-bottom: 6px;
+                color: #92400e;
+              "
+            >
+              Log Custom Question & Answer
+            </div>
+            <input
+              type="text"
+              id="dNewQAQuestion"
+              placeholder="Question text (e.g. Why are you interested in this role?)"
+              style="
+                width: 100%;
+                box-sizing: border-box;
+                padding: 6px 8px;
+                font-size: 0.8rem;
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                margin-bottom: 6px;
+                background: #ffffff;
+              "
+            />
+            <textarea
+              id="dNewQAAnswer"
+              rows="2"
+              placeholder="Answer text..."
+              style="
+                width: 100%;
+                box-sizing: border-box;
+                padding: 6px 8px;
+                font-size: 0.8rem;
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                margin-bottom: 8px;
+                background: #ffffff;
+              "
+            ></textarea>
+            <div style="display: flex; gap: 6px; justify-content: flex-end">
+              <button
+                type="button"
+                id="dCancelNewQABtn"
+                class="action-btn"
+                style="padding: 3px 10px; font-size: 0.75rem; cursor: pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                id="dSaveNewQABtn"
+                class="btn-primary-gold"
+                style="padding: 3px 12px; font-size: 0.75rem; cursor: pointer"
+              >
+                Save Q&A
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="dCustomQAList"
+            style="display: flex; flex-direction: column; gap: 8px"
+          ></div>
+        </div>
+
+        <!-- DELETE BUTTON -->
+        <div
+          style="
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: flex-start;
+          "
+        >
+          <button
+            type="button"
+            id="deleteAppBtn"
+            class="action-btn action-btn-danger"
+            style="
+              font-size: 0.8rem;
+              padding: 6px 14px;
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+            "
+          >
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path
+                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+              ></path>
+            </svg>
+            Delete Application Record
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastNotification" class="grts-toast"></div>
+
+    <!-- Dashboard Modular JavaScript Architecture -->
+    <script src="us_map_data.js"></script>
+    <script src="dashboard/api.js"></script>
+    <script src="dashboard/state.js"></script>
+    <script src="dashboard/utils.js"></script>
+    <script src="dashboard/data.js"></script>
+    <script src="dashboard/table_view.js"></script>
+    <script src="dashboard/kanban_view.js"></script>
+    <script src="dashboard/analytics_view.js"></script>
+    <script src="dashboard/resumes_view.js"></script>
+    <script src="dashboard/qa_bank_view.js"></script>
+    <script src="dashboard/drawer_and_modals.js"></script>
+    <script src="dashboard/profile_view.js"></script>
+    <script src="dashboard/bootstrap.js"></script>
+  </body>
+</html>
