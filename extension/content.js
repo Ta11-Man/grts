@@ -4,11 +4,32 @@
 function setSafeInnerHTML(el, html) {
     if (!el) return;
     el.textContent = "";
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-    while (doc.body.firstChild) {
-        el.appendChild(doc.body.firstChild);
+    if (!html) return;
+    if (el instanceof SVGElement || (el.tagName && el.tagName.toLowerCase() === "svg")) {
+        const template = document.createElement("template");
+        template.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg">${html}</svg>`;
+        const svgContent = template.content.querySelector("svg");
+        if (svgContent && svgContent.childNodes.length > 0) {
+            while (svgContent.firstChild) {
+                el.appendChild(svgContent.firstChild);
+            }
+            return;
+        }
+        try {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${html}</svg>`, "image/svg+xml");
+            const svgRoot = doc.documentElement;
+            if (svgRoot && svgRoot.nodeName !== "parsererror") {
+                while (svgRoot.firstChild) {
+                    el.appendChild(svgRoot.firstChild);
+                }
+                return;
+            }
+        } catch (e) {}
     }
+    const template = document.createElement("template");
+    template.innerHTML = html;
+    el.appendChild(template.content.cloneNode(true));
 }
 
 /**
@@ -279,22 +300,40 @@ if (isEligibleJobSite()) {
 
 /**
  * Derives a crisp company logo from domain or page assets
+ * Prioritizes direct https://<domain>/favicon.ico before attempting other ways of getting an icon.
  */
 function resolveCompanyLogo(companyName, fallbackDomain = "") {
-    // 1. Try explicit logo elements in ATS
-    const pageLogo = document.querySelector('img[data-automation-id="companyLogo"], header img, .main-header-logo img, meta[property="og:image"]');
-    if (pageLogo) {
-        const src = pageLogo.src || pageLogo.content;
-        if (src && !src.includes("data:") && src.startsWith("http")) return src;
+    // 1. Determine target company domain
+    let domain = "";
+    if (fallbackDomain) {
+        try {
+            const raw = fallbackDomain.startsWith("http") ? fallbackDomain : `https://${fallbackDomain}`;
+            const host = new URL(raw).hostname.toLowerCase();
+            const isAts = ["greenhouse.io", "myworkdayjobs.com", "lever.co", "ashbyhq.com", "smartrecruiters.com", "icims.com"].some(ats => host.includes(ats));
+            if (!isAts) {
+                domain = host.replace(/^www\./, "");
+            }
+        } catch (e) {}
     }
 
-    // 2. Derive domain from company name or hostname
-    let domain = fallbackDomain;
     if (!domain && companyName) {
-        const cleanName = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const cleanName = companyName.toLowerCase().replace(/[^a-z0-9]/g, "");
         if (cleanName) domain = `${cleanName}.com`;
     }
 
+    // 1. Primary Method: Try direct https://<domain>/favicon.ico format first
+    if (domain) {
+        return `https://${domain}/favicon.ico`;
+    }
+
+    // 2. Try explicit logo elements / favicons in page DOM
+    const pageLogo = document.querySelector('link[rel="icon"], link[rel="shortcut icon"], img[data-automation-id="companyLogo"], header img, .main-header-logo img, meta[property="og:image"]');
+    if (pageLogo) {
+        const src = pageLogo.href || pageLogo.src || pageLogo.content;
+        if (src && !src.includes("data:") && src.startsWith("http")) return src;
+    }
+
+    // 3. Fallback to Google favicon service
     if (domain) {
         return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`;
     }
@@ -497,6 +536,8 @@ function parseWorkday() {
     const { workplace_type, days_in_office } = extractWorkplaceAndDays(`${subtitleText} ${title} ${description}`, location);
     const salary_range = extractSalaryRange(`${subtitleText} ${description}`);
     const job_type = extractJobType(`${subtitleText} ${title} ${description}`);
+
+    const resolvedLogo = logoUrl || resolveCompanyLogo(company, companyWebsite || window.location.hostname);
 
     const liveData = {
         company: company,

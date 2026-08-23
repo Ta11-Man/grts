@@ -12,11 +12,32 @@ window.GRTS.UI = (() => {
     function setSafeInnerHTML(el, html) {
         if (!el) return;
         el.textContent = "";
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-        while (doc.body.firstChild) {
-            el.appendChild(doc.body.firstChild);
+        if (!html) return;
+        if (el instanceof SVGElement || (el.tagName && el.tagName.toLowerCase() === "svg")) {
+            const template = document.createElement("template");
+            template.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg">${html}</svg>`;
+            const svgContent = template.content.querySelector("svg");
+            if (svgContent && svgContent.childNodes.length > 0) {
+                while (svgContent.firstChild) {
+                    el.appendChild(svgContent.firstChild);
+                }
+                return;
+            }
+            try {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${html}</svg>`, "image/svg+xml");
+                const svgRoot = doc.documentElement;
+                if (svgRoot && svgRoot.nodeName !== "parsererror") {
+                    while (svgRoot.firstChild) {
+                        el.appendChild(svgRoot.firstChild);
+                    }
+                    return;
+                }
+            } catch (e) {}
         }
+        const template = document.createElement("template");
+        template.innerHTML = html;
+        el.appendChild(template.content.cloneNode(true));
     }
 
     function renderFloatingBadge(count, onRerun) {

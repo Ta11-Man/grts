@@ -449,18 +449,40 @@ window.markOaSkipped = async function (appId) {
 function getCompanyFavicon(url) {
   if (!url) return null;
   try {
-    // Ensure proper URL formatting even if the protocol was omitted
     const fullUrl =
       url.startsWith("http://") || url.startsWith("https://")
         ? url
         : `https://${url}`;
-    const domain = new URL(fullUrl).hostname;
-    // Google's public favicon service (size=64 or 128 for crisp display)
-    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+    const domain = new URL(fullUrl).hostname.replace(/^www\./, "");
+    return `https://${domain}/favicon.ico`;
   } catch {
     return null;
   }
 }
+
+window.handleLogoFallback = function (img, companyName, companyWebsite) {
+  if (!img.dataset.fallbackStep) {
+    img.dataset.fallbackStep = "1";
+    let domain = "";
+    if (companyWebsite) {
+      try {
+        const fullUrl = companyWebsite.startsWith("http")
+          ? companyWebsite
+          : `https://${companyWebsite}`;
+        domain = new URL(fullUrl).hostname.replace(/^www\./, "");
+      } catch (e) {}
+    }
+    if (!domain && companyName) {
+      domain = companyName.toLowerCase().replace(/[^a-z0-9]/g, "") + ".com";
+    }
+    if (domain) {
+      img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+      return;
+    }
+  }
+  img.onerror = null;
+  img.src = "grts-logo-sqr.svg";
+};
 
 function renderTable(apps) {
   const tbody = document.getElementById("applicationsTableBody");
@@ -476,7 +498,16 @@ function renderTable(apps) {
 
   tbody.innerHTML = apps
     .map((app) => {
-      const logoSrc = app.company_logo || "grts-logo-sqr.svg";
+      let logoSrc = app.company_logo;
+      if (!logoSrc && app.company_website) {
+        logoSrc = getCompanyFavicon(app.company_website);
+      }
+      if (!logoSrc && app.company_name) {
+        const cleanName = app.company_name.toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (cleanName) logoSrc = `https://${cleanName}.com/favicon.ico`;
+      }
+      logoSrc = logoSrc || "grts-logo-sqr.svg";
+
       const cleanStatus = getStatusClass(app.status);
       const starsHtml = renderClickableStars(app.id, app.priority || 1);
 
@@ -503,7 +534,7 @@ function renderTable(apps) {
                       <img 
                           src="${escapeHtml(logoSrc)}" 
                           class="company-logo" 
-                          onerror="this.onerror=null; this.src='grts-logo-sqr.svg';" 
+                          onerror="handleLogoFallback(this, '${escapeHtml(app.company_name || "")}', '${escapeHtml(app.company_website || "")}')" 
                           alt="${escapeHtml(app.company_name)} logo" 
                       />
                       <span>${escapeHtml(app.company_name)}</span>

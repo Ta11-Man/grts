@@ -876,9 +876,34 @@ window.openDetailDrawer = async function (appId) {
     }
     document.getElementById("dLocation").innerText = locText;
     document.getElementById("dSalary").innerText = app.salary_range || "-";
-    document.getElementById("dDateApplied").innerText = app.date_applied || "-";
-    document.getElementById("dCompanyLogo").src =
-      app.company_logo || "grts-logo-sqr.svg";
+    const dLogoEl = document.getElementById("dCompanyLogo");
+    if (dLogoEl) {
+      delete dLogoEl.dataset.fallbackStep;
+      let logoSrc = app.company_logo;
+      if (!logoSrc && app.company_website) {
+        try {
+          const d = new URL(
+            app.company_website.startsWith("http")
+              ? app.company_website
+              : `https://${app.company_website}`,
+          ).hostname.replace(/^www\./, "");
+          logoSrc = `https://${d}/favicon.ico`;
+        } catch (e) {}
+      }
+      if (!logoSrc && app.company_name) {
+        const slug = app.company_name.toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (slug) logoSrc = `https://${slug}.com/favicon.ico`;
+      }
+      dLogoEl.src = logoSrc || "grts-logo-sqr.svg";
+      dLogoEl.onerror = function () {
+        if (typeof handleLogoFallback === "function") {
+          handleLogoFallback(dLogoEl, app.company_name, app.company_website);
+        } else {
+          dLogoEl.onerror = null;
+          dLogoEl.src = "grts-logo-sqr.svg";
+        }
+      };
+    }
     document.getElementById("dStatusSelect").value = app.status;
 
     const starsContainer = document.getElementById("dPriorityStars");
@@ -1102,7 +1127,7 @@ function initManualAddModal() {
           .replace(/\s+/g, "")
           .replace(/[^a-z0-9]/g, "");
         if (slug) {
-          mLogoInput.value = `https://www.google.com/s2/favicons?domain=${slug}.com&sz=64`;
+          mLogoInput.value = `https://${slug}.com/favicon.ico`;
           if (mLogoPreview) {
             mLogoPreview.src = mLogoInput.value;
             mLogoPreview.style.display = "block";
