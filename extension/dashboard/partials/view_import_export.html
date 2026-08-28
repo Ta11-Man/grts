@@ -1,0 +1,159 @@
+<div id="view-import-export" class="view-container">
+  <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+    
+    <!-- HEADER INTRO -->
+    <div class="table-card" style="padding: 24px 28px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 style="margin: 0; font-size: 1.3rem; color: var(--secondary);">Spreadsheet Import & Export</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin: 4px 0 0 0;">
+            Migrate job applications seamlessly between GRTS and spreadsheets (Excel, Google Sheets, Notion, Simplify, CSV).
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-primary-gold" id="quickExportHeaderBtn" style="padding: 8px 16px; font-size: 0.82rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export All to CSV
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN SECTION -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+      
+      <!-- IMPORT CARD -->
+      <div class="table-card" style="padding: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              1. Import Applications from CSV
+            </h3>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+              Auto-detects common column headers: <em>Company</em>, <em>Job Title/Role</em>, <em>Location</em>, <em>Date Applied</em>, <em>Status</em>, <em>Date Rejected</em>.
+            </div>
+          </div>
+          <span id="csvParsedCountBadge" style="display: none; font-size: 0.75rem; background: var(--primary-light); color: var(--primary-dark); padding: 4px 10px; border-radius: 6px; font-weight: 700; border: 1px solid var(--border-color);">
+            0 Rows Parsed
+          </span>
+        </div>
+
+        <!-- DRAG AND DROP ZONE -->
+        <div id="csvDropZone" style="border: 2px dashed var(--border-color); border-radius: 10px; padding: 32px 20px; text-align: center; background: var(--bg-color); cursor: pointer; transition: all 0.2s ease;">
+          <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display: none;" />
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+          <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main); margin-bottom: 4px;" id="dropZoneTitle">
+            Click to Browse or Drag & Drop CSV File Here
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);" id="dropZoneSub">
+            Supports Google Sheets, Excel (.csv), Notion, Simplify & custom job logs
+          </div>
+        </div>
+
+        <!-- PARSING LOADER -->
+        <div id="csvParseLoader" style="display: none; text-align: center; padding: 24px;">
+          <div class="loading-spinner" style="width: 28px; height: 28px; border: 3px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px;"></div>
+          <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Parsing spreadsheet columns & normalizing dates...</div>
+        </div>
+
+        <!-- PREVIEW CONTAINER (HIDDEN UNTIL FILE LOADED) -->
+        <div id="csvPreviewContainer" style="display: none; margin-top: 20px;">
+          
+          <!-- OPTIONS & MAPPING ROW -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; background: var(--bg-color); padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 600; color: var(--text-main); cursor: pointer; margin: 0;">
+                <input type="checkbox" id="csvSkipDuplicatesChk" checked style="width: 16px; height: 16px; margin: 0;" />
+                <span>Skip Duplicates (Match Company + Role)</span>
+              </label>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);" id="csvMatchSummaryText">
+              Auto-matched 6 of 6 columns
+            </div>
+          </div>
+
+          <!-- INTERACTIVE HTML PREVIEW TABLE -->
+          <div style="max-height: 380px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 18px;">
+            <table style="width: 100%; font-size: 0.82rem; border-collapse: collapse;">
+              <thead>
+                <tr style="background: var(--bg-color); position: sticky; top: 0; z-index: 2; border-bottom: 2px solid var(--border-color);">
+                  <th style="padding: 10px 12px; text-align: left; width: 40px;">#</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 22%;">Company *</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 26%;">Job Title / Role *</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 16%;">Location</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 12%;">Date Applied</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 14%;">Detected Status</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 10%;">Rejected Date</th>
+                </tr>
+              </thead>
+              <tbody id="csvPreviewTbody">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- IMPORT PROGRESS BAR (DURING IMPORT) -->
+          <div id="importProgressContainer" style="display: none; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 600; color: var(--text-main); margin-bottom: 4px;">
+              <span id="importProgressLabel">Importing applications...</span>
+              <span id="importProgressPercent">0%</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: var(--bg-color); border-radius: 4px; overflow: hidden; border: 1px solid var(--border-color);">
+              <div id="importProgressBar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.15s ease;"></div>
+            </div>
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <button type="button" class="action-btn" id="csvCancelBtn" style="font-size: 0.82rem; padding: 8px 16px;">
+              Clear / Choose Another File
+            </button>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span id="importStatusMsg" style="font-size: 0.85rem; font-weight: 600;"></span>
+              <button type="button" class="btn-primary-gold" id="confirmImportBtn" style="padding: 9px 22px; font-size: 0.9rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Confirm & Import into GRTS
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPORT CARD -->
+      <div class="table-card" style="padding: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              2. Export Data to CSV
+            </h3>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+              Exports your application database cleanly into a 5-column standard CSV file.
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; background: var(--bg-color); padding: 18px 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main); margin-bottom: 4px;">
+              Standardized 5-Column CSV Export
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">
+              Columns included: <strong>Job Title</strong>, <strong>Company Name</strong>, <strong>Location</strong>, <strong>Date Applied</strong>, <strong>Date Rejected</strong>.
+            </div>
+          </div>
+          <button type="button" class="btn-primary-gold" id="exportCsvBtn" style="padding: 9px 22px; font-size: 0.9rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download CSV Export
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

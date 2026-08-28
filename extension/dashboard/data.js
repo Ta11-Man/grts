@@ -70,11 +70,31 @@ async function loadDashboardData() {
 }
 
 /**
- * Render Funnel Metrics Bar
+ * Render Funnel Metrics Bar & Top Metric Cards
  */
 function renderMetrics(stats) {
-  document.getElementById("mTotalApps").innerText =
-    stats.total_applications || 0;
+  if (!stats) return;
+
+  const setElText = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.innerText = text;
+  };
+
+  // Header metric cards
+  setElText("metricTotal", stats.total_applications || 0);
+  setElText(
+    "metricOA",
+    stats.oa_count ||
+      (stats.status_counts && stats.status_counts["Online Assessment (OA)"]) ||
+      0,
+  );
+  setElText("metricInterview", stats.interview_count || 0);
+  setElText("metricOffers", stats.offer_count || 0);
+  setElText("metricGhosted", stats.ghosted_count || 0);
+  setElText("metricRejections", stats.rejected_count || 0);
+
+  // Legacy bar support
+  setElText("mTotalApps", stats.total_applications || 0);
 
   let uniqueCompanies = stats.unique_companies_count;
   if (
@@ -91,16 +111,13 @@ function renderMetrics(stats) {
     uniqueCompanies = compSet.size;
   }
   const uCount = uniqueCompanies || 0;
-  document.getElementById("mActiveApps").innerText =
-    `${uCount} ${uCount === 1 ? "unique company" : "unique companies"}`;
-  const mSaved = document.getElementById("mSavedApps");
-  if (mSaved) mSaved.innerText = stats.saved_count || 0;
-  document.getElementById("mInterviews").innerText = stats.interview_count || 0;
-  document.getElementById("mOffers").innerText = stats.offer_count || 0;
-  document.getElementById("mOfferRate").innerText =
-    `${stats.offer_rate_percent || 0}% offer rate`;
-  document.getElementById("mResponseRate").innerText =
-    `${stats.positive_response_percent || 0}%`;
+  setElText("mActiveApps", `${uCount} ${uCount === 1 ? "unique company" : "unique companies"}`);
+  setElText("mSavedApps", stats.saved_count || 0);
+  setElText("mInterviews", stats.interview_count || 0);
+  setElText("mOffers", stats.offer_count || 0);
+  setElText("mOfferRate", `${stats.offer_rate_percent || 0}% offer rate`);
+  setElText("mResponseRate", `${stats.positive_response_percent || 0}%`);
+
   const mResponseSub = document.getElementById("mResponseSub");
   if (mResponseSub) {
     mResponseSub.innerText = `${stats.response_rate_percent || 0}% including rejections`;

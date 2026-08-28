@@ -7,10 +7,34 @@ import sqlite3
 import os
 import json
 import re
+import threading
+import uuid
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional
 
-DB_NAME = os.path.join(os.path.dirname(__file__), "grts.db")
+DB_DIR = os.path.dirname(__file__)
+DB_NAME = os.path.join(DB_DIR, "grts.db")
+DATA_DIR = os.path.join(DB_DIR, "data")
+USERS_DIR = os.path.join(DATA_DIR, "users")
+CORE_ACCOUNTS_DB = os.path.join(DATA_DIR, "core_accounts.db")
+
+os.makedirs(USERS_DIR, exist_ok=True)
+
+# Thread-local storage for per-request tenant context
+_current_user_context = threading.local()
+
+def set_current_user_id(user_id: Optional[str]):
+    """Sets the active tenant ID for the current execution thread."""
+    _current_user_context.user_id = user_id
+
+def get_current_user_id() -> Optional[str]:
+    """Gets the active tenant ID for the current execution thread."""
+    return getattr(_current_user_context, "user_id", None)
+
+def get_user_db_path(user_id: str) -> str:
+    """Returns the absolute filesystem path to a tenant's SQLite database."""
+    safe_uid = re.sub(r'[^a-zA-Z0-9_\-]', '', str(user_id))
+    return os.path.join(USERS_DIR, f"user_{safe_uid}.db")
 
 VALID_US_STATES = {
     'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA',
@@ -49,15 +73,73 @@ def clean_workday_location(raw_loc: Optional[str]) -> Optional[str]:
         
     return raw_loc
 
-def get_connection():
-    """Returns a Row-based SQLite connection for dictionary-like access."""
+def get_connection(user_id: Optional[str] = None):
+    """
+    Returns a Row-based SQLite connection for dictionary-like access.
+    Enforces SQLite WAL mode, busy timeout, and tenant database isolation.
+    """
+    target_user_id = user_id if user_id is not None else get_current_user_id()
+    if target_user_id:
+        db_path = get_user_db_path(target_user_id)
+        is_new = not os.path.exists(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA journal_mode = WAL;")
+        conn.execute("PRAGMA synchronous = NORMAL;")
+        conn.execute("PRAGMA busy_timeout = 5000;")
+        conn.execute("PRAGMA foreign_keys = ON;")
+        if is_new:
+            init_schema(conn)
+        return conn
+
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode = WAL;")
+    conn.execute("PRAGMA synchronous = NORMAL;")
+    conn.execute("PRAGMA busy_timeout = 5000;")
+    conn.execute("PRAGMA foreign_keys = ON;")
     return conn
 
-def init_db():
-    """Initializes the database schema if it doesn't already exist and runs migrations."""
-    conn = get_connection()
+def get_core_connection():
+    """Returns a connection to the master accounts database."""
+    conn = sqlite3.connect(CORE_ACCOUNTS_DB)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode = WAL;")
+    conn.execute("PRAGMA synchronous = NORMAL;")
+    conn.execute("PRAGMA busy_timeout = 5000;")
+    conn.execute("PRAGMA foreign_keys = ON;")
+    return conn
+
+def init_core_db():
+    """Initializes the master user accounts database schema."""
+    conn = get_core_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id TEXT PRIMARY KEY,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            tier TEXT DEFAULT 'free',
+            stripe_customer_id TEXT,
+            created_at TEXT DEFAULT (datetime('now', 'localtime')),
+            updated_at TEXT DEFAULT (datetime('now', 'localtime')),
+            last_login_at TEXT
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS promo_redemptions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            code TEXT NOT NULL,
+            redeemed_at TEXT DEFAULT (datetime('now', 'localtime')),
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+def init_schema(conn: sqlite3.Connection):
+    """Applies standard GRTS schema and migrations to a target database connection."""
     cursor = conn.cursor()
     
     # 1. Companies
@@ -167,7 +249,43 @@ def init_db():
         )
     ''')
 
-    # Safe Schema Migrations for existing databases
+    # 8. Email Sync Configuration Table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS email_config (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            provider TEXT DEFAULT 'gmail',
+            imap_host TEXT,
+            imap_port INTEGER DEFAULT 993,
+            use_ssl INTEGER DEFAULT 1,
+            email_address TEXT,
+            password TEXT,
+            auto_sync INTEGER DEFAULT 1,
+            sync_interval_mins INTEGER DEFAULT 10,
+            last_synced_at TEXT,
+            created_at TEXT DEFAULT (datetime('now', 'localtime')),
+            updated_at TEXT DEFAULT (datetime('now', 'localtime'))
+        )
+    ''')
+
+    # 9. Email Sync Logs & Processed Message Deduplication Table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS email_sync_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            message_id TEXT UNIQUE,
+            sender TEXT,
+            subject TEXT,
+            email_date TEXT,
+            category TEXT,
+            matched_company TEXT,
+            matched_application_id INTEGER,
+            details_json TEXT,
+            status TEXT,
+            created_at TEXT DEFAULT (datetime('now', 'localtime')),
+            FOREIGN KEY(matched_application_id) REFERENCES applications(id)
+        )
+    ''')
+
+    # Safe Schema Migrations
     migrations = [
         ("companies", "website", "TEXT"),
         ("companies", "logo", "TEXT"),
@@ -239,7 +357,76 @@ def init_db():
     """)
     
     conn.commit()
+
+def init_db():
+    """Initializes both the local/default SQLite database and the core accounts database."""
+    init_core_db()
+    conn = get_connection()
+    init_schema(conn)
     conn.close()
+
+# ----------------- MASTER ACCOUNTS MANAGEMENT -----------------
+
+def create_user_account(email: str, password_hash: str, tier: str = "free") -> Dict[str, Any]:
+    """Creates a new user in core_accounts.db."""
+    user_id = str(uuid.uuid4())
+    conn = get_core_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO users (id, email, password_hash, tier) VALUES (?, ?, ?, ?)",
+        (user_id, email.lower().strip(), password_hash, tier)
+    )
+    conn.commit()
+    conn.close()
+    return {"id": user_id, "email": email.lower().strip(), "tier": tier}
+
+def get_user_by_email(email: str) -> Optional[Dict[str, Any]]:
+    """Retrieves user row by email from core_accounts.db."""
+    conn = get_core_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = ?", (email.lower().strip(),))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def get_user_by_id(user_id: str) -> Optional[Dict[str, Any]]:
+    """Retrieves user row by UUID from core_accounts.db."""
+    conn = get_core_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def update_user_tier(user_id: str, tier: str) -> bool:
+    """Updates a user's subscription tier."""
+    conn = get_core_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET tier = ?, updated_at = datetime('now', 'localtime') WHERE id = ?", (tier, user_id))
+    affected = cursor.rowcount > 0
+    conn.commit()
+    conn.close()
+    return affected
+
+def record_promo_redemption(user_id: str, code: str) -> bool:
+    """Records a VIP promo code redemption."""
+    conn = get_core_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO promo_redemptions (user_id, code) VALUES (?, ?)", (user_id, code))
+    cursor.execute("UPDATE users SET tier = 'vip_friend', updated_at = datetime('now', 'localtime') WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+def count_user_applications(user_id: Optional[str] = None) -> int:
+    """Counts active (non-archived) applications for a user."""
+    conn = get_connection(user_id)
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) as count FROM applications WHERE archived = 0")
+    row = cursor.fetchone()
+    count = row['count'] if row else 0
+    conn.close()
+    return count
 
 def insert_application_data(data: Dict[str, Any]) -> int:
     """
@@ -1430,5 +1617,224 @@ def get_detailed_analytics() -> Dict[str, Any]:
             "title_stats": title_stats,
             "intern_vs_fulltime": intern_vs_fulltime
         }
+    finally:
+        conn.close()
+
+# -------------------------------------------------------------
+# EMAIL AUTO-SYNC & LIFECYCLE MATCHING FUNCTIONS
+# -------------------------------------------------------------
+
+def get_email_config(mask_password: bool = True) -> Optional[Dict[str, Any]]:
+    """Retrieves saved email IMAP configuration."""
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM email_config WHERE id = 1")
+        row = cursor.fetchone()
+        if not row:
+            return None
+        cfg = dict(row)
+        if mask_password and cfg.get("password"):
+            cfg["password_masked"] = True
+            cfg["password"] = "••••••••"
+        else:
+            cfg["password_masked"] = bool(cfg.get("password"))
+        return cfg
+    finally:
+        conn.close()
+
+def save_email_config(config_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Inserts or updates the email IMAP configuration."""
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT password FROM email_config WHERE id = 1")
+        existing = cursor.fetchone()
+        
+        # If user did not change the password (masked placeholder submitted), keep old password
+        new_pwd = config_data.get("password")
+        if (not new_pwd or new_pwd == "••••••••") and existing:
+            new_pwd = existing["password"]
+            
+        provider = config_data.get("provider", "gmail")
+        imap_host = config_data.get("imap_host", "imap.gmail.com")
+        imap_port = int(config_data.get("imap_port", 993))
+        use_ssl = int(config_data.get("use_ssl", 1))
+        email_address = config_data.get("email_address", "").strip()
+        auto_sync = int(config_data.get("auto_sync", 1))
+        sync_interval = int(config_data.get("sync_interval_mins", 10))
+
+        cursor.execute("""
+            INSERT INTO email_config (id, provider, imap_host, imap_port, use_ssl, email_address, password, auto_sync, sync_interval_mins, updated_at)
+            VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', 'localtime'))
+            ON CONFLICT(id) DO UPDATE SET
+                provider = excluded.provider,
+                imap_host = excluded.imap_host,
+                imap_port = excluded.imap_port,
+                use_ssl = excluded.use_ssl,
+                email_address = excluded.email_address,
+                password = excluded.password,
+                auto_sync = excluded.auto_sync,
+                sync_interval_mins = excluded.sync_interval_mins,
+                updated_at = datetime('now', 'localtime')
+        """, (provider, imap_host, imap_port, use_ssl, email_address, new_pwd, auto_sync, sync_interval))
+        conn.commit()
+        return get_email_config(mask_password=True)
+    finally:
+        conn.close()
+
+def update_email_last_synced(timestamp_str: Optional[str] = None):
+    """Updates the last_synced_at timestamp in email_config."""
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        from datetime import datetime as dt
+        ts = timestamp_str or dt.now().strftime("%Y-%m-%d %H:%M:%S")
+        cursor.execute("UPDATE email_config SET last_synced_at = ? WHERE id = 1", (ts,))
+        conn.commit()
+    finally:
+        conn.close()
+
+def is_email_already_processed(message_id: str) -> bool:
+    """Checks if an email with message_id has already been processed."""
+    if not message_id:
+        return False
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1 FROM email_sync_logs WHERE message_id = ?", (message_id,))
+        return cursor.fetchone() is not None
+    finally:
+        conn.close()
+
+def log_email_sync_event(event_data: Dict[str, Any]) -> int:
+    """Logs a processed email into email_sync_logs."""
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        import json
+        details = event_data.get("details")
+        details_json = json.dumps(details) if isinstance(details, dict) else (details or "")
+        
+        cursor.execute("""
+            INSERT INTO email_sync_logs (message_id, sender, subject, email_date, category, matched_company, matched_application_id, details_json, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', 'localtime'))
+        """, (
+            event_data.get("message_id"),
+            event_data.get("sender"),
+            event_data.get("subject"),
+            event_data.get("email_date"),
+            event_data.get("category"),
+            event_data.get("matched_company"),
+            event_data.get("matched_application_id"),
+            details_json,
+            event_data.get("status", "applied")
+        ))
+        conn.commit()
+        return cursor.lastrowid
+    finally:
+        conn.close()
+
+def get_email_sync_logs(limit: int = 50) -> List[Dict[str, Any]]:
+    """Fetches recent email sync logs."""
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT l.*, a.status as current_app_status, j.title as job_title, c.name as app_company_name
+            FROM email_sync_logs l
+            LEFT JOIN applications a ON l.matched_application_id = a.id
+            LEFT JOIN jobs j ON a.job_id = j.id
+            LEFT JOIN companies c ON j.company_id = c.id
+            ORDER BY l.id DESC
+            LIMIT ?
+        """, (limit,))
+        rows = cursor.fetchall()
+        import json
+        result = []
+        for r in rows:
+            d = dict(r)
+            if d.get("details_json"):
+                try:
+                    d["details"] = json.loads(d["details_json"])
+                except Exception:
+                    d["details"] = d["details_json"]
+            result.append(d)
+        return result
+    finally:
+        conn.close()
+
+def get_active_applications_for_matching() -> List[Dict[str, Any]]:
+    """Returns active job applications formatted for email fuzzy matching."""
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT a.id, a.status, a.date_applied, a.oa_expiration_date,
+                   j.title as job_title, j.ats_platform,
+                   c.name as company_name, c.website as company_website
+            FROM applications a
+            JOIN jobs j ON a.job_id = j.id
+            JOIN companies c ON j.company_id = c.id
+            WHERE a.archived = 0
+            ORDER BY a.date_applied DESC
+        """)
+        return [dict(r) for r in cursor.fetchall()]
+    finally:
+        conn.close()
+
+def apply_email_match_to_application(app_id: int, category: str, details: Dict[str, Any]) -> bool:
+    """Updates application status, deadlines, and adds a timeline event based on email classification."""
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        from datetime import datetime as dt
+        event_date = details.get("event_date") or dt.now().strftime("%Y-%m-%d")
+        notes = details.get("notes", f"Auto-detected from email: {details.get('subject', '')}")
+        
+        if category == "rejection":
+            cursor.execute("""
+                UPDATE applications
+                SET status = 'Rejected',
+                    rejection_date = COALESCE(rejection_date, ?),
+                    updated_at = datetime('now', 'localtime')
+                WHERE id = ?
+            """, (event_date, app_id))
+            
+            cursor.execute("""
+                INSERT INTO timeline (application_id, event_type, event_date, notes, created_at)
+                VALUES (?, 'Rejected', ?, ?, datetime('now', 'localtime'))
+            """, (app_id, event_date, notes))
+
+        elif category == "oa":
+            oa_deadline = details.get("oa_expiration_date")
+            cursor.execute("""
+                UPDATE applications
+                SET status = CASE WHEN status IN ('Applied', 'Saved') THEN 'Online Assessment (OA)' ELSE status END,
+                    oa_expiration_date = COALESCE(?, oa_expiration_date),
+                    updated_at = datetime('now', 'localtime')
+                WHERE id = ?
+            """, (oa_deadline, app_id))
+            
+            cursor.execute("""
+                INSERT INTO timeline (application_id, event_type, event_date, notes, created_at)
+                VALUES (?, 'Online Assessment (OA)', ?, ?, datetime('now', 'localtime'))
+            """, (app_id, event_date, notes))
+
+        elif category == "interview":
+            cursor.execute("""
+                UPDATE applications
+                SET status = CASE WHEN status IN ('Applied', 'Saved', 'Online Assessment (OA)') THEN 'Recruiter Screen' ELSE status END,
+                    updated_at = datetime('now', 'localtime')
+                WHERE id = ?
+            """, (app_id,))
+            
+            cursor.execute("""
+                INSERT INTO timeline (application_id, event_type, event_date, notes, interviewer_name, meeting_link, created_at)
+                VALUES (?, 'Recruiter Screen', ?, ?, ?, ?, datetime('now', 'localtime'))
+            """, (app_id, event_date, notes, details.get("interviewer_name"), details.get("meeting_link")))
+
+        conn.commit()
+        return True
     finally:
         conn.close()

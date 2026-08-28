@@ -1,24 +1,155 @@
-<!-- 4. RESUME VERSIONS & TAILORING VIEW -->
 <div id="view-resumes" class="view-container">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-    <div>
-      <h2 style="margin: 0; font-size: 1.25rem; color: var(--text-main);">Resume Git & Version History</h2>
-      <div style="font-size: 0.8rem; color: var(--text-muted);">Track custom resume versions, target job profiles, and PDF attachments.</div>
-    </div>
-    <button class="btn-primary-gold" id="openAddResumeModalBtn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-      Upload / Create Resume Version
-    </button>
-  </div>
-  <div style="display: grid; grid-template-columns: 320px 1fr; gap: 20px;">
-    <div class="analytics-card" style="padding: 14px;">
-      <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 10px; color: var(--text-main);">Version Tree</div>
-      <div id="resumesListContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
-    </div>
-    <div class="analytics-card" id="resumeDetailView" style="padding: 20px;">
-      <div style="font-size: 0.85rem; color: var(--text-muted); text-align: center; padding: 40px 0;">
-        Select a resume version from the list to view PDF preview, notes, and attached applications.
+        <div class="resume-grid">
+          <!-- Resume Versions List -->
+          <div class="analytics-card">
+            <div class="chart-title">
+              <span>Resume Documents & Versions</span>
+              <button
+                class="btn-primary-gold"
+                id="openAddResumeBtn"
+                style="padding: 4px 10px; font-size: 0.75rem"
+              >
+                + Upload New Version
+              </button>
+            </div>
+            <div
+              style="
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                margin-top: 2px;
+                margin-bottom: 8px;
+              "
+            >
+              Upload PDF or DOCX tailored versions (SWE, Embedded, Robotics,
+              etc.)
+            </div>
+            <div
+              id="resumesListContainer"
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 6px;
+              "
+            ></div>
+          </div>
+
+          <!-- Resume Document Preview & Details -->
+          <div
+            class="analytics-card"
+            style="display: flex; flex-direction: column; gap: 12px"
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px;
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 10px;
+              "
+            >
+              <div>
+                <div
+                  class="chart-title"
+                  id="resumeViewerTitle"
+                  style="margin-bottom: 2px"
+                >
+                  Resume Document Viewer
+                </div>
+                <div
+                  id="resumePdfBadge"
+                  style="font-size: 0.75rem; color: var(--text-muted)"
+                ></div>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center">
+                <button
+                  class="action-btn"
+                  id="togglePdfViewBtn"
+                  style="
+                    display: none;
+                    font-size: 0.75rem;
+                    padding: 4px 10px;
+                    align-items: center;
+                    gap: 5px;
+                  "
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                    ></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                  </svg>
+                  <span>Preview Document</span>
+                </button>
+                <button
+                  class="action-btn"
+                  id="downloadPdfBtn"
+                  style="
+                    display: none;
+                    font-size: 0.75rem;
+                    padding: 4px 10px;
+                    align-items: center;
+                    gap: 5px;
+                  "
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>Download File</span>
+                </button>
+                <button
+                  class="btn-primary-gold"
+                  id="attachPdfToActiveBtn"
+                  style="font-size: 0.75rem; padding: 4px 10px"
+                >
+                  + Replace PDF / DOCX
+                </button>
+              </div>
+            </div>
+
+            <iframe
+              id="resumePdfPreviewFrame"
+              style="
+                width: 100%;
+                height: 550px;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                background: #ffffff;
+              "
+            ></iframe>
+            <div
+              class="diff-viewer"
+              id="resumeDiffViewer"
+              style="display: none"
+            >
+              Select a resume version on the left to view notes.
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
+
+      <!-- 5. Q&A BANK VIEW -->

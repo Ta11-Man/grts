@@ -7,8 +7,10 @@ window.GRTS.Dashboard.start = function startDashboard() {
   initFiltersAndSearch();
   initDetailDrawer();
   initManualAddModal();
+  initEmailSyncModal();
   initResumeManager();
   initMasterProfileForm();
+  initImportExportView();
   initKanbanDragAndDropListeners();
   initQABankActionListeners();
   initMilestoneActionListeners();

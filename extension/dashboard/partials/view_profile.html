@@ -1,22 +1,567 @@
-<!-- 6. AUTOFILL USER PROFILE VIEW -->
 <div id="view-profile" class="view-container">
-  <div style="margin-bottom: 16px;">
-    <h2 style="margin: 0; font-size: 1.25rem; color: var(--text-main);">Autofill Candidate Profile</h2>
-    <div style="font-size: 0.8rem; color: var(--text-muted);">Configure your personal details, EEO preferences, work history, and custom field values for instant form filling.</div>
-  </div>
-  <form id="userProfileForm" class="analytics-card" style="padding: 24px;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px;">
-      <div class="form-group"><label>First Name</label><input type="text" id="prof_first_name" placeholder="Candidate First Name" /></div>
-      <div class="form-group"><label>Last Name</label><input type="text" id="prof_last_name" placeholder="Candidate Last Name" /></div>
-      <div class="form-group"><label>Email Address</label><input type="email" id="prof_email" placeholder="email@example.com" /></div>
-      <div class="form-group"><label>Phone Number</label><input type="tel" id="prof_phone" placeholder="(555) 000-0000" /></div>
-      <div class="form-group"><label>LinkedIn Profile URL</label><input type="url" id="prof_linkedin" placeholder="https://linkedin.com/in/username" /></div>
-      <div class="form-group"><label>GitHub / Portfolio URL</label><input type="url" id="prof_github" placeholder="https://github.com/username" /></div>
-      <div class="form-group"><label>City, State</label><input type="text" id="prof_location" placeholder="City, ST" /></div>
-      <div class="form-group"><label>Work Authorization</label><select id="prof_work_auth"><option value="Authorized to work">Authorized to work (US Citizen / Permanent Resident)</option><option value="Requires visa sponsorship">Requires visa sponsorship</option></select></div>
+        <div
+          class="table-card"
+          style="padding: 28px; max-width: 960px; margin: 0 auto"
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: 20px;
+              border-bottom: 1px solid var(--border-color);
+              padding-bottom: 14px;
+            "
+          >
+            <div>
+              <h2 style="margin: 0; font-size: 1.3rem; color: var(--secondary)">
+                Master Autofill Profile
+              </h2>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.85rem;
+                  margin: 4px 0 0 0;
+                "
+              >
+                Ordered source of truth used to instantly auto-populate
+                Greenhouse, Workday, Lever, Ashby, SmartRecruiters, and custom
+                job applications.
+              </p>
+            </div>
+            <span
+              style="
+                font-size: 0.75rem;
+                background: #ecfdf5;
+                color: #065f46;
+                font-weight: 700;
+                padding: 4px 10px;
+                border-radius: 6px;
+                border: 1px solid #a7f3d0;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+              "
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#059669"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Synced with Auto-Filler</span>
+            </span>
+          </div>
+
+          <form id="masterProfileForm">
+            <!-- Global Profile Accordion Controls -->
+            <div
+              style="
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                margin-bottom: 14px;
+              "
+            >
+              <button
+                type="button"
+                class="action-btn"
+                id="expandAllSectionsBtn"
+                style="font-size: 0.75rem; padding: 4px 10px"
+              >
+                Expand All Sections
+              </button>
+              <button
+                type="button"
+                class="action-btn"
+                id="collapseAllSectionsBtn"
+                style="font-size: 0.75rem; padding: 4px 10px"
+              >
+                Collapse All
+              </button>
+            </div>
+
+            <!-- SITE SETTINGS & THEME PREFERENCES -->
+            <div
+              class="profile-section-card"
+              id="profile-sec-settings"
+              style="border-left: 4px solid var(--primary); background: var(--card-bg)"
+            >
+              <div class="profile-section-header" data-section="settings">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>Site Settings & Display Preferences</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >Theme appearance, autofill behavior & account status</span
+                >
+              </div>
+              <div class="profile-section-body">
+                <!-- Theme Toggle -->
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 8px 0 14px 0;
+                    border-bottom: 1px solid var(--border-color);
+                    margin-bottom: 12px;
+                  "
+                >
+                  <div>
+                    <label
+                      style="
+                        font-weight: 700;
+                        font-size: 0.88rem;
+                        color: var(--text-main);
+                        margin: 0;
+                        display: block;
+                      "
+                    >
+                      Theme & Color Mode
+                    </label>
+                    <p
+                      style="
+                        margin: 2px 0 0 0;
+                        font-size: 0.78rem;
+                        color: var(--text-muted);
+                      "
+                    >
+                      Choose between the refined warm paper light theme and the artisanal warm dark theme.
+                    </p>
+                  </div>
+                  <div class="theme-switcher-group" style="display: inline-flex; background: var(--bg-color); padding: 3px; border-radius: 8px; border: 1px solid var(--border-color); gap: 4px;">
+                    <button type="button" class="theme-btn" id="themeBtnLight" data-theme="light" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; background: var(--card-bg); color: var(--text-main); box-shadow: var(--shadow-sm); display: inline-flex; align-items: center; gap: 4px;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                      Light
+                    </button>
+                    <button type="button" class="theme-btn" id="themeBtnDark" data-theme="dark" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; background: transparent; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                      Dark
+                    </button>
+                    <button type="button" class="theme-btn" id="themeBtnSystem" data-theme="system" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; background: transparent; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                      System
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Autofill Toggle -->
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 6px 0;
+                  "
+                >
+                  <div>
+                    <label
+                      for="p_autofill_enabled"
+                      style="
+                        font-weight: 700;
+                        font-size: 0.88rem;
+                        color: var(--text-main);
+                        margin: 0;
+                        cursor: pointer;
+                        display: block;
+                      "
+                    >
+                      Enable Automatic Autofill on Page Load
+                    </label>
+                    <p
+                      style="
+                        margin: 2px 0 0 0;
+                        font-size: 0.78rem;
+                        color: var(--text-muted);
+                      "
+                    >
+                      When disabled, GRTS will wait for you to click "<svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <polygon
+                          points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"
+                        ></polygon>
+                      </svg>
+                      Autofill Page" instead of filling or advancing
+                      automatically when visiting career pages.
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    id="p_autofill_enabled"
+                    style="width: 18px; height: 18px; cursor: pointer"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- 1. PERSONAL & CONTACT INFORMATION -->
+            <div class="profile-section-card" id="profile-sec-1">
+              <div class="profile-section-header" data-section="1">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>1. Personal & Contact Information</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >Name, phone, email & location</span
+                >
+              </div>
+              <div class="profile-section-body">
+                <div class="profile-grid">
+                  <div class="form-group">
+                    <label>First Name *</label>
+                    <input type="text" id="p_first_name" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Last Name *</label>
+                    <input type="text" id="p_last_name" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="p_email" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" id="p_phone" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Phone Device Type</label>
+                    <select id="p_phone_type">
+                      <option value="Mobile">Mobile</option>
+                      <option value="Home">Home</option>
+                      <option value="Work">Work</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>How Did You Hear About Us?</label>
+                    <select id="p_how_heard">
+                      <option value="LinkedIn">LinkedIn</option>
+                      <option value="Company Career Site">
+                        Company Career Site
+                      </option>
+                      <option value="University / Campus">
+                        University / Campus
+                      </option>
+                      <option value="Career Fair">Career Fair</option>
+                      <option value="Job Board">Job Board</option>
+                      <option value="Referral">Referral</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="grid-column: span 2">
+                    <label>Street Address</label>
+                    <input type="text" id="p_address" />
+                  </div>
+                  <div class="form-group">
+                    <label>City</label>
+                    <input type="text" id="p_city" />
+                  </div>
+                  <div class="form-group">
+                    <label>State / Province</label>
+                    <input type="text" id="p_state" />
+                  </div>
+                  <div class="form-group">
+                    <label>Postal / Zip Code</label>
+                    <input type="text" id="p_postal_code" />
+                  </div>
+                  <div class="form-group">
+                    <label>Country</label>
+                    <input type="text" id="p_country" value="United States" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. ONLINE PROFILES & PORTFOLIOS -->
+            <div class="profile-section-card" id="profile-sec-2">
+              <div class="profile-section-header" data-section="2">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>2. Online Profiles & Portfolios</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >LinkedIn, GitHub & portfolio links</span
+                >
+              </div>
+              <div class="profile-section-body">
+                <div class="profile-grid">
+                  <div class="form-group">
+                    <label>LinkedIn URL</label>
+                    <input
+                      type="text"
+                      id="p_linkedin"
+                      placeholder="https://www.linkedin.com/in/..."
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>GitHub URL</label>
+                    <input
+                      type="text"
+                      id="p_github"
+                      placeholder="https://github.com/..."
+                    />
+                  </div>
+                  <div class="form-group" style="grid-column: span 2">
+                    <label>Portfolio / Personal Website</label>
+                    <input
+                      type="text"
+                      id="p_portfolio"
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. EDUCATION HISTORY (MULTI-ENTRY) -->
+            <div class="profile-section-card" id="profile-sec-3">
+              <div class="profile-section-header" data-section="3">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>3. Education History</span>
+                </div>
+                <div
+                  style="display: flex; align-items: center; gap: 8px"
+                  onclick="event.stopPropagation()"
+                >
+                  <button
+                    type="button"
+                    class="btn-primary-gold"
+                    id="addEducationBtn"
+                    style="padding: 4px 10px; font-size: 0.75rem"
+                  >
+                    + Add Education
+                  </button>
+                </div>
+              </div>
+              <div class="profile-section-body">
+                <div
+                  id="educationEntriesList"
+                  style="display: flex; flex-direction: column; gap: 10px"
+                ></div>
+              </div>
+            </div>
+
+            <!-- 4. WORK EXPERIENCE HISTORY (MULTI-ENTRY) -->
+            <div class="profile-section-card" id="profile-sec-4">
+              <div class="profile-section-header" data-section="4">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>4. Work Experience & Internships</span>
+                </div>
+                <div
+                  style="display: flex; align-items: center; gap: 8px"
+                  onclick="event.stopPropagation()"
+                >
+                  <button
+                    type="button"
+                    class="btn-primary-gold"
+                    id="addExperienceBtn"
+                    style="padding: 4px 10px; font-size: 0.75rem"
+                  >
+                    + Add Experience
+                  </button>
+                </div>
+              </div>
+              <div class="profile-section-body">
+                <div
+                  id="experienceEntriesList"
+                  style="display: flex; flex-direction: column; gap: 10px"
+                ></div>
+              </div>
+            </div>
+
+            <!-- 5. TECHNICAL SKILLS & COMPENSATION PREFERENCES -->
+            <div class="profile-section-card" id="profile-sec-5">
+              <div class="profile-section-header" data-section="5">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>5. Skills & Preferences</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >Skills keywords, target compensation & notice</span
+                >
+              </div>
+              <div class="profile-section-body">
+                <div class="profile-grid">
+                  <div class="form-group" style="grid-column: span 2">
+                    <label>Technical Skills & Keywords</label>
+                    <input
+                      type="text"
+                      id="p_skills"
+                      placeholder="e.g. Python, Go, C++, Linux, Docker, SQL, React"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>Target Compensation</label>
+                    <input
+                      type="text"
+                      id="p_salary"
+                      placeholder="e.g. $165,000"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>Notice Period</label>
+                    <input
+                      type="text"
+                      id="p_notice"
+                      placeholder="Immediate / 2 Weeks"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. WORK AUTHORIZATION & EEO DISCLOSURES -->
+            <div class="profile-section-card" id="profile-sec-6">
+              <div class="profile-section-header" data-section="6">
+                <div class="profile-section-title">
+                  <span class="sec-chevron">▼</span>
+                  <span>6. Work Authorization & Demographics (Voluntary)</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >Work auth, visa sponsorship, voluntary EEO</span
+                >
+              </div>
+              <div class="profile-section-body">
+                <div class="profile-grid">
+                  <div class="form-group">
+                    <label>Legally Authorized to Work in US?</label>
+                    <select id="p_work_auth">
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Will You Require Visa Sponsorship?</label>
+                    <select id="p_sponsorship">
+                      <option value="No">No</option>
+                      <option value="Yes">Yes</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Gender (EEO)</label>
+                    <select id="p_gender">
+                      <option value="Decline to Self-Identify">
+                        Decline to Self-Identify
+                      </option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Non-Binary">Non-Binary</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Race / Ethnicity (EEO)</label>
+                    <select id="p_race">
+                      <option value="White">White / Caucasian</option>
+                      <option value="Asian">Asian</option>
+                      <option value="Black or African American">
+                        Black or African American
+                      </option>
+                      <option value="Hispanic or Latino">
+                        Hispanic or Latino
+                      </option>
+                      <option value="American Indian or Alaska Native">
+                        American Indian or Alaska Native
+                      </option>
+                      <option value="Native Hawaiian or Other Pacific Islander">
+                        Native Hawaiian or Other Pacific Islander
+                      </option>
+                      <option value="Two or More Races">
+                        Two or More Races
+                      </option>
+                      <option value="Decline to Self-Identify">
+                        Decline to Self-Identify
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Hispanic / Latino? (EEO)</label>
+                    <select id="p_hispanic">
+                      <option value="No">No, not Hispanic or Latino</option>
+                      <option value="Yes">Yes, Hispanic or Latino</option>
+                      <option value="Decline to Self-Identify">
+                        Decline to Self-Identify
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Veteran Status (EEO)</label>
+                    <select id="p_veteran">
+                      <option value="I am not a protected veteran">
+                        I am not a protected veteran
+                      </option>
+                      <option
+                        value="I identify as one or more classifications of protected veteran"
+                      >
+                        Protected Veteran
+                      </option>
+                      <option value="I do not wish to self-identify">
+                        Decline to Self-Identify
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="grid-column: span 2">
+                    <label>Disability Status (EEO)</label>
+                    <select id="p_disability">
+                      <option
+                        value="No, I do not have a disability and have not had one in the past"
+                      >
+                        No disability
+                      </option>
+                      <option
+                        value="Yes, I have a disability (or previously had a disability)"
+                      >
+                        Yes, I have a disability
+                      </option>
+                      <option value="I do not wish to answer">
+                        Decline to Self-Identify
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SAVE BUTTON -->
+            <div
+              style="
+                margin-top: 24px;
+                border-top: 1px solid var(--border-color);
+                padding-top: 18px;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+              "
+            >
+              <button
+                type="submit"
+                class="btn-primary-gold"
+                style="padding: 10px 24px; font-size: 0.95rem"
+              >
+                Save Master Profile
+              </button>
+              <span
+                id="profileSaveMsg"
+                style="font-size: 0.88rem; font-weight: 600"
+              ></span>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-    <div style="display: flex; justify-content: flex-end; gap: 10px;">
-      <button type="submit" class="btn-primary-gold">Save Candidate Profile</button>
-    </div>
-  </form>
-</div>
+
+    <!-- MANUAL APPLICATION ADD MODAL -->

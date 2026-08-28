@@ -47,7 +47,37 @@ When navigating to a job page, `content.js` checks URL patterns and DOM signatur
 
 ---
 
+## Dashboard Compilation & Modular Structure
+
+The single-page dashboard HTML is assembled from component partials in `extension/dashboard/partials/`:
+
+- `header.html` – Top navigation, funnel metric cards, search/sort controls, and Email Auto-Sync trigger.
+- `view_table.html` – Main applications table.
+- `view_kanban.html` – Kanban pipeline view with stage columns.
+- `view_analytics.html` – Pipeline funnel, conversion statistics, application velocity, and US geographic map.
+- `view_resumes.html` – Resume version manager, markdown diffs, and PDF preview.
+- `view_qa.html` – Custom application question and answer bank.
+- `view_profile.html` – Master autofill profile form with education, work history, visa, and demographic fields.
+- `modals.html` – Detail drawer, manual application add modal, resume version modal, and Email Auto-Sync modal.
+
+### Recompiling the Dashboard
+
+When making changes to HTML structure in `extension/dashboard/partials/`, recompile `extension/dashboard.html` using either:
+
+```bash
+make build-dashboard
+```
+
+or directly with Python:
+
+```bash
+python scripts/build_dashboard_html.py
+```
+
+---
+
 ## Known Issues & Notes
 
 - **Workday Skills MultiSelect**: In certain Workday tenant deployments, the optional "Skills" combobox uses a deep synthetic focus trap that may not convert search terms into tag-pills automatically without manual key selection. Workday does not require skills for application submission when work experience and education are present.
 - **Resume Single Attachment**: Guaranteed strictly 1 resume attachment per portal session across initial fill and "Re-run" triggers.
+

@@ -9,1066 +9,22 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <style>
-      :root {
-        --primary: #b6a25b;
-        --primary-dark: #8c7a3a;
-        --primary-light: #f7f4ea;
-        --secondary: #6e6138;
-        --bg-color: #f8fafc;
-        --card-bg: #ffffff;
-        --text-main: #1e293b;
-        --text-muted: #64748b;
-        --border-color: #e2e8f0;
-        --accent: #eef7f6;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --info: #3b82f6;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-        --shadow-md:
-          0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-        --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.08);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Outfit", "Inter", sans-serif;
-        background-color: var(--bg-color);
-        color: var(--text-main);
-        margin: 0;
-        padding: 0;
-        line-height: 1.5;
-      }
-
-      .app-layout {
-        max-width: 1440px;
-        margin: 0 auto;
-        padding: 24px 36px 60px;
-      }
-
-      /* Header */
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 18px;
-        border-bottom: 1px solid var(--border-color);
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-
-      .logo {
-        height: 40px;
-        width: 40px;
-      }
-
-      h1 {
-        margin: 0;
-        font-size: 1.65rem;
-        font-weight: 800;
-        color: var(--text-main);
-        letter-spacing: -0.02em;
-      }
-
-      h1 span {
-        color: var(--primary);
-      }
-
-      .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .btn-primary-gold {
-        background: var(--primary);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 9px 16px;
-        font-family: inherit;
-        font-size: 0.85rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .btn-primary-gold:hover {
-        background: var(--primary-dark);
-        transform: translateY(-1px);
-      }
-
-      /* Analytics Bar */
-      .metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 14px;
-        margin-bottom: 24px;
-      }
-
-      .metric-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 16px 20px;
-        box-shadow: var(--shadow-sm);
-        cursor: pointer;
-        user-select: none;
-        transition:
-          transform 0.15s ease,
-          box-shadow 0.15s ease,
-          border-color 0.15s ease;
-      }
-
-      .metric-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-        border-color: var(--primary);
-      }
-
-      .metric-card.active-filter {
-        border: 2px solid var(--primary);
-        background: #fefdf9;
-        box-shadow: 0 0 0 2px rgba(182, 162, 91, 0.2);
-      }
-
-      .metric-title {
-        font-size: 0.74rem;
-        font-weight: 700;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 6px;
-      }
-
-      .metric-value {
-        font-size: 1.75rem;
-        font-weight: 800;
-        color: var(--text-main);
-        line-height: 1.1;
-      }
-
-      .metric-sub {
-        font-size: 0.78rem;
-        color: var(--text-muted);
-        margin-top: 4px;
-        font-weight: 500;
-      }
-
-      /* View Navigation & Controls */
-      .controls-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        gap: 14px;
-      }
-
-      .view-tabs {
-        display: flex;
-        background: #e2e8f0;
-        padding: 4px;
-        border-radius: 10px;
-        gap: 4px;
-      }
-
-      .view-tab-btn {
-        background: none;
-        border: none;
-        padding: 8px 14px;
-        font-family: inherit;
-        font-size: 0.82rem;
-        font-weight: 700;
-        color: var(--text-muted);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .view-tab-btn.active {
-        background: #ffffff;
-        color: var(--text-main);
-        box-shadow: var(--shadow-sm);
-      }
-
-      .filter-tools {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex: 1;
-        max-width: 650px;
-        justify-content: flex-end;
-      }
-
-      .search-box {
-        position: relative;
-        flex: 1;
-      }
-
-      .search-box input {
-        width: 100%;
-        padding: 8px 14px;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        background: #ffffff;
-        font-family: inherit;
-        font-size: 0.85rem;
-        transition: all 0.2s;
-      }
-
-      .search-box input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(182, 162, 91, 0.15);
-      }
-
-      .filter-select {
-        padding: 8px 12px;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        background: #ffffff;
-        font-family: inherit;
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: var(--text-main);
-        cursor: pointer;
-      }
-
-      /* Views */
-      .view-container {
-        display: none;
-      }
-
-      .view-container.active {
-        display: block;
-      }
-
-      /* Table View */
-      .table-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 14px;
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-      }
-
-      th {
-        background-color: #fcfcfd;
-        padding: 12px 18px;
-        font-weight: 700;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        font-size: 0.72rem;
-        letter-spacing: 0.08em;
-        border-bottom: 1px solid var(--border-color);
-      }
-
-      td {
-        padding: 10px 16px;
-        border-bottom: 1px solid #f1f5f9;
-        vertical-align: middle;
-        height: 60px;
-        box-sizing: border-box;
-      }
-
-      tr:last-child td {
-        border-bottom: none;
-      }
-
-      tr.clickable-row {
-        cursor: pointer;
-        transition: background-color 0.15s ease;
-      }
-
-      tr.clickable-row:hover {
-        background-color: #f8fafc;
-      }
-
-      .company-cell {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 700;
-        color: var(--text-main);
-        max-width: 170px;
-      }
-
-      .company-cell span {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .company-logo {
-        width: 30px;
-        height: 30px;
-        min-width: 30px;
-        border-radius: 6px;
-        object-fit: cover;
-        background-color: #ffffff;
-        border: 1px solid var(--border-color);
-        padding: 2px;
-      }
-
-      .role-title {
-        font-weight: 700;
-        font-size: 0.88rem;
-        color: var(--text-main);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 240px;
-      }
-
-      .role-meta {
-        font-size: 0.76rem;
-        color: var(--text-muted);
-        margin-top: 2px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 240px;
-      }
-
-      .location-cell-text {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        font-weight: 500;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 200px;
-        display: block;
-      }
-
-      .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 0.74rem;
-        font-weight: 700;
-        letter-spacing: 0.02em;
-      }
-
-      .status-Saved {
-        background: #e0e7ff;
-        color: #4338ca;
-        border: 1px solid #c7d2fe;
-      }
-      .status-Applied {
-        background: #f1f5f9;
-        color: #475569;
-      }
-      .status-OA,
-      .status-Screening {
-        background: #e0f2fe;
-        color: #0284c7;
-      }
-      .status-Technical {
-        background: #fef3c7;
-        color: #d97706;
-      }
-      .status-Final {
-        background: #ede9fe;
-        color: #7c3aed;
-      }
-      .status-Offer {
-        background: #dcfce7;
-        color: #15803d;
-      }
-      .status-Rejected {
-        background: #fee2e2;
-        color: #b91c1c;
-      }
-      .status-Skipped,
-      .status-Expired {
-        background: #f1f5f9;
-        color: #64748b;
-        border: 1px dashed #cbd5e1;
-      }
-
-      .oa-deadline-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
-        padding: 2px 7px;
-        border-radius: 5px;
-        font-size: 0.7rem;
-        font-weight: 700;
-        margin-top: 4px;
-      }
-      .oa-deadline-badge.soon {
-        background: #fef3c7;
-        color: #b45309;
-        border: 1px solid #fde68a;
-      }
-      .oa-deadline-badge.expired {
-        background: #fee2e2;
-        color: #b91c1c;
-        border: 1px solid #fecaca;
-      }
-      .oa-deadline-badge.ok {
-        background: #ecfdf5;
-        color: #047857;
-        border: 1px solid #a7f3d0;
-      }
-      .btn-skip-oa {
-        background: #ffffff;
-        border: 1px solid #cbd5e1;
-        color: #475569;
-        border-radius: 4px;
-        padding: 1px 6px;
-        font-size: 0.68rem;
-        font-weight: 600;
-        cursor: pointer;
-        margin-left: 4px;
-        transition: all 0.15s ease;
-      }
-      .btn-skip-oa:hover {
-        background: #fee2e2;
-        color: #b91c1c;
-        border-color: #fca5a5;
-      }
-
-      .star-click {
-        cursor: pointer;
-        display: inline-block;
-        transition: transform 0.1s;
-        color: #f59e0b;
-        font-size: 15px;
-        padding: 0 1px;
-      }
-      .star-click:hover {
-        transform: scale(1.3);
-      }
-
-      .action-btn {
-        background: none;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        padding: 5px 10px;
-        font-family: inherit;
-        font-size: 0.78rem;
-        font-weight: 600;
-        color: var(--text-main);
-        cursor: pointer;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-      }
-
-      .action-btn:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-        background: #ffffff;
-      }
-
-      .action-btn-danger {
-        border-color: #fee2e2;
-        color: #ef4444;
-      }
-      .action-btn-danger:hover {
-        background: #fee2e2;
-        color: #b91c1c;
-        border-color: #fca5a5;
-      }
-
-      /* Horizontal Single-Row Drag-and-Drop Kanban Board */
-      .kanban-board-wrapper {
-        width: 100%;
-        overflow-x: auto;
-        padding-bottom: 12px;
-      }
-
-      .kanban-board {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        gap: 14px;
-        min-width: max-content;
-        align-items: stretch;
-      }
-
-      .kanban-col {
-        flex: 0 0 250px;
-        width: 250px;
-        background: #f1f5f9;
-        border: 2px dashed transparent;
-        border-radius: 12px;
-        padding: 12px;
-        min-height: 540px;
-        transition: all 0.2s ease;
-      }
-
-      .kanban-col.drag-over {
-        background: #eef7f6;
-        border-color: var(--primary);
-      }
-
-      .kanban-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.78rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-muted);
-        margin-bottom: 10px;
-        padding-bottom: 6px;
-        border-bottom: 2px solid #e2e8f0;
-      }
-
-      .kanban-count {
-        background: #ffffff;
-        color: var(--text-main);
-        padding: 2px 7px;
-        border-radius: 10px;
-        font-size: 0.72rem;
-      }
-
-      .kanban-card {
-        background: #ffffff;
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        padding: 12px;
-        margin-bottom: 8px;
-        box-shadow: var(--shadow-sm);
-        cursor: grab;
-        transition: all 0.15s ease;
-        user-select: none;
-      }
-
-      .kanban-card:active {
-        cursor: grabbing;
-      }
-
-      .kanban-card.dragging {
-        opacity: 0.35;
-        transform: scale(0.96);
-      }
-
-      .kanban-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-        border-color: var(--primary);
-      }
-
-      .kanban-card-company {
-        font-weight: 800;
-        font-size: 0.82rem;
-        color: var(--secondary);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .kanban-card-title {
-        font-weight: 700;
-        font-size: 0.9rem;
-        margin: 4px 0 6px;
-        color: var(--text-main);
-      }
-
-      .kanban-card-date {
-        font-size: 0.74rem;
-        color: var(--text-muted);
-      }
-
-      /* Analytics View Time-Series Range Chart */
-      .analytics-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 16px;
-        margin-bottom: 20px;
-      }
-
-      .analytics-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 14px;
-        padding: 20px;
-        box-shadow: var(--shadow-sm);
-      }
-
-      .chart-title {
-        font-size: 0.85rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-main);
-        margin-bottom: 14px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      /* Chronological Range Timeline Chart */
-      .time-chart-container {
-        width: 100%;
-        overflow: hidden;
-        padding-top: 10px;
-      }
-
-      .time-chart-svg {
-        width: 100%;
-        min-width: 0;
-        height: 260px;
-        display: block;
-        overflow: hidden;
-      }
-
-      /* Resume Manager */
-      .resume-grid {
-        display: grid;
-        grid-template-columns: 1fr 1.5fr;
-        gap: 18px;
-      }
-
-      .diff-viewer {
-        background: #f8fafc;
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        padding: 16px;
-        font-family: monospace;
-        font-size: 0.82rem;
-        line-height: 1.5;
-        max-height: 520px;
-        overflow-y: auto;
-        white-space: pre-wrap;
-      }
-
-      .diff-added {
-        background-color: #dcfce7;
-        color: #166534;
-        display: block;
-        padding: 2px 4px;
-        border-radius: 4px;
-      }
-
-      .diff-removed {
-        background-color: #fee2e2;
-        color: #991b1b;
-        display: block;
-        padding: 2px 4px;
-        border-radius: 4px;
-        text-decoration: line-through;
-      }
-
-      /* Q&A Bank View */
-      .qa-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-        gap: 14px;
-      }
-
-      .qa-bank-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 16px;
-        box-shadow: var(--shadow-sm);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-
-      .qa-bank-question {
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: var(--text-main);
-        margin-bottom: 8px;
-      }
-
-      .qa-bank-answer {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        background: #f8fafc;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 10px;
-        white-space: pre-wrap;
-        margin-bottom: 12px;
-        flex: 1;
-      }
-
-      .qa-bank-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.78rem;
-        color: var(--text-muted);
-      }
-
-      /* Modals and Drawers */
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(15, 23, 42, 0.4);
-        backdrop-filter: blur(4px);
-        display: none;
-        justify-content: flex-end;
-        z-index: 9999;
-      }
-      .modal-overlay.open {
-        display: flex;
-      }
-
-      .center-modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(15, 23, 42, 0.45);
-        backdrop-filter: blur(4px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-      }
-      .center-modal-overlay.open {
-        display: flex;
-      }
-
-      .center-modal {
-        background: #ffffff;
-        border-radius: 14px;
-        padding: 26px;
-        max-width: 600px;
-        width: 90vw;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-      }
-
-      .drawer {
-        width: 660px;
-        max-width: 92vw;
-        background: #ffffff;
-        height: 100vh;
-        overflow-y: auto;
-        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
-        padding: 28px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        animation: slideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-
-      @keyframes slideIn {
-        from {
-          transform: translateX(100%);
-        }
-        to {
-          transform: translateX(0);
-        }
-      }
-
-      .drawer-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 16px;
-      }
-
-      .close-drawer-btn {
-        background: none;
-        border: none;
-        font-size: 1.4rem;
-        color: var(--text-muted);
-        cursor: pointer;
-        padding: 2px 6px;
-        border-radius: 6px;
-      }
-
-      .close-drawer-btn:hover {
-        background: #f1f5f9;
-        color: var(--text-main);
-      }
-
-      .section-title {
-        font-size: 0.8rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: var(--secondary);
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      /* Journey Timeline in Drawer */
-      .timeline-flow {
-        position: relative;
-        padding-left: 18px;
-        margin-left: 8px;
-        border-left: 2px solid #e2e8f0;
-      }
-
-      .timeline-node {
-        position: relative;
-        margin-bottom: 14px;
-      }
-
-      .timeline-node:last-child {
-        margin-bottom: 0;
-      }
-
-      .timeline-marker {
-        position: absolute;
-        left: -25px;
-        top: 4px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: var(--primary);
-        border: 2px solid #ffffff;
-        box-shadow: 0 0 0 3px rgba(182, 162, 91, 0.2);
-      }
-
-      .timeline-card {
-        background: #f8fafc;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 12px 14px;
-      }
-
-      .timeline-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 4px;
-      }
-
-      .timeline-event-name {
-        font-weight: 700;
-        font-size: 0.9rem;
-        color: var(--text-main);
-      }
-
-      .timeline-date-str {
-        font-size: 0.74rem;
-        color: var(--text-muted);
-        font-weight: 600;
-      }
-
-      .timeline-detail-text {
-        font-size: 0.82rem;
-        color: var(--text-muted);
-        white-space: pre-wrap;
-      }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        margin-bottom: 10px;
-      }
-
-      .form-group label {
-        font-size: 0.72rem;
-        font-weight: 700;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
-
-      .form-group input,
-      .form-group select,
-      .form-group textarea {
-        padding: 8px 10px;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        font-family: inherit;
-        font-size: 0.85rem;
-        background: #ffffff;
-      }
-
-      .form-group input:focus,
-      .form-group select:focus,
-      .form-group textarea:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(182, 162, 91, 0.15);
-      }
-
-      .profile-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-      }
-
-      .profile-section-card {
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        margin-bottom: 16px;
-        background: #ffffff;
-        box-shadow: var(--shadow-sm);
-        overflow: hidden;
-        transition:
-          box-shadow 0.2s ease,
-          border-color 0.2s ease;
-      }
-      .profile-section-card:hover {
-        border-color: #cbd5e1;
-      }
-      .profile-section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 14px 18px;
-        background: #f8fafc;
-        cursor: pointer;
-        user-select: none;
-        transition: background 0.15s ease;
-      }
-      .profile-section-header:hover {
-        background: #f1f5f9;
-      }
-      .profile-section-title {
-        margin: 0;
-        font-size: 1.05rem;
-        color: var(--text-main);
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .profile-section-body {
-        padding: 18px;
-        border-top: 1px solid var(--border-color);
-      }
-      .sec-chevron {
-        display: inline-block;
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        transition: transform 0.2s ease;
-      }
-      .profile-section-card.collapsed .sec-chevron {
-        transform: rotate(-90deg);
-      }
-      .profile-section-card.collapsed .profile-section-body {
-        display: none;
-      }
-
-      .exp-entry-card,
-      .edu-entry-card {
-        background: #f8fafc;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        margin-bottom: 12px;
-        overflow: hidden;
-        transition: border-color 0.15s ease;
-      }
-      .exp-entry-card:hover,
-      .edu-entry-card:hover {
-        border-color: #cbd5e1;
-      }
-      .exp-card-header,
-      .edu-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 14px;
-        background: #ffffff;
-        border-bottom: 1px solid var(--border-color);
-        cursor: pointer;
-        user-select: none;
-        transition: background 0.15s ease;
-      }
-      .exp-card-header:hover,
-      .edu-card-header:hover {
-        background: #f8fafc;
-      }
-      .exp-card-body,
-      .edu-card-body {
-        padding: 14px;
-      }
-      .card-chevron {
-        display: inline-block;
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        transition: transform 0.2s ease;
-      }
-      .exp-entry-card.collapsed .card-chevron,
-      .edu-entry-card.collapsed .card-chevron {
-        transform: rotate(-90deg);
-      }
-      .exp-entry-card.collapsed .exp-card-body,
-      .edu-entry-card.collapsed .edu-card-body {
-        display: none;
-      }
-
-      .empty-state {
-        text-align: center;
-        padding: 50px 20px;
-        color: var(--text-muted);
-      }
-
-      .empty-state h3 {
-        margin: 8px 0 4px;
-        color: var(--text-main);
-      }
-
-      /* Toast Notification */
-      .grts-toast {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        background: #1e293b;
-        color: #ffffff;
-        padding: 10px 18px;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        opacity: 0;
-        transform: translateY(12px);
-        transition: all 0.25s ease;
-        z-index: 999999;
-        pointer-events: none;
-      }
-      .grts-toast.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    </style>
+    <link rel="stylesheet" href="dashboard/dashboard.css" />
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('grts_theme') || 'light';
+          if (t === 'system') {
+            t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', t);
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body>
     <div class="app-layout">
-      <!-- HEADER -->
-      <div class="header">
+<div class="header">
         <div class="brand">
           <img src="grts-logo.svg" class="logo" alt="GRTS Logo" />
           <div>
@@ -1101,6 +57,10 @@
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
             Add Application
+          </button>
+                    <button class="action-btn" id="openEmailSyncModalBtn" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            Email Auto-Sync
           </button>
           <button class="action-btn" id="refreshBtn">
             <svg
@@ -1298,6 +258,23 @@
             </svg>
             Autofill Profile
           </button>
+          <button class="view-tab-btn" data-view="view-import-export">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Import / Export
+          </button>
         </div>
 
         <div class="filter-tools">
@@ -1331,7 +308,9 @@
       </div>
 
       <!-- 1. TABLE VIEW -->
-      <div id="view-table" class="view-container active">
+
+
+<div id="view-table" class="view-container active">
         <div class="table-card">
           <table>
             <thead>
@@ -1356,7 +335,9 @@
       </div>
 
       <!-- 2. HORIZONTAL SINGLE-ROW KANBAN BOARD VIEW -->
-      <div id="view-kanban" class="view-container">
+
+
+<div id="view-kanban" class="view-container">
         <div
           style="
             font-size: 0.82rem;
@@ -1373,7 +354,9 @@
       </div>
 
       <!-- 3. ANALYTICS & STATISTICS VIEW -->
-      <div id="view-analytics" class="view-container">
+
+
+<div id="view-analytics" class="view-container">
         <!-- Chronological Range Timeline Chart -->
         <div class="analytics-card" style="margin-bottom: 16px">
           <div class="chart-title">
@@ -1568,7 +551,9 @@
       </div>
 
       <!-- 4. RESUME VERSION MANAGER (PDF & DOCX FOCUSED) -->
-      <div id="view-resumes" class="view-container">
+
+
+<div id="view-resumes" class="view-container">
         <div class="resume-grid">
           <!-- Resume Versions List -->
           <div class="analytics-card">
@@ -1723,7 +708,9 @@
       </div>
 
       <!-- 5. Q&A BANK VIEW -->
-      <div id="view-qa" class="view-container">
+
+
+<div id="view-qa" class="view-container">
         <div
           style="
             margin-bottom: 14px;
@@ -1738,7 +725,9 @@
       </div>
 
       <!-- 6. PROFILE SETTINGS VIEW (ORDERED & INTUITIVE MULTI-ENTRY) -->
-      <div id="view-profile" class="view-container">
+
+
+<div id="view-profile" class="view-container">
         <div
           class="table-card"
           style="padding: 28px; max-width: 960px; margin: 0 auto"
@@ -1827,22 +816,72 @@
               </button>
             </div>
 
-            <!-- AUTOFILL AUTOMATION SETTINGS -->
+            <!-- SITE SETTINGS & THEME PREFERENCES -->
             <div
               class="profile-section-card"
-              id="profile-sec-auto"
-              style="border-left: 4px solid var(--primary); background: #fdfcf7"
+              id="profile-sec-settings"
+              style="border-left: 4px solid var(--primary); background: var(--card-bg)"
             >
-              <div class="profile-section-header" data-section="auto">
+              <div class="profile-section-header" data-section="settings">
                 <div class="profile-section-title">
                   <span class="sec-chevron">▼</span>
-                  <span>Autofill Automation & Behavior</span>
+                  <span>Site Settings & Display Preferences</span>
                 </div>
                 <span style="font-size: 0.75rem; color: var(--text-muted)"
-                  >Automatic page filling & trigger control</span
+                  >Theme appearance, autofill behavior & account status</span
                 >
               </div>
               <div class="profile-section-body">
+                <!-- Theme Toggle -->
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 8px 0 14px 0;
+                    border-bottom: 1px solid var(--border-color);
+                    margin-bottom: 12px;
+                  "
+                >
+                  <div>
+                    <label
+                      style="
+                        font-weight: 700;
+                        font-size: 0.88rem;
+                        color: var(--text-main);
+                        margin: 0;
+                        display: block;
+                      "
+                    >
+                      Theme & Color Mode
+                    </label>
+                    <p
+                      style="
+                        margin: 2px 0 0 0;
+                        font-size: 0.78rem;
+                        color: var(--text-muted);
+                      "
+                    >
+                      Choose between the refined warm paper light theme and the artisanal warm dark theme.
+                    </p>
+                  </div>
+                  <div class="theme-switcher-group" style="display: inline-flex; background: var(--bg-color); padding: 3px; border-radius: 8px; border: 1px solid var(--border-color); gap: 4px;">
+                    <button type="button" class="theme-btn" id="themeBtnLight" data-theme="light" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; background: var(--card-bg); color: var(--text-main); box-shadow: var(--shadow-sm); display: inline-flex; align-items: center; gap: 4px;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                      Light
+                    </button>
+                    <button type="button" class="theme-btn" id="themeBtnDark" data-theme="dark" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; background: transparent; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                      Dark
+                    </button>
+                    <button type="button" class="theme-btn" id="themeBtnSystem" data-theme="system" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; background: transparent; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                      System
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Autofill Toggle -->
                 <div
                   style="
                     display: flex;
@@ -2255,7 +1294,170 @@
     </div>
 
     <!-- MANUAL APPLICATION ADD MODAL -->
-    <div class="center-modal-overlay" id="addAppModal">
+
+
+<div id="view-import-export" class="view-container">
+  <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+    
+    <!-- HEADER INTRO -->
+    <div class="table-card" style="padding: 24px 28px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 style="margin: 0; font-size: 1.3rem; color: var(--secondary);">Spreadsheet Import & Export</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin: 4px 0 0 0;">
+            Migrate job applications seamlessly between GRTS and spreadsheets (Excel, Google Sheets, Notion, Simplify, CSV).
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-primary-gold" id="quickExportHeaderBtn" style="padding: 8px 16px; font-size: 0.82rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export All to CSV
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN SECTION -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+      
+      <!-- IMPORT CARD -->
+      <div class="table-card" style="padding: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              1. Import Applications from CSV
+            </h3>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+              Auto-detects common column headers: <em>Company</em>, <em>Job Title/Role</em>, <em>Location</em>, <em>Date Applied</em>, <em>Status</em>, <em>Date Rejected</em>.
+            </div>
+          </div>
+          <span id="csvParsedCountBadge" style="display: none; font-size: 0.75rem; background: var(--primary-light); color: var(--primary-dark); padding: 4px 10px; border-radius: 6px; font-weight: 700; border: 1px solid var(--border-color);">
+            0 Rows Parsed
+          </span>
+        </div>
+
+        <!-- DRAG AND DROP ZONE -->
+        <div id="csvDropZone" style="border: 2px dashed var(--border-color); border-radius: 10px; padding: 32px 20px; text-align: center; background: var(--bg-color); cursor: pointer; transition: all 0.2s ease;">
+          <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display: none;" />
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+          <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main); margin-bottom: 4px;" id="dropZoneTitle">
+            Click to Browse or Drag & Drop CSV File Here
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);" id="dropZoneSub">
+            Supports Google Sheets, Excel (.csv), Notion, Simplify & custom job logs
+          </div>
+        </div>
+
+        <!-- PARSING LOADER -->
+        <div id="csvParseLoader" style="display: none; text-align: center; padding: 24px;">
+          <div class="loading-spinner" style="width: 28px; height: 28px; border: 3px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px;"></div>
+          <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Parsing spreadsheet columns & normalizing dates...</div>
+        </div>
+
+        <!-- PREVIEW CONTAINER (HIDDEN UNTIL FILE LOADED) -->
+        <div id="csvPreviewContainer" style="display: none; margin-top: 20px;">
+          
+          <!-- OPTIONS & MAPPING ROW -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; background: var(--bg-color); padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 600; color: var(--text-main); cursor: pointer; margin: 0;">
+                <input type="checkbox" id="csvSkipDuplicatesChk" checked style="width: 16px; height: 16px; margin: 0;" />
+                <span>Skip Duplicates (Match Company + Role)</span>
+              </label>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);" id="csvMatchSummaryText">
+              Auto-matched 6 of 6 columns
+            </div>
+          </div>
+
+          <!-- INTERACTIVE HTML PREVIEW TABLE -->
+          <div style="max-height: 380px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 18px;">
+            <table style="width: 100%; font-size: 0.82rem; border-collapse: collapse;">
+              <thead>
+                <tr style="background: var(--bg-color); position: sticky; top: 0; z-index: 2; border-bottom: 2px solid var(--border-color);">
+                  <th style="padding: 10px 12px; text-align: left; width: 40px;">#</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 22%;">Company *</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 26%;">Job Title / Role *</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 16%;">Location</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 12%;">Date Applied</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 14%;">Detected Status</th>
+                  <th style="padding: 10px 12px; text-align: left; width: 10%;">Rejected Date</th>
+                </tr>
+              </thead>
+              <tbody id="csvPreviewTbody">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- IMPORT PROGRESS BAR (DURING IMPORT) -->
+          <div id="importProgressContainer" style="display: none; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 600; color: var(--text-main); margin-bottom: 4px;">
+              <span id="importProgressLabel">Importing applications...</span>
+              <span id="importProgressPercent">0%</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: var(--bg-color); border-radius: 4px; overflow: hidden; border: 1px solid var(--border-color);">
+              <div id="importProgressBar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.15s ease;"></div>
+            </div>
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <button type="button" class="action-btn" id="csvCancelBtn" style="font-size: 0.82rem; padding: 8px 16px;">
+              Clear / Choose Another File
+            </button>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span id="importStatusMsg" style="font-size: 0.85rem; font-weight: 600;"></span>
+              <button type="button" class="btn-primary-gold" id="confirmImportBtn" style="padding: 9px 22px; font-size: 0.9rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Confirm & Import into GRTS
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPORT CARD -->
+      <div class="table-card" style="padding: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              2. Export Data to CSV
+            </h3>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+              Exports your application database cleanly into a 5-column standard CSV file.
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; background: var(--bg-color); padding: 18px 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main); margin-bottom: 4px;">
+              Standardized 5-Column CSV Export
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">
+              Columns included: <strong>Job Title</strong>, <strong>Company Name</strong>, <strong>Location</strong>, <strong>Date Applied</strong>, <strong>Date Rejected</strong>.
+            </div>
+          </div>
+          <button type="button" class="btn-primary-gold" id="exportCsvBtn" style="padding: 9px 22px; font-size: 0.9rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download CSV Export
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="center-modal-overlay" id="addAppModal">
       <div class="center-modal">
         <div
           style="
@@ -2427,14 +1629,18 @@
             ></textarea>
           </div>
 
-          <div
-            style="
-              display: flex;
-              justify-content: flex-end;
-              gap: 8px;
-              margin-top: 16px;
-            "
-          >
+                    <div class="form-group" style="margin-top: 6px;">
+            <label>Cover Letter</label>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+              <label class="action-btn" style="cursor: pointer; padding: 4px 10px; font-size: 0.76rem;">
+                Upload File (.pdf, .docx, .txt)
+                <input type="file" id="m_cover_letter_file" accept=".pdf,.docx,.txt" style="display: none;" />
+              </label>
+              <span id="m_cover_letter_filename" style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;"></span>
+            </div>
+            <textarea id="m_cover_letter" rows="3" placeholder="Paste tailored cover letter text or upload a document..."></textarea>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
             <button type="button" class="action-btn" id="cancelAddBtn">
               Cancel
             </button>
@@ -3259,6 +2465,39 @@
           </button>
         </div>
 
+                <!-- COVER LETTER SECTION -->
+        <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+          <div class="section-title" style="margin-bottom: 8px;">Cover Letter</div>
+          <div id="dCoverLetterDisplay" style="font-size: 0.84rem; color: var(--text-muted); background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; min-height: 50px; max-height: 180px; overflow-y: auto; white-space: pre-wrap; margin-bottom: 8px;">No cover letter attached.</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <button type="button" id="toggleCoverLetterEditBtn" class="action-btn">Edit Cover Letter</button>
+            <button type="button" id="copyCoverLetterBtn" class="action-btn">Copy Text</button>
+            <label class="action-btn" style="cursor: pointer; margin: 0;">
+              Upload File
+              <input type="file" id="uploadCoverLetterFile" accept=".pdf,.docx,.txt" style="display: none;" />
+            </label>
+            <span id="dCoverLetterFileName" style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;"></span>
+          </div>
+          <div id="dCoverLetterEditArea" style="display: none; margin-top: 10px;">
+            <textarea id="dCoverLetterTextarea" rows="4" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 0.82rem;" placeholder="Paste or type cover letter content..."></textarea>
+            <div style="display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end;">
+              <button type="button" id="cancelCoverLetterBtn" class="action-btn">Cancel</button>
+              <button type="button" id="saveCoverLetterBtn" class="btn-primary-gold" style="padding: 4px 12px; font-size: 0.8rem;">Save Cover Letter</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PORTALS & TRACKING LINKS -->
+        <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+          <div class="section-title" style="margin-bottom: 8px;">Portals & Additional Links</div>
+          <div id="dLinksList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
+          <div style="display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 6px; align-items: center;">
+            <input type="text" id="newLinkLabel" placeholder="Label (e.g. Candidate Portal)" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+            <input type="url" id="newLinkUrl" placeholder="https://portal.company.com/..." style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+            <button type="button" id="addLinkBtn" class="action-btn" style="padding: 5px 10px;">Add Link</button>
+          </div>
+        </div>
+
         <!-- CAPTURED NON-STANDARD APPLICATION QUESTIONS -->
         <div
           style="
@@ -3463,8 +2702,111 @@
       </div>
     </div>
 
+    
+<!-- EMAIL AUTO-SYNC & INBOX SCANNER MODAL -->
+<div class="center-modal-overlay" id="emailSyncModal" style="display: none;">
+  <div class="center-modal" style="max-width: 680px; width: 92%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        <h2 style="margin: 0; font-size: 1.15rem; color: var(--text-main)">Passive Email Auto-Scanner & Matcher</h2>
+      </div>
+      <button class="close-drawer-btn" id="closeEmailSyncModalBtn">&times;</button>
+    </div>
+
+    <!-- TABS: SETTINGS vs ACTIVITY LOGS -->
+    <div style="display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+      <button type="button" class="tab-btn active" id="emailTabSettingsBtn" style="padding: 5px 12px; font-size: 0.82rem; font-weight: 600; border-radius: 6px; border: none; background: #fef3c7; color: #92400e; cursor: pointer;">IMAP Settings</button>
+      <button type="button" class="tab-btn" id="emailTabLogsBtn" style="padding: 5px 12px; font-size: 0.82rem; font-weight: 500; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); cursor: pointer;">Sync Activity & Matched Events</button>
+    </div>
+
+    <!-- SETTINGS VIEW -->
+    <div id="emailSettingsView">
+      <form id="emailConfigForm">
+        <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+          <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45;">
+            <strong style="color: var(--text-main);">🔒 100% Local & Private:</strong> GRTS connects directly to your email provider over secure IMAP from your computer. <strong>No email bodies, headers, or credentials are ever transmitted to any hosted cloud database.</strong>
+          </div>
+          <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">
+            💡 <strong>Gmail Users:</strong> Standard Google passwords will not work. You must generate a 16-character <strong>App Password</strong> at <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color: var(--primary); text-decoration: underline;">myaccount.google.com/apppasswords</a> (requires 2-Step Verification enabled).
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+          <div class="form-group">
+            <label>Email Provider Preset</label>
+            <select id="em_provider">
+              <option value="gmail" selected>Gmail (imap.gmail.com)</option>
+              <option value="outlook">Outlook / Hotmail (outlook.office365.com)</option>
+              <option value="yahoo">Yahoo Mail (imap.mail.yahoo.com)</option>
+              <option value="icloud">Apple iCloud (imap.mail.me.com)</option>
+              <option value="custom">Custom IMAP Server</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="em_address" required placeholder="your.name@gmail.com" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+          <div class="form-group">
+            <label>App Password * <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 400;">(16-character code)</span></label>
+            <input type="password" id="em_password" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label>Auto-Sync Status</label>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+              <input type="checkbox" id="em_auto_sync" checked style="width: 16px; height: 16px;" />
+              <label for="em_auto_sync" style="font-size: 0.82rem; cursor: pointer; margin: 0;">Passive Background Sync (Every 10 min)</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADVANCED IMAP HOST/PORT -->
+        <details style="margin-bottom: 14px; font-size: 0.8rem; color: var(--text-muted);">
+          <summary style="cursor: pointer; font-weight: 500; color: var(--text-main); margin-bottom: 6px;">Advanced IMAP Server Settings</summary>
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-top: 8px;">
+            <div class="form-group"><label>IMAP Host</label><input type="text" id="em_host" value="imap.gmail.com" /></div>
+            <div class="form-group"><label>Port</label><input type="number" id="em_port" value="993" /></div>
+            <div class="form-group"><label>SSL</label><select id="em_ssl"><option value="1">SSL (Yes)</option><option value="0">Plain (No)</option></select></div>
+          </div>
+        </details>
+
+        <div id="emailConnectionFeedback" style="display: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 12px; font-weight: 600;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+          <button type="button" id="testEmailBtn" class="action-btn" style="padding: 7px 14px; font-size: 0.82rem;">Test Connection</button>
+          <div style="display: flex; gap: 8px;">
+            <button type="submit" class="btn-primary-gold" style="padding: 7px 16px; font-size: 0.82rem;">Save Settings</button>
+            <button type="button" id="syncNowEmailBtn" class="btn-primary-gold" style="padding: 7px 16px; font-size: 0.82rem;">Sync Inbox Now</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- LOGS & ACTIVITY VIEW -->
+    <div id="emailLogsView" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-size: 0.82rem; color: var(--text-muted);">Last Synced: <strong id="emailLastSyncText">Never</strong></span>
+        <button type="button" id="refreshLogsBtn" class="action-btn" style="padding: 4px 10px; font-size: 0.75rem;">Refresh Logs</button>
+      </div>
+      <div id="emailLogsContainer" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; background: #fafafa;">
+        <div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.82rem;">No sync events recorded yet. Click "Sync Inbox Now" to begin.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
     <!-- TOAST NOTIFICATION -->
     <div id="toastNotification" class="grts-toast"></div>
+
+    <!-- Dashboard Modular JavaScript Architecture -->
+
+
+
+    </div>
 
     <!-- Dashboard Modular JavaScript Architecture -->
     <script src="us_map_data.js"></script>
@@ -3479,6 +2821,7 @@
     <script src="dashboard/qa_bank_view.js"></script>
     <script src="dashboard/drawer_and_modals.js"></script>
     <script src="dashboard/profile_view.js"></script>
+    <script src="dashboard/import_export_view.js"></script>
     <script src="dashboard/bootstrap.js"></script>
   </body>
 </html>

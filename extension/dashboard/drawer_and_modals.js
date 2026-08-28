@@ -882,17 +882,29 @@ window.openDetailDrawer = async function (appId) {
       let logoSrc = app.company_logo;
       if (!logoSrc && app.company_website) {
         try {
-          const d = new URL(
-            app.company_website.startsWith("http")
-              ? app.company_website
-              : `https://${app.company_website}`,
-          ).hostname.replace(/^www\./, "");
-          logoSrc = `https://${d}/favicon.ico`;
+          const fullUrl = app.company_website.startsWith("http")
+            ? app.company_website
+            : `https://${app.company_website}`;
+          const host = new URL(fullUrl).hostname.toLowerCase();
+          const isAts = [
+            "oraclecloud.com", "oracle.com", "taleo.net",
+            "myworkdayjobs.com", "workday.com",
+            "greenhouse.io", "lever.co", "ashbyhq.com",
+            "smartrecruiters.com", "icims.com", "jobvite.com"
+          ].some((ats) => host.includes(ats));
+          if (!isAts) {
+            const d = host.replace(/^www\./, "");
+            logoSrc = `https://${d}/favicon.ico`;
+          }
         } catch (e) {}
       }
       if (!logoSrc && app.company_name) {
         const slug = app.company_name.toLowerCase().replace(/[^a-z0-9]/g, "");
-        if (slug) logoSrc = `https://${slug}.com/favicon.ico`;
+        if (slug.includes("jpmorgan") || slug.includes("jpmc")) {
+          logoSrc = `https://jpmorganchase.com/favicon.ico`;
+        } else if (slug) {
+          logoSrc = `https://${slug}.com/favicon.ico`;
+        }
       }
       dLogoEl.src = logoSrc || "grts-logo-sqr.svg";
       dLogoEl.onerror = function () {
@@ -1093,6 +1105,9 @@ function initManualAddModal() {
       prev.src = "";
       prev.style.display = "none";
     }
+    manualCoverLetterFileName = "";
+    const fnEl = document.getElementById("m_cover_letter_filename");
+    if (fnEl) fnEl.innerText = "";
   };
 
   openBtn.addEventListener("click", openModal);
@@ -1113,6 +1128,28 @@ function initManualAddModal() {
       } else {
         mLogoPreview.src = "";
         mLogoPreview.style.display = "none";
+      }
+    });
+  }
+
+  let manualCoverLetterFileName = "";
+  const mCoverLetterFileInput = document.getElementById("m_cover_letter_file");
+  const mCoverLetterFileNameEl = document.getElementById("m_cover_letter_filename");
+  const mCoverLetterTextarea = document.getElementById("m_cover_letter");
+
+  if (mCoverLetterFileInput) {
+    mCoverLetterFileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      manualCoverLetterFileName = file.name;
+      if (mCoverLetterFileNameEl) mCoverLetterFileNameEl.innerText = file.name;
+
+      if (file.name.endsWith(".txt")) {
+        const reader = new FileReader();
+        reader.onload = (re) => {
+          if (mCoverLetterTextarea) mCoverLetterTextarea.value = re.target.result;
+        };
+        reader.readAsText(file);
       }
     });
   }
@@ -1164,6 +1201,8 @@ function initManualAddModal() {
         document.getElementById("m_company_website")?.value.trim() || null,
       company_logo:
         document.getElementById("m_company_logo")?.value.trim() || null,
+      cover_letter: document.getElementById("m_cover_letter")?.value.trim() || null,
+      cover_letter_file_name: manualCoverLetterFileName || null,
       notes:
         document.getElementById("m_notes").value.trim() ||
         (targetStatus === "Saved"
@@ -1215,3 +1254,304 @@ window.deleteApplication = async function (appId) {
     console.error("Failed to delete application:", err);
   }
 };
+
+function initEmailSyncModal() {
+  const openBtn = document.getElementById("openEmailSyncModalBtn");
+  const modal = document.getElementById("emailSyncModal");
+  const closeBtn = document.getElementById("closeEmailSyncModalBtn");
+  if (!modal || !openBtn) return;
+
+  const openModal = async () => {
+    modal.style.display = "flex";
+    await loadEmailConfig();
+    await loadEmailLogs();
+  };
+
+  const closeModal = () => {
+    modal.style.display = "none";
+  };
+
+  openBtn.addEventListener("click", openModal);
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  const tabSettingsBtn = document.getElementById("emailTabSettingsBtn");
+  const tabLogsBtn = document.getElementById("emailTabLogsBtn");
+  const settingsView = document.getElementById("emailSettingsView");
+  const logsView = document.getElementById("emailLogsView");
+
+  if (tabSettingsBtn && tabLogsBtn) {
+    tabSettingsBtn.addEventListener("click", () => {
+      tabSettingsBtn.classList.add("active");
+      tabSettingsBtn.style.background = "#fef3c7";
+      tabSettingsBtn.style.color = "#92400e";
+      tabLogsBtn.classList.remove("active");
+      tabLogsBtn.style.background = "transparent";
+      tabLogsBtn.style.color = "var(--text-muted)";
+      if (settingsView) settingsView.style.display = "block";
+      if (logsView) logsView.style.display = "none";
+    });
+
+    tabLogsBtn.addEventListener("click", () => {
+      tabLogsBtn.classList.add("active");
+      tabLogsBtn.style.background = "#fef3c7";
+      tabLogsBtn.style.color = "#92400e";
+      tabSettingsBtn.classList.remove("active");
+      tabSettingsBtn.style.background = "transparent";
+      tabSettingsBtn.style.color = "var(--text-muted)";
+      if (settingsView) settingsView.style.display = "none";
+      if (logsView) logsView.style.display = "block";
+      loadEmailLogs();
+    });
+  }
+
+  const providerSelect = document.getElementById("em_provider");
+  const hostInput = document.getElementById("em_host");
+  const portInput = document.getElementById("em_port");
+  const sslSelect = document.getElementById("em_ssl");
+
+  if (providerSelect) {
+    providerSelect.addEventListener("change", () => {
+      const p = providerSelect.value;
+      if (p === "gmail") {
+        if (hostInput) hostInput.value = "imap.gmail.com";
+        if (portInput) portInput.value = "993";
+        if (sslSelect) sslSelect.value = "1";
+      } else if (p === "outlook") {
+        if (hostInput) hostInput.value = "outlook.office365.com";
+        if (portInput) portInput.value = "993";
+        if (sslSelect) sslSelect.value = "1";
+      } else if (p === "yahoo") {
+        if (hostInput) hostInput.value = "imap.mail.yahoo.com";
+        if (portInput) portInput.value = "993";
+        if (sslSelect) sslSelect.value = "1";
+      } else if (p === "icloud") {
+        if (hostInput) hostInput.value = "imap.mail.me.com";
+        if (portInput) portInput.value = "993";
+        if (sslSelect) sslSelect.value = "1";
+      }
+    });
+  }
+
+  async function loadEmailConfig() {
+    try {
+      const res = await fetch(`${API_BASE}/api/email/config`);
+      if (res.ok) {
+        const json = await res.json();
+        const d = json.data || {};
+        if (d.provider && providerSelect) providerSelect.value = d.provider;
+        if (d.email_address) document.getElementById("em_address").value = d.email_address;
+        if (d.imap_host && hostInput) hostInput.value = d.imap_host;
+        if (d.imap_port && portInput) portInput.value = d.imap_port;
+        if (d.use_ssl !== undefined && sslSelect) sslSelect.value = d.use_ssl ? "1" : "0";
+        if (d.auto_sync !== undefined) {
+          const autoSyncEl = document.getElementById("em_auto_sync");
+          if (autoSyncEl) autoSyncEl.checked = Boolean(d.auto_sync);
+        }
+        if (d.last_synced_at) {
+          const syncText = document.getElementById("emailLastSyncText");
+          if (syncText) syncText.innerText = d.last_synced_at;
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load email configuration:", err);
+    }
+  }
+
+  const testBtn = document.getElementById("testEmailBtn");
+  if (testBtn) {
+    testBtn.addEventListener("click", async () => {
+      const addr = document.getElementById("em_address")?.value.trim();
+      const pwd = document.getElementById("em_password")?.value.trim();
+      const host = hostInput ? hostInput.value.trim() : "imap.gmail.com";
+      const port = portInput ? parseInt(portInput.value, 10) : 993;
+      const ssl = sslSelect ? sslSelect.value === "1" : true;
+
+      if (!addr) {
+        alert("Please enter your Email Address to test.");
+        return;
+      }
+
+      const origText = testBtn.innerText;
+      testBtn.innerText = "Testing...";
+      testBtn.disabled = true;
+
+      const feedbackBox = document.getElementById("emailConnectionFeedback");
+      if (feedbackBox) {
+        feedbackBox.style.display = "none";
+        feedbackBox.innerText = "";
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/email/test`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            imap_host: host,
+            imap_port: port,
+            use_ssl: ssl,
+            email_address: addr,
+            password: pwd || null
+          })
+        });
+        const result = await res.json().catch(() => ({}));
+        const errMsg = result.message || (typeof result.detail === "string" ? result.detail : (result.detail ? JSON.stringify(result.detail) : "Unknown error"));
+
+        if (feedbackBox) {
+          feedbackBox.style.display = "block";
+          if (res.ok && result.status === "success") {
+            feedbackBox.style.background = "#ecfdf5";
+            feedbackBox.style.color = "#065f46";
+            feedbackBox.style.border = "1px solid #a7f3d0";
+            feedbackBox.innerHTML = `✓ <strong>Connected Successfully:</strong> ${escapeHtml(result.message || "Mailbox is accessible.")}`;
+            showToast("IMAP connection verified");
+          } else {
+            feedbackBox.style.background = "#fff1f2";
+            feedbackBox.style.color = "#9f1239";
+            feedbackBox.style.border = "1px solid #fecdd3";
+            feedbackBox.innerHTML = `✕ <strong>Connection Failed:</strong> ${escapeHtml(errMsg)}`;
+          }
+        }
+      } catch (err) {
+        if (feedbackBox) {
+          feedbackBox.style.display = "block";
+          feedbackBox.style.background = "#fff1f2";
+          feedbackBox.style.color = "#9f1239";
+          feedbackBox.style.border = "1px solid #fecdd3";
+          feedbackBox.innerHTML = `✕ <strong>API / Network Error:</strong> ${escapeHtml(err.message)}`;
+        }
+      } finally {
+        testBtn.innerText = origText;
+        testBtn.disabled = false;
+      }
+    });
+  }
+
+  const configForm = document.getElementById("emailConfigForm");
+  if (configForm) {
+    configForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        provider: providerSelect?.value || "gmail",
+        email_address: document.getElementById("em_address")?.value.trim(),
+        password: document.getElementById("em_password")?.value.trim() || undefined,
+        imap_host: hostInput?.value.trim() || "imap.gmail.com",
+        imap_port: parseInt(portInput?.value || "993", 10),
+        use_ssl: sslSelect?.value === "1",
+        auto_sync: document.getElementById("em_auto_sync")?.checked ?? true,
+        sync_interval_mins: 10
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/email/config`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          showToast("Email sync settings saved");
+        } else {
+          alert("Failed to save email settings.");
+        }
+      } catch (err) {
+        console.error("Error saving email settings:", err);
+      }
+    });
+  }
+
+  const syncNowBtn = document.getElementById("syncNowEmailBtn");
+  if (syncNowBtn) {
+    syncNowBtn.addEventListener("click", async () => {
+      const origText = syncNowBtn.innerText;
+      syncNowBtn.innerText = "Scanning Inbox...";
+      syncNowBtn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/email/sync?force=true`, { method: "POST" });
+        const data = await res.json();
+        if (res.ok && data.status === "success") {
+          showToast(`Scanned ${data.scanned} emails: ${data.matched_and_updated} matched and updated!`);
+          if (data.last_synced_at) {
+            const syncText = document.getElementById("emailLastSyncText");
+            if (syncText) syncText.innerText = data.last_synced_at;
+          }
+          loadDashboardData();
+          loadEmailLogs();
+        } else {
+          alert(`Sync result: ${data.message || "Failed"}`);
+        }
+      } catch (err) {
+        alert(`Error triggering sync: ${err.message}`);
+      } finally {
+        syncNowBtn.innerText = origText;
+        syncNowBtn.disabled = false;
+      }
+    });
+  }
+
+  const refreshLogsBtn = document.getElementById("refreshLogsBtn");
+  if (refreshLogsBtn) {
+    refreshLogsBtn.addEventListener("click", loadEmailLogs);
+  }
+
+  async function loadEmailLogs() {
+    const container = document.getElementById("emailLogsContainer");
+    if (!container) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/email/logs?limit=50`);
+      if (!res.ok) return;
+      const json = await res.json();
+      const logs = json.data || [];
+
+      if (logs.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.82rem;">No sync events recorded yet. Click "Sync Inbox Now" to scan.</div>`;
+        return;
+      }
+
+      container.innerHTML = logs.map((item) => {
+        let badgeColor = "#64748b";
+        let badgeBg = "#f1f5f9";
+        let badgeText = item.category ? item.category.toUpperCase() : "LOG";
+
+        if (item.category === "rejection") {
+          badgeColor = "#dc2626";
+          badgeBg = "#fee2e2";
+          badgeText = "REJECTION";
+        } else if (item.category === "oa") {
+          badgeColor = "#d97706";
+          badgeBg = "#fef3c7";
+          badgeText = "OA INVITE";
+        } else if (item.category === "interview") {
+          badgeColor = "#16a34a";
+          badgeBg = "#dcfce7";
+          badgeText = "INTERVIEW";
+        }
+
+        const matchedText = item.matched_company
+          ? `<span style="color: #1e293b; font-weight: 600;">Matched: ${item.matched_company}</span>`
+          : `<span style="color: #94a3b8;">Unmatched</span>`;
+
+        return `
+          <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 10px; font-size: 0.8rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: ${badgeBg}; color: ${badgeColor};">${badgeText}</span>
+                ${matchedText}
+              </div>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">${item.email_date || item.created_at || ""}</span>
+            </div>
+            <div style="color: var(--text-main); font-weight: 500; margin-bottom: 2px;">${item.subject || "(No Subject)"}</div>
+            <div style="font-size: 0.74rem; color: var(--text-muted);">${item.sender || ""}</div>
+          </div>
+        `;
+      }).join("");
+
+    } catch (err) {
+      console.error("Error loading email logs:", err);
+    }
+  }
+}
+

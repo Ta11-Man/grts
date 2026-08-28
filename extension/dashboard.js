@@ -446,6 +446,16 @@ window.markOaSkipped = async function (appId) {
   }
 };
 
+const ATS_DOMAINS_LIST_DASH = [
+  "oraclecloud.com", "oracle.com", "taleo.net",
+  "myworkdayjobs.com", "workday.com",
+  "greenhouse.io", "lever.co", "ashbyhq.com",
+  "smartrecruiters.com", "icims.com", "jobvite.com",
+  "rippling.com", "bamboohr.com", "jazz.co", "jazzhr.com",
+  "recruitee.com", "brassring.com", "successfactors.com",
+  "adp.com", "paylocity.com", "phenompeople.com", "eightfold.ai"
+];
+
 function getCompanyFavicon(url) {
   if (!url) return null;
   try {
@@ -453,7 +463,11 @@ function getCompanyFavicon(url) {
       url.startsWith("http://") || url.startsWith("https://")
         ? url
         : `https://${url}`;
-    const domain = new URL(fullUrl).hostname.replace(/^www\./, "");
+    const host = new URL(fullUrl).hostname.toLowerCase();
+    if (ATS_DOMAINS_LIST_DASH.some((ats) => host.includes(ats))) {
+      return null;
+    }
+    const domain = host.replace(/^www\./, "");
     return `https://${domain}/favicon.ico`;
   } catch {
     return null;
@@ -469,11 +483,19 @@ window.handleLogoFallback = function (img, companyName, companyWebsite) {
         const fullUrl = companyWebsite.startsWith("http")
           ? companyWebsite
           : `https://${companyWebsite}`;
-        domain = new URL(fullUrl).hostname.replace(/^www\./, "");
+        const host = new URL(fullUrl).hostname.toLowerCase();
+        if (!ATS_DOMAINS_LIST_DASH.some((ats) => host.includes(ats))) {
+          domain = host.replace(/^www\./, "");
+        }
       } catch (e) {}
     }
     if (!domain && companyName) {
-      domain = companyName.toLowerCase().replace(/[^a-z0-9]/g, "") + ".com";
+      const clean = companyName.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (clean.includes("jpmorgan") || clean.includes("jpmc")) {
+        domain = "jpmorganchase.com";
+      } else if (clean) {
+        domain = clean + ".com";
+      }
     }
     if (domain) {
       img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;

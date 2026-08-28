@@ -62,7 +62,9 @@ function isEligibleJobSite() {
         'greenhouse.io', 'myworkdayjobs.com', 'workday.com', 
         'lever.co', 'ashbyhq.com', 'smartrecruiters.com', 
         'jobvite.com', 'rippling.com', 'bamboohr.com', 
-        'icims.com', 'taleo.net', 'jazz.co', 'recruitee.com',
+        'icims.com', 'taleo.net', 'oraclecloud.com', 'oracle.com',
+        'jazz.co', 'recruitee.com', 'brassring.com', 'successfactors.com',
+        'adp.com', 'paylocity.com', 'phenompeople.com', 'eightfold.ai',
         'linkedin.com/jobs', 'ziprecruiter.com', 'indeed.com'
     ];
 
@@ -299,42 +301,128 @@ if (isEligibleJobSite()) {
 }
 
 /**
- * Derives a crisp company logo from domain or page assets
- * Prioritizes direct https://<domain>/favicon.ico before attempting other ways of getting an icon.
+ * Checks if a given hostname is a known third-party Applicant Tracking System (ATS)
+ */
+function isKnownAtsHostname(hostname) {
+    if (!hostname) return false;
+    const host = hostname.toLowerCase();
+    const atsList = [
+        "oraclecloud.com", "oracle.com", "taleo.net",
+        "myworkdayjobs.com", "workday.com",
+        "greenhouse.io", "lever.co", "ashbyhq.com",
+        "smartrecruiters.com", "icims.com", "jobvite.com",
+        "rippling.com", "bamboohr.com", "jazz.co", "jazzhr.com",
+        "recruitee.com", "brassring.com", "successfactors.com",
+        "successfactors.eu", "adp.com", "paylocity.com",
+        "phenompeople.com", "eightfold.ai", "avature.net",
+        "careers-page.com"
+    ];
+    return atsList.some(ats => host.includes(ats));
+}
+
+/**
+ * Extracts explicit high-resolution company favicon or branding image from the live DOM
+ */
+function extractPageLogoOrFavicon() {
+    // 1. Try explicit custom site / page favicons in DOM
+    const favicons = Array.from(document.querySelectorAll(
+        'link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"], link[rel="apple-touch-icon-precomposed"]'
+    ));
+    for (const fav of favicons) {
+        const href = fav.href;
+        if (href && !href.startsWith("data:") && (href.startsWith("http://") || href.startsWith("https://"))) {
+            // Filter out generic ATS vendor default favicons
+            const isGenericAtsFav = (
+                href.endsWith("oraclecloud.com/favicon.ico") ||
+                href.endsWith("oracle.com/favicon.ico") ||
+                href.endsWith("myworkdayjobs.com/favicon.ico") ||
+                href.endsWith("workday.com/favicon.ico") ||
+                href.endsWith("greenhouse.io/favicon.ico") ||
+                href.endsWith("lever.co/favicon.ico")
+            );
+            if (!isGenericAtsFav) {
+                return href;
+            }
+        }
+    }
+
+    // 2. Try explicit company logo elements in page DOM
+    const logoSelectors = [
+        'img[data-automation-id="companyLogo"]',
+        'img[data-automation-id="logo"]',
+        '.cx-site-header img',
+        '.cx-site-logo img',
+        '[data-qa*="logo"] img',
+        '[data-qa="site-logo"] img',
+        '.main-header-logo img',
+        'header img[src*="logo" i]',
+        'img[class*="logo" i]',
+        'img[alt*="logo" i]',
+        'header img',
+        'meta[property="og:image"]'
+    ];
+
+    for (const sel of logoSelectors) {
+        const el = document.querySelector(sel);
+        if (el) {
+            const src = el.href || el.src || el.content;
+            if (src && !src.startsWith("data:") && (src.startsWith("http://") || src.startsWith("https://"))) {
+                // Ensure it is not a generic vendor asset
+                if (!src.includes("oracle-cloud-logo") && !src.includes("workday_logo")) {
+                    return src;
+                }
+            }
+        }
+    }
+
+    return "";
+}
+
+/**
+ * Derives a crisp company logo from page assets or domain
  */
 function resolveCompanyLogo(companyName, fallbackDomain = "") {
-    // 1. Determine target company domain
+    // 1. Try explicit page favicon / logo from current DOM first
+    if (typeof document !== "undefined") {
+        const domLogo = extractPageLogoOrFavicon();
+        if (domLogo) return domLogo;
+    }
+
+    // 2. Determine target company domain
     let domain = "";
+    let isAts = false;
     if (fallbackDomain) {
         try {
             const raw = fallbackDomain.startsWith("http") ? fallbackDomain : `https://${fallbackDomain}`;
             const host = new URL(raw).hostname.toLowerCase();
-            const isAts = ["greenhouse.io", "myworkdayjobs.com", "lever.co", "ashbyhq.com", "smartrecruiters.com", "icims.com"].some(ats => host.includes(ats));
+            isAts = isKnownAtsHostname(host);
             if (!isAts) {
                 domain = host.replace(/^www\./, "");
+            } else {
+                // If ATS subdomain matches company (e.g. jpmc.fa.oraclecloud.com -> jpmc.com)
+                const parts = host.split('.');
+                if (parts.length >= 3 && !["fa", "jobs", "careers", "external", "wd1", "wd2", "wd3", "wd5"].includes(parts[0])) {
+                    if (parts[0] === "jpmc") {
+                        domain = "jpmorganchase.com";
+                    } else {
+                        domain = `${parts[0]}.com`;
+                    }
+                }
             }
         } catch (e) {}
     }
 
     if (!domain && companyName) {
         const cleanName = companyName.toLowerCase().replace(/[^a-z0-9]/g, "");
-        if (cleanName) domain = `${cleanName}.com`;
+        if (cleanName.includes("jpmorgan") || cleanName.includes("jpmc")) {
+            domain = "jpmorganchase.com";
+        } else if (cleanName) {
+            domain = `${cleanName}.com`;
+        }
     }
 
-    // 1. Primary Method: Try direct https://<domain>/favicon.ico format first
-    if (domain) {
-        return `https://${domain}/favicon.ico`;
-    }
-
-    // 2. Try explicit logo elements / favicons in page DOM
-    const pageLogo = document.querySelector('link[rel="icon"], link[rel="shortcut icon"], img[data-automation-id="companyLogo"], header img, .main-header-logo img, meta[property="og:image"]');
-    if (pageLogo) {
-        const src = pageLogo.href || pageLogo.src || pageLogo.content;
-        if (src && !src.includes("data:") && src.startsWith("http")) return src;
-    }
-
-    // 3. Fallback to Google favicon service
-    if (domain) {
+    // 3. If domain is valid non-ATS domain, try Google high-res favicon service or direct favicon
+    if (domain && !isKnownAtsHostname(domain)) {
         return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`;
     }
 
@@ -655,7 +743,94 @@ function parseGoogleCareers() {
 }
 
 /**
- * 8. Generic ATS Fallback
+ * 8. Oracle Cloud HCM & Candidate Experience Parser
+ */
+function parseOracleCloud() {
+    let company = "";
+    let logoUrl = "";
+    let companyWebsite = "";
+
+    // 1. Detect company name from title, meta tags, or DOM header
+    const siteNameMeta = document.querySelector('meta[property="og:site_name"]')?.content;
+    const authorMeta = document.querySelector('meta[name="author"]')?.content;
+    
+    // Check header logo or site branding
+    const headerLogoImg = document.querySelector('.cx-site-header img, .cx-site-logo img, [data-qa*="logo"] img, [data-qa="site-logo"] img, header img[src*="logo" i], header img, img[alt*="logo" i]');
+    if (headerLogoImg) {
+        if (headerLogoImg.src && (headerLogoImg.src.startsWith("http://") || headerLogoImg.src.startsWith("https://")) && !headerLogoImg.src.includes("oracle")) {
+            logoUrl = headerLogoImg.src;
+        }
+        if (headerLogoImg.alt && !headerLogoImg.alt.toLowerCase().includes("logo")) {
+            company = headerLogoImg.alt.trim();
+        }
+    }
+
+    if (!company && siteNameMeta) company = siteNameMeta.trim();
+    if (!company && authorMeta) company = authorMeta.trim();
+
+    // Check document.title e.g. "Candidate Profile | JPMorgan Chase & Co." or "Software Engineer - J.P. Morgan"
+    if (!company && document.title) {
+        const titleParts = document.title.split(/[-|•–—]/);
+        if (titleParts.length > 1) {
+            const possibleComp = titleParts[titleParts.length - 1].trim();
+            if (!/oracle|candidate\s*experience|careers|jobs|login|profile/i.test(possibleComp)) {
+                company = possibleComp;
+            }
+        }
+    }
+
+    // Infer from subdomain e.g. jpmc.fa.oraclecloud.com -> jpmc
+    const hostParts = window.location.hostname.split('.');
+    if (!company && hostParts.length >= 3) {
+        let tenant = hostParts[0].toLowerCase();
+        if (tenant === "jpmc") company = "JPMorgan Chase";
+        else company = tenant.charAt(0).toUpperCase() + tenant.slice(1);
+    }
+
+    // Determine title
+    let title = document.querySelector('h1, [data-qa="job-title"], .cx-job-title, .cx-requisition-title, [id*="requisitionTitle"]')?.innerText?.trim() || "";
+    if (isGenericTitle(title, company) || /candidate\s*profile|my\s*profile|sign\s*in/i.test(title)) {
+        title = document.querySelector('h2, [data-qa="requisition-title"]')?.innerText?.trim() || "";
+        if (isGenericTitle(title, company)) title = "";
+    }
+
+    // Location
+    const loc = document.querySelector('[data-qa="job-location"], .cx-job-location, [id*="location"], .location')?.innerText?.trim() || "";
+    
+    // Description
+    const desc = document.querySelector('[data-qa="job-description"], .cx-job-description, [id*="jobDescription"], #content')?.innerText?.trim() || "";
+
+    // Requisition ID / ATS Job ID
+    let ats_job_id = "";
+    const reqMatch = window.location.pathname.match(/requisitions\/(?:preview\/)?([A-Za-z0-9_-]+)/i) || 
+                     (document.body ? document.body.innerText.match(/requisition\s*(?:id|#)?\s*[:\s]\s*([A-Za-z0-9_-]+)/i) : null);
+    if (reqMatch) ats_job_id = reqMatch[1];
+
+    const cleanCompany = company || "Applied Company";
+    const { workplace_type, days_in_office } = extractWorkplaceAndDays(`${title} ${desc}`, loc);
+    const salary_range = extractSalaryRange(desc);
+    const job_type = extractJobType(`${title} ${desc}`);
+
+    const resolvedLogo = logoUrl || resolveCompanyLogo(cleanCompany, companyWebsite || window.location.hostname);
+
+    return {
+        company: cleanCompany,
+        title: title,
+        location: loc,
+        description: desc,
+        workplace_type: workplace_type,
+        days_in_office: days_in_office,
+        salary_range: salary_range,
+        job_type: job_type,
+        website: companyWebsite || window.location.origin,
+        logo: resolvedLogo,
+        ats_job_id: ats_job_id,
+        ats_platform: "oraclecloud"
+    };
+}
+
+/**
+ * 9. Generic ATS Fallback
  */
 function parseGenericATS() {
     let data = {
@@ -727,6 +902,7 @@ function extractCoverLetterFromPage() {
 function detectAndParseCurrentPage() {
     let data;
     const hostname = window.location.hostname.toLowerCase();
+    const pathname = window.location.pathname.toLowerCase();
     const ogUrl = (document.querySelector('meta[property="og:url"]')?.content || "").toLowerCase();
 
     if (hostname.includes("greenhouse.io") || ogUrl.includes("greenhouse.io") || document.querySelector('#application-form, #application_form, .greenhouse-job-application')) {
@@ -739,6 +915,8 @@ function detectAndParseCurrentPage() {
         data = parseAshby();
     } else if (hostname.includes("smartrecruiters.com")) {
         data = parseSmartRecruiters();
+    } else if (hostname.includes("oraclecloud.com") || hostname.includes("taleo.net") || pathname.includes("/candidateexperience/") || pathname.includes("/hcmui/")) {
+        data = parseOracleCloud();
     } else if (hostname.includes("linkedin.com")) {
         data = parseLinkedIn();
     } else if (hostname.includes("google.com") && window.location.pathname.includes("careers")) {

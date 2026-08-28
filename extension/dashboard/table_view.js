@@ -27,25 +27,39 @@ function initViewTabs() {
  * 2. Search & Filter Controls & Clickable Funnel Metric Cards
  */
 function updateMetricCardActiveState() {
-  const totalAppsCard = document.getElementById("mTotalAppsCard");
-  const savedCard = document.getElementById("mSavedCard");
-  const interviewingCard = document.getElementById("mInterviewingCard");
-  const offersCard = document.getElementById("mOffersCard");
-  const hearbackCard = document.getElementById("mHearbackCard");
-
   document
     .querySelectorAll(".metric-card")
     .forEach((c) => c.classList.remove("active-filter"));
-  if (activeCustomFilter === "interviewing" && interviewingCard)
+
+  const totalCard =
+    document.getElementById("mTotalAppsCard") ||
+    document.getElementById("mcard-total");
+  const savedCard = document.getElementById("mSavedCard");
+  const interviewingCard =
+    document.getElementById("mInterviewingCard") ||
+    document.getElementById("mcard-interview");
+  const offersCard =
+    document.getElementById("mOffersCard") ||
+    document.getElementById("mcard-offer");
+  const hearbackCard = document.getElementById("mHearbackCard");
+  const oaCard = document.getElementById("mcard-oa");
+  const ghostedCard = document.getElementById("mcard-ghosted");
+
+  if (activeCustomFilter === "interviewing" && interviewingCard) {
     interviewingCard.classList.add("active-filter");
-  else if (activeCustomFilter === "offers" && offersCard)
+  } else if (activeCustomFilter === "offers" && offersCard) {
     offersCard.classList.add("active-filter");
-  else if (activeCustomFilter === "hearback" && hearbackCard)
+  } else if (activeCustomFilter === "hearback" && hearbackCard) {
     hearbackCard.classList.add("active-filter");
-  else if (activeStatusFilter === "Saved" && savedCard)
+  } else if (activeStatusFilter === "Saved" && savedCard) {
     savedCard.classList.add("active-filter");
-  else if (!activeStatusFilter && !activeCustomFilter && totalAppsCard)
-    totalAppsCard.classList.add("active-filter");
+  } else if (activeStatusFilter === "Online Assessment (OA)" && oaCard) {
+    oaCard.classList.add("active-filter");
+  } else if (activeStatusFilter === "Ghosted" && ghostedCard) {
+    ghostedCard.classList.add("active-filter");
+  } else if (!activeStatusFilter && !activeCustomFilter && totalCard) {
+    totalCard.classList.add("active-filter");
+  }
 }
 
 function initFiltersAndSearch() {
@@ -53,39 +67,52 @@ function initFiltersAndSearch() {
   const sortSelect = document.getElementById("sortBySelect");
   const statusSelect = document.getElementById("statusFilterSelect");
 
-  const totalAppsCard = document.getElementById("mTotalAppsCard");
-  const savedCard = document.getElementById("mSavedCard");
-  const interviewingCard = document.getElementById("mInterviewingCard");
-  const offersCard = document.getElementById("mOffersCard");
-  const hearbackCard = document.getElementById("mHearbackCard");
-
   let debounceTimer = null;
-  searchInput.addEventListener("input", (e) => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      activeSearchQuery = e.target.value.trim();
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        activeSearchQuery = e.target.value.trim();
+        loadDashboardData();
+      }, 300);
+    });
+  }
+
+  if (sortSelect) {
+    sortSelect.addEventListener("change", (e) => {
+      activeSortBy = e.target.value;
       loadDashboardData();
-    }, 300);
-  });
+    });
+  }
 
-  sortSelect.addEventListener("change", (e) => {
-    activeSortBy = e.target.value;
-    loadDashboardData();
-  });
+  if (statusSelect) {
+    statusSelect.addEventListener("change", (e) => {
+      activeStatusFilter = e.target.value;
+      activeCustomFilter = null;
+      updateMetricCardActiveState();
+      loadDashboardData();
+    });
+  }
 
-  statusSelect.addEventListener("change", (e) => {
-    activeStatusFilter = e.target.value;
-    activeCustomFilter = null;
-    updateMetricCardActiveState();
-    loadDashboardData();
-  });
+  const activateTableView = () => {
+    const tableTabBtn = document.querySelector(
+      '.view-tab-btn[data-view="view-table"]',
+    );
+    if (tableTabBtn && !tableTabBtn.classList.contains("active")) {
+      tableTabBtn.click();
+    }
+  };
 
   // 1. Total Applications Card -> Show All
+  const totalAppsCard =
+    document.getElementById("mTotalAppsCard") ||
+    document.getElementById("mcard-total");
   if (totalAppsCard) {
     totalAppsCard.addEventListener("click", () => {
       if (statusSelect) statusSelect.value = "";
       activeStatusFilter = "";
       activeCustomFilter = null;
+      activateTableView();
       updateMetricCardActiveState();
       loadDashboardData();
       showToast("Showing All Applications");
@@ -93,11 +120,13 @@ function initFiltersAndSearch() {
   }
 
   // 2. Saved Jobs Card -> Filter Saved
+  const savedCard = document.getElementById("mSavedCard");
   if (savedCard) {
     savedCard.addEventListener("click", () => {
       if (statusSelect) statusSelect.value = "Saved";
       activeStatusFilter = "Saved";
       activeCustomFilter = null;
+      activateTableView();
       updateMetricCardActiveState();
       loadDashboardData();
       showToast("Filtering Saved Jobs");
@@ -105,11 +134,15 @@ function initFiltersAndSearch() {
   }
 
   // 3. Interviewing Card -> Filter Active Interview Rounds
+  const interviewingCard =
+    document.getElementById("mInterviewingCard") ||
+    document.getElementById("mcard-interview");
   if (interviewingCard) {
     interviewingCard.addEventListener("click", () => {
       if (statusSelect) statusSelect.value = "";
       activeStatusFilter = "";
       activeCustomFilter = "interviewing";
+      activateTableView();
       updateMetricCardActiveState();
       loadDashboardData();
       showToast("Filtering Active Interview Rounds");
@@ -117,11 +150,15 @@ function initFiltersAndSearch() {
   }
 
   // 4. Offers Card -> Filter Offers
+  const offersCard =
+    document.getElementById("mOffersCard") ||
+    document.getElementById("mcard-offer");
   if (offersCard) {
     offersCard.addEventListener("click", () => {
       if (statusSelect) statusSelect.value = "";
       activeStatusFilter = "";
       activeCustomFilter = "offers";
+      activateTableView();
       updateMetricCardActiveState();
       loadDashboardData();
       showToast("Filtering Offers");
@@ -129,16 +166,51 @@ function initFiltersAndSearch() {
   }
 
   // 5. Hearback Card -> Filter Roles With Company Responses
+  const hearbackCard = document.getElementById("mHearbackCard");
   if (hearbackCard) {
     hearbackCard.addEventListener("click", () => {
       if (statusSelect) statusSelect.value = "";
       activeStatusFilter = "";
       activeCustomFilter = "hearback";
+      activateTableView();
       updateMetricCardActiveState();
       loadDashboardData();
       showToast("Filtering Roles With Company Responses");
     });
   }
+
+  // 6. Generic fallback for any other metric card with data-filter-status
+  document.querySelectorAll(".metric-card").forEach((card) => {
+    if (
+      ![
+        "mTotalAppsCard",
+        "mSavedCard",
+        "mInterviewingCard",
+        "mOffersCard",
+        "mHearbackCard",
+        "mcard-total",
+        "mcard-interview",
+        "mcard-offer",
+      ].includes(card.id)
+    ) {
+      card.addEventListener("click", () => {
+        const filterStatus = card.getAttribute("data-filter-status");
+        if (filterStatus !== null && filterStatus !== undefined) {
+          if (statusSelect) statusSelect.value = filterStatus;
+          activeStatusFilter = filterStatus;
+          activeCustomFilter = null;
+          activateTableView();
+          showToast(
+            filterStatus
+              ? `Filtering ${filterStatus}`
+              : "Showing All Applications",
+          );
+          updateMetricCardActiveState();
+          loadDashboardData();
+        }
+      });
+    }
+  });
 }
 
 /**
@@ -197,6 +269,16 @@ window.markOaSkipped = async function (appId) {
   }
 };
 
+const ATS_DOMAINS_LIST = [
+  "oraclecloud.com", "oracle.com", "taleo.net",
+  "myworkdayjobs.com", "workday.com",
+  "greenhouse.io", "lever.co", "ashbyhq.com",
+  "smartrecruiters.com", "icims.com", "jobvite.com",
+  "rippling.com", "bamboohr.com", "jazz.co", "jazzhr.com",
+  "recruitee.com", "brassring.com", "successfactors.com",
+  "adp.com", "paylocity.com", "phenompeople.com", "eightfold.ai"
+];
+
 function getCompanyFavicon(url) {
   if (!url) return null;
   try {
@@ -204,7 +286,11 @@ function getCompanyFavicon(url) {
       url.startsWith("http://") || url.startsWith("https://")
         ? url
         : `https://${url}`;
-    const domain = new URL(fullUrl).hostname.replace(/^www\./, "");
+    const host = new URL(fullUrl).hostname.toLowerCase();
+    if (ATS_DOMAINS_LIST.some((ats) => host.includes(ats))) {
+      return null;
+    }
+    const domain = host.replace(/^www\./, "");
     return `https://${domain}/favicon.ico`;
   } catch {
     return null;
@@ -220,11 +306,19 @@ window.handleLogoFallback = function (img, companyName, companyWebsite) {
         const fullUrl = companyWebsite.startsWith("http")
           ? companyWebsite
           : `https://${companyWebsite}`;
-        domain = new URL(fullUrl).hostname.replace(/^www\./, "");
+        const host = new URL(fullUrl).hostname.toLowerCase();
+        if (!ATS_DOMAINS_LIST.some((ats) => host.includes(ats))) {
+          domain = host.replace(/^www\./, "");
+        }
       } catch (e) {}
     }
     if (!domain && companyName) {
-      domain = companyName.toLowerCase().replace(/[^a-z0-9]/g, "") + ".com";
+      const clean = companyName.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (clean.includes("jpmorgan") || clean.includes("jpmc")) {
+        domain = "jpmorganchase.com";
+      } else if (clean) {
+        domain = clean + ".com";
+      }
     }
     if (domain) {
       img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;

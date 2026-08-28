@@ -1,238 +1,1346 @@
-<!-- MANUAL APPLICATION ADD MODAL -->
 <div class="center-modal-overlay" id="addAppModal">
-  <div class="center-modal">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-      <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-main)">Manually Add Job Application</h2>
-      <button class="close-drawer-btn" id="closeAddModalBtn">&times;</button>
-    </div>
-    <form id="manualAppForm">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <div class="form-group"><label>Company Name *</label><input type="text" id="m_company" required placeholder="e.g. Humana" /></div>
-        <div class="form-group"><label>Job Title *</label><input type="text" id="m_title" required placeholder="e.g. Software Engineer Intern" /></div>
-        <div class="form-group"><label>Location</label><input type="text" id="m_location" placeholder="City, ST or Remote" /></div>
-        <div class="form-group"><label>Workplace Type</label><select id="m_workplace"><option value="Remote">Remote</option><option value="Hybrid">Hybrid</option><option value="Onsite">Onsite</option></select></div>
-        <div class="form-group"><label>Days in Office / Wk</label><input type="number" id="m_days_in_office" min="0" max="5" placeholder="0 = Remote, 5 = Onsite" /></div>
-        <div class="form-group"><label>Current Status</label><select id="m_status"><option value="Applied">Applied</option><option value="Saved">Saved / Bookmarked</option><option value="Online Assessment (OA)">Online Assessment (OA)</option><option value="Recruiter Screen">Recruiter Screen</option><option value="Technical Interview">Technical Interview</option><option value="Final Round / Onsite">Final Round / Onsite</option><option value="Offer">Offer</option></select></div>
-        <div class="form-group"><label>Date Applied</label><input type="date" id="m_date" /></div>
-        <div class="form-group"><label>Salary Range</label><input type="text" id="m_salary" placeholder="e.g. $120k - $140k" /></div>
-        <div class="form-group"><label>Excitement / Priority</label><select id="m_priority"><option value="1">1 - Low</option><option value="2">2 - Medium-Low</option><option value="3" selected>3 - Good Match</option><option value="4">4 - High Interest</option><option value="5">5 - Top Choice</option></select></div>
-        <div class="form-group"><label>Job URL</label><input type="url" id="m_url" placeholder="https://..." /></div>
-      </div>
-      <div class="form-group"><label>Notes</label><textarea id="m_notes" rows="2" placeholder="Referral, recruiter contact, notes..."></textarea></div>
-      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
-        <button type="button" class="action-btn" id="cancelAddBtn">Cancel</button>
-        <button type="submit" class="btn-primary-gold">Save Application</button>
-      </div>
-    </form>
-  </div>
-</div>
+      <div class="center-modal">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+          "
+        >
+          <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-main)">
+            Log Job Application
+          </h2>
+          <button class="close-drawer-btn" id="closeAddModalBtn">
+            &times;
+          </button>
+        </div>
 
-<!-- CREATE RESUME VERSION MODAL -->
-<div class="center-modal-overlay" id="addResumeModal">
-  <div class="center-modal">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-      <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-main)">Create Resume Version (PDF & Markdown)</h2>
-      <button class="close-drawer-btn" id="closeAddResumeBtn">&times;</button>
-    </div>
-    <form id="addResumeForm">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <div class="form-group"><label>Version Tag</label><input type="text" id="r_tag" value="v1.0" /></div>
-        <div class="form-group"><label>Parent Version</label><select id="r_parent_id"><option value="">None (Master Version)</option></select></div>
-      </div>
-      <div class="form-group"><label>Upload Resume File (PDF / DOCX)</label><input type="file" id="r_pdf_file" accept=".pdf,.docx,.doc" /></div>
-      <div class="form-group"><label>Version Notes / Focus</label><input type="text" id="r_commit_msg" placeholder="Highlights systems & cloud" /></div>
-      <div class="form-group"><label>Extracted Summary Notes</label><textarea id="r_content" rows="3" placeholder="Optional notes..."></textarea></div>
-      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
-        <button type="button" class="action-btn" id="cancelAddResumeBtn">Cancel</button>
-        <button type="submit" class="btn-primary-gold">Save Resume Version</button>
-      </div>
-    </form>
-  </div>
-</div>
+        <form id="manualAppForm">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+            <div class="form-group">
+              <label>Company Name *</label>
+              <input
+                type="text"
+                id="m_company"
+                required
+                placeholder="e.g. Google, Chevron, Stripe"
+              />
+            </div>
+            <div class="form-group">
+              <label>Job Title *</label>
+              <input
+                type="text"
+                id="m_title"
+                required
+                placeholder="e.g. Senior Software Engineer"
+              />
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input
+                type="text"
+                id="m_location"
+                placeholder="e.g. Austin, TX (Hybrid)"
+              />
+            </div>
+            <div class="form-group">
+              <label>Workplace Type</label>
+              <select id="m_workplace">
+                <option value="Remote">Remote</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="On-site">On-site</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Days in Office / Wk</label>
+              <input
+                type="number"
+                id="m_days_in_office"
+                min="0"
+                max="5"
+                placeholder="0 = Remote, 5 = Onsite"
+              />
+            </div>
+            <div class="form-group">
+              <label>Current Status</label>
+              <select id="m_status">
+                <option value="Applied">Applied</option>
+                <option value="Saved">
+                  Saved / Bookmarked (Not applied yet)
+                </option>
+                <option value="Online Assessment (OA)">
+                  Online Assessment (OA)
+                </option>
+                <option value="Skipped / Expired OA">
+                  Skipped / Expired OA
+                </option>
+                <option value="Recruiter Screen">Recruiter Screen</option>
+                <option value="Technical Interview">Technical Interview</option>
+                <option value="Final Round / Onsite">
+                  Final Round / Onsite
+                </option>
+                <option value="Offer Received">Offer Received</option>
+                <option value="Offer Accepted">Offer Accepted</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>OA Expiration / Deadline (Optional)</label>
+              <input type="date" id="m_oa_expiration_date" />
+            </div>
+            <div class="form-group">
+              <label>Date Logged / Applied</label>
+              <input type="date" id="m_date" />
+            </div>
+            <div class="form-group">
+              <label>Salary / Comp Range</label>
+              <input
+                type="text"
+                id="m_salary"
+                placeholder="e.g. $150k - $175k"
+              />
+            </div>
+            <div class="form-group">
+              <label>Excitement / Priority</label>
+              <select id="m_priority">
+                <option value="1" selected>1 - Low Priority</option>
+                <option value="2">2 - Medium-Low</option>
+                <option value="3">3 - Good Match</option>
+                <option value="4">4 - High Interest</option>
+                <option value="5">5 - Top Choice / Dream Role</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Job Listing URL</label>
+            <input type="text" id="m_url" placeholder="https://..." />
+          </div>
+          <div class="form-group">
+            <label>Company Website (Optional)</label>
+            <input
+              type="text"
+              id="m_company_website"
+              placeholder="https://company.com"
+            />
+          </div>
+          <div class="form-group" style="grid-column: span 2">
+            <label>Company Logo Image URL (Optional)</label>
+            <div style="display: flex; align-items: center; gap: 10px">
+              <input
+                type="text"
+                id="m_company_logo"
+                placeholder="https://logo.clearbit.com/company.com"
+                style="flex: 1"
+              />
+              <img
+                id="m_logo_preview"
+                src=""
+                alt=""
+                style="
+                  width: 36px;
+                  height: 36px;
+                  border-radius: 6px;
+                  object-fit: contain;
+                  border: 1px solid var(--border-color);
+                  display: none;
+                "
+                onerror="this.style.display = 'none'"
+              />
+            </div>
+            <div
+              style="
+                font-size: 0.72rem;
+                color: var(--text-muted);
+                margin-top: 3px;
+              "
+            >
+              Tip: Use <code>https://logo.clearbit.com/company.com</code> for
+              auto-fetching logos
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Notes</label>
+            <textarea
+              id="m_notes"
+              rows="2"
+              placeholder="Referral, recruiter name, OA link..."
+            ></textarea>
+          </div>
 
-<!-- APPLICATION DETAIL DRAWER OVERLAY -->
-<div class="modal-overlay" id="appDetailModal">
-  <div class="drawer">
-    <div class="drawer-header">
-      <div style="display: flex; gap: 12px; align-items: center;">
-        <img id="dCompanyLogo" src="grts-logo-sqr.svg" style="width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--border-color); object-fit: contain;" />
+                    <div class="form-group" style="margin-top: 6px;">
+            <label>Cover Letter</label>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+              <label class="action-btn" style="cursor: pointer; padding: 4px 10px; font-size: 0.76rem;">
+                Upload File (.pdf, .docx, .txt)
+                <input type="file" id="m_cover_letter_file" accept=".pdf,.docx,.txt" style="display: none;" />
+              </label>
+              <span id="m_cover_letter_filename" style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;"></span>
+            </div>
+            <textarea id="m_cover_letter" rows="3" placeholder="Paste tailored cover letter text or upload a document..."></textarea>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+            <button type="button" class="action-btn" id="cancelAddBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary-gold">
+              Save to Database
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- CREATE RESUME VERSION MODAL (WITH PDF UPLOAD) -->
+    <div class="center-modal-overlay" id="addResumeModal">
+      <div class="center-modal">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+          "
+        >
+          <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-main)">
+            Create Resume Version (YAML / Markdown & PDF)
+          </h2>
+          <button class="close-drawer-btn" id="closeAddResumeBtn">
+            &times;
+          </button>
+        </div>
+
+        <form id="createResumeForm">
+          <div class="form-group">
+            <label>Version Name *</label>
+            <input
+              type="text"
+              id="r_name"
+              required
+              placeholder="e.g. Software Engineer 2026, Embedded Systems, Robotics"
+            />
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px">
+            <div class="form-group">
+              <label>Version Tag</label>
+              <input type="text" id="r_tag" value="v1.0" />
+            </div>
+            <div class="form-group">
+              <label>Parent Version (Optional)</label>
+              <select id="r_parent_id">
+                <option value="">None (Master Version)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Upload Resume File (PDF or DOCX) *</label>
+            <input
+              type="file"
+              id="r_pdf_file"
+              accept=".pdf,.docx,.doc,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            />
+            <div
+              id="pdfUploadStatus"
+              style="
+                font-size: 0.74rem;
+                color: var(--text-muted);
+                margin-top: 2px;
+              "
+            ></div>
+          </div>
+          <div class="form-group">
+            <label>Version Notes / Target Focus</label>
+            <input
+              type="text"
+              id="r_commit_msg"
+              placeholder="e.g. Highlights systems programming & cloud validation"
+            />
+          </div>
+          <div class="form-group">
+            <label>Optional Text / Extracted Summary Notes</label>
+            <textarea
+              id="r_content"
+              rows="3"
+              placeholder="Optional notes or text keywords..."
+            ></textarea>
+          </div>
+
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              gap: 8px;
+              margin-top: 14px;
+            "
+          >
+            <button type="button" class="action-btn" id="cancelAddResumeBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary-gold">
+              Save Resume Version
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- APPLICATION DETAIL & LIFECYCLE DRAWER -->
+    <div class="modal-overlay" id="appDetailModal">
+      <div class="drawer">
+        <div class="drawer-header">
+          <div style="display: flex; gap: 12px; align-items: center">
+            <img
+              id="dCompanyLogo"
+              src="grts-logo-sqr.svg"
+              class="company-logo"
+              style="width: 40px; height: 40px"
+              alt=""
+            />
+            <div>
+              <div
+                style="
+                  font-size: 1.2rem;
+                  font-weight: 800;
+                  color: var(--text-main);
+                "
+                id="dJobTitle"
+              >
+                Software Engineer
+              </div>
+              <div
+                style="
+                  font-size: 0.88rem;
+                  font-weight: 600;
+                  color: var(--secondary);
+                "
+                id="dCompanyName"
+              >
+                Company
+              </div>
+            </div>
+          </div>
+          <button class="close-drawer-btn" id="closeDrawerBtn">&times;</button>
+        </div>
+
+        <!-- Quick Status & Excitement -->
+        <div
+          style="
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+          "
+        >
+          <div>
+            <span
+              style="
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: var(--text-muted);
+                text-transform: uppercase;
+              "
+              >Status:</span
+            >
+            <div style="margin-top: 2px">
+              <select
+                id="dStatusSelect"
+                class="filter-select"
+                style="padding: 5px 8px; font-size: 0.82rem"
+              >
+                <option value="Saved">Saved / Bookmarked</option>
+                <option value="Applied">Applied</option>
+                <option value="Online Assessment (OA)">
+                  Online Assessment (OA)
+                </option>
+                <option value="Skipped / Expired OA">
+                  Skipped / Expired OA
+                </option>
+                <option value="Recruiter Screen">Recruiter Screen</option>
+                <option value="Technical Interview">Technical Interview</option>
+                <option value="System Design">System Design</option>
+                <option value="Coding Assessment">Coding Assessment</option>
+                <option value="Final Round / Onsite">
+                  Final Round / Onsite
+                </option>
+                <option value="Offer Received">Offer Received</option>
+                <option value="Offer Accepted">Offer Accepted</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Ghosted">Ghosted</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <span
+              style="
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: var(--text-muted);
+                text-transform: uppercase;
+              "
+              >Excitement Rating:</span
+            >
+            <div id="dPriorityStars" style="margin-top: 2px"></div>
+          </div>
+          <div id="dLinksContainer" style="display: flex; gap: 6px"></div>
+        </div>
+
+        <!-- Quick Info Summary Grid -->
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            font-size: 0.82rem;
+          "
+        >
+          <div class="timeline-card">
+            <div
+              style="
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                font-weight: 700;
+              "
+            >
+              LOCATION & WORKPLACE
+            </div>
+            <div id="dLocation" style="font-weight: 600; margin-top: 2px">
+              Remote
+            </div>
+          </div>
+          <div class="timeline-card">
+            <div
+              style="
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                font-weight: 700;
+              "
+            >
+              SALARY / COMP
+            </div>
+            <div id="dSalary" style="font-weight: 600; margin-top: 2px">-</div>
+          </div>
+          <div class="timeline-card">
+            <div
+              style="
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                font-weight: 700;
+              "
+            >
+              DATE LOGGED
+            </div>
+            <div id="dDateApplied" style="font-weight: 600; margin-top: 2px">
+              -
+            </div>
+          </div>
+        </div>
+
+        <!-- APPLICATION & ROLE DETAILS (VIEW / EDIT TOGGLE) -->
+        <div
+          class="timeline-card"
+          style="
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 10px;
+              border-bottom: 1px solid var(--border-color);
+              padding-bottom: 8px;
+            "
+          >
+            <div class="section-title" style="margin: 0; font-size: 0.88rem">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                ></path>
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                ></path>
+              </svg>
+              Role & Job Details
+            </div>
+            <div id="roleDetailsHeaderActions">
+              <button
+                type="button"
+                id="editAppDetailsBtn"
+                class="action-btn"
+                style="padding: 4px 10px; font-size: 0.75rem"
+              >
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                  ></path>
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                  ></path>
+                </svg>
+                Edit
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. VIEW MODE (DEFAULT) -->
+          <div id="roleDetailsViewMode">
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                font-size: 0.82rem;
+                margin-bottom: 10px;
+              "
+            >
+              <div>
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Company & Role:</span
+                >
+                <div
+                  style="
+                    font-weight: 700;
+                    color: var(--text-main);
+                    margin-top: 2px;
+                  "
+                  id="dViewCompanyRole"
+                >
+                  -
+                </div>
+              </div>
+              <div>
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Workplace & Schedule:</span
+                >
+                <div
+                  style="
+                    font-weight: 600;
+                    color: var(--text-main);
+                    margin-top: 2px;
+                  "
+                  id="dViewWorkplaceSchedule"
+                >
+                  -
+                </div>
+              </div>
+              <div>
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Job Type & Salary:</span
+                >
+                <div
+                  style="
+                    font-weight: 600;
+                    color: var(--text-main);
+                    margin-top: 2px;
+                  "
+                  id="dViewTypeSalary"
+                >
+                  -
+                </div>
+              </div>
+              <div>
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Posting Link:</span
+                >
+                <div style="margin-top: 2px" id="dViewUrl">-</div>
+              </div>
+              <div>
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Excitement Priority:</span
+                >
+                <div style="margin-top: 2px" id="dViewPriority">-</div>
+              </div>
+              <div
+                id="dViewOaWrapper"
+                style="display: none; grid-column: span 2"
+              >
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >OA Expiration / Deadline:</span
+                >
+                <div style="margin-top: 2px" id="dViewOaExpiration">-</div>
+              </div>
+            </div>
+
+            <div
+              id="dViewNotesWrapper"
+              style="margin-bottom: 10px; font-size: 0.82rem"
+            >
+              <span
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-muted);
+                  font-weight: 700;
+                  text-transform: uppercase;
+                "
+                >Notes & Context:</span
+              >
+              <div
+                id="dViewNotes"
+                style="
+                  color: var(--text-main);
+                  margin-top: 2px;
+                  background: #f8fafc;
+                  padding: 6px 10px;
+                  border-radius: 6px;
+                  border: 1px solid var(--border-color);
+                  white-space: pre-wrap;
+                "
+              >
+                -
+              </div>
+            </div>
+
+            <div style="font-size: 0.82rem">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 4px;
+                "
+              >
+                <span
+                  style="
+                    font-size: 0.7rem;
+                    color: var(--text-muted);
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                  >Job Description:</span
+                >
+              </div>
+              <div
+                id="dViewJobDescription"
+                style="
+                  max-height: 220px;
+                  overflow-y: auto;
+                  font-size: 0.8rem;
+                  line-height: 1.5;
+                  color: var(--text-main);
+                  background: #f8fafc;
+                  padding: 10px 12px;
+                  border-radius: 6px;
+                  border: 1px solid var(--border-color);
+                  white-space: pre-wrap;
+                "
+              >
+                No job description captured.
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. EDIT MODE (HIDDEN BY DEFAULT) -->
+          <div id="roleDetailsEditMode" style="display: none">
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                font-size: 0.82rem;
+              "
+            >
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Company Name</label>
+                <input
+                  type="text"
+                  id="dEditCompanyName"
+                  placeholder="e.g. Example Company"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Job Title</label>
+                <input
+                  type="text"
+                  id="dEditJobTitle"
+                  placeholder="e.g. Business Informatics Intern"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Location</label>
+                <input
+                  type="text"
+                  id="dEditLocation"
+                  placeholder="e.g. Remote, Indianapolis, IN"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Workplace Type</label>
+                <select id="dEditWorkplace">
+                  <option value="Remote">Remote</option>
+                  <option value="Hybrid">Hybrid</option>
+                  <option value="On-site">On-site</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Days in Office (0-5)</label>
+                <input
+                  type="number"
+                  id="dEditDaysInOffice"
+                  min="0"
+                  max="5"
+                  placeholder="0 = Remote, 5 = Onsite"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Job Type</label>
+                <select id="dEditJobType">
+                  <option value="Full-time">Full-time</option>
+                  <option value="Internship">Internship</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Part-time">Part-time</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Salary / Comp Range</label>
+                <input
+                  type="text"
+                  id="dEditSalary"
+                  placeholder="e.g. $150k - $175k"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Date Logged / Applied</label>
+                <input type="date" id="dEditDateApplied" />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>OA Expiration / Deadline</label>
+                <input type="date" id="dEditOaExpirationDate" />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Excitement Priority (1-5)</label>
+                <select id="dEditPriority">
+                  <option value="5">★★★★★ (5 - Dream / Top Choice)</option>
+                  <option value="4">★★★★☆ (4 - High Priority)</option>
+                  <option value="3">★★★☆☆ (3 - Target / Solid)</option>
+                  <option value="2">★★☆☆☆ (2 - Backup / Neutral)</option>
+                  <option value="1">★☆☆☆☆ (1 - Baseline / Low)</option>
+                </select>
+              </div>
+              <div
+                class="form-group"
+                style="grid-column: span 2; margin-bottom: 6px"
+              >
+                <label>Job Listing URL</label>
+                <input type="text" id="dEditUrl" placeholder="https://..." />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Company Website</label>
+                <input
+                  type="text"
+                  id="dEditCompanyWebsite"
+                  placeholder="https://company.com"
+                />
+              </div>
+              <div class="form-group" style="margin-bottom: 6px">
+                <label>Company Logo URL</label>
+                <div style="display: flex; align-items: center; gap: 8px">
+                  <input
+                    type="text"
+                    id="dEditCompanyLogo"
+                    placeholder="https://logo.clearbit.com/company.com"
+                    style="flex: 1; font-size: 0.78rem"
+                  />
+                  <img
+                    id="dEditLogoPreview"
+                    src=""
+                    alt=""
+                    style="
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 5px;
+                      object-fit: contain;
+                      border: 1px solid var(--border-color);
+                      display: none;
+                    "
+                    onerror="this.style.display = 'none'"
+                  />
+                </div>
+              </div>
+              <div
+                class="form-group"
+                style="grid-column: span 2; margin-bottom: 6px"
+              >
+                <label>Notes / Referral / Context</label>
+                <textarea
+                  id="dEditNotes"
+                  rows="2"
+                  placeholder="Referral, recruiter notes, team info..."
+                ></textarea>
+              </div>
+              <div
+                class="form-group"
+                style="grid-column: span 2; margin-bottom: 0"
+              >
+                <label>Job Description (Editable)</label>
+                <textarea
+                  id="dEditJobDescription"
+                  rows="8"
+                  placeholder="Paste or edit the full job description text here..."
+                  style="
+                    font-family: inherit;
+                    font-size: 0.82rem;
+                    line-height: 1.45;
+                    width: 100%;
+                    box-sizing: border-box;
+                  "
+                ></textarea>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                margin-top: 12px;
+                padding-top: 8px;
+                border-top: 1px solid var(--border-color);
+              "
+            >
+              <button type="button" id="cancelAppDetailsBtn" class="action-btn">
+                Cancel
+              </button>
+              <button
+                type="button"
+                id="saveAppDetailsBtn"
+                class="btn-primary-gold"
+                style="padding: 4px 14px; font-size: 0.78rem"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- THE JOURNEY (TIMELINE) -->
         <div>
-          <h2 id="dJobTitle" style="margin: 0; font-size: 1.25rem; color: var(--text-main);">Role Title</h2>
-          <div id="dCompanyName" style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Company</div>
+          <div class="section-title">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"
+              ></path>
+              <line x1="4" y1="22" x2="4" y2="15"></line>
+            </svg>
+            The Journey & Interview Milestones
+          </div>
+          <div class="timeline-flow" id="dTimelineList"></div>
+        </div>
+
+        <!-- LOG NEW MILESTONE (DEFAULT: OA) -->
+        <div
+          class="timeline-card"
+          style="border: 1px dashed var(--primary); background: #fefdf9"
+        >
+          <div class="section-title" style="margin-bottom: 6px">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Log Milestone (Default: Online Assessment)
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+            <div class="form-group">
+              <label>Milestone Type</label>
+              <select
+                id="logEventType"
+                style="padding: 6px 8px; border-radius: 6px; font-size: 0.82rem"
+              >
+                <option value="Applied">Application Submitted / Applied</option>
+                <option value="Online Assessment (OA)" selected>
+                  Online Assessment (OA)
+                </option>
+                <option value="Skipped / Expired OA">
+                  Skipped / Expired OA
+                </option>
+                <option value="Recruiter Screen">Recruiter Screen</option>
+                <option value="Technical Interview">Technical Interview</option>
+                <option value="System Design">System Design</option>
+                <option value="Coding Challenge">Coding Challenge</option>
+                <option value="Final Round / Onsite">
+                  Final Round / Onsite
+                </option>
+                <option value="Offer Received">Offer Received</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>OA Platform / Tool</label>
+              <select
+                id="logOaPlatform"
+                style="padding: 6px 8px; border-radius: 6px; font-size: 0.82rem"
+              >
+                <option value="CodeSignal">CodeSignal</option>
+                <option value="HackerRank">HackerRank</option>
+                <option value="LeetCode">LeetCode</option>
+                <option value="Karat">Karat</option>
+                <option value="Codility">Codility</option>
+                <option value="TestGorilla">TestGorilla</option>
+                <option value="Other">Other / Custom</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Event Date</label>
+              <input
+                type="date"
+                id="logEventDate"
+                style="padding: 5px 8px; border-radius: 6px; font-size: 0.82rem"
+              />
+            </div>
+            <div class="form-group">
+              <label>OA Expiration / Deadline (Optional)</label>
+              <input
+                type="date"
+                id="logOaExpirationDate"
+                style="padding: 5px 8px; border-radius: 6px; font-size: 0.82rem"
+              />
+            </div>
+            <div class="form-group" style="grid-column: span 2">
+              <label>Meeting / Assessment Link</label>
+              <input
+                type="text"
+                id="logMeetingLink"
+                placeholder="https://..."
+                style="padding: 6px 8px; border-radius: 6px; font-size: 0.82rem"
+              />
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 6px">
+            <label>Notes / Questions / Score</label>
+            <textarea
+              id="logEventNotes"
+              rows="2"
+              placeholder="Scores, topics covered, difficulty level..."
+              style="padding: 6px 8px; border-radius: 6px; font-size: 0.82rem"
+            ></textarea>
+          </div>
+          <button
+            id="saveMilestoneBtn"
+            class="btn-primary-gold"
+            style="margin-top: 8px; padding: 7px 14px; font-size: 0.82rem"
+          >
+            Save Milestone
+          </button>
+        </div>
+
+                <!-- COVER LETTER SECTION -->
+        <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+          <div class="section-title" style="margin-bottom: 8px;">Cover Letter</div>
+          <div id="dCoverLetterDisplay" style="font-size: 0.84rem; color: var(--text-muted); background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; min-height: 50px; max-height: 180px; overflow-y: auto; white-space: pre-wrap; margin-bottom: 8px;">No cover letter attached.</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <button type="button" id="toggleCoverLetterEditBtn" class="action-btn">Edit Cover Letter</button>
+            <button type="button" id="copyCoverLetterBtn" class="action-btn">Copy Text</button>
+            <label class="action-btn" style="cursor: pointer; margin: 0;">
+              Upload File
+              <input type="file" id="uploadCoverLetterFile" accept=".pdf,.docx,.txt" style="display: none;" />
+            </label>
+            <span id="dCoverLetterFileName" style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;"></span>
+          </div>
+          <div id="dCoverLetterEditArea" style="display: none; margin-top: 10px;">
+            <textarea id="dCoverLetterTextarea" rows="4" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 0.82rem;" placeholder="Paste or type cover letter content..."></textarea>
+            <div style="display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end;">
+              <button type="button" id="cancelCoverLetterBtn" class="action-btn">Cancel</button>
+              <button type="button" id="saveCoverLetterBtn" class="btn-primary-gold" style="padding: 4px 12px; font-size: 0.8rem;">Save Cover Letter</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PORTALS & TRACKING LINKS -->
+        <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+          <div class="section-title" style="margin-bottom: 8px;">Portals & Additional Links</div>
+          <div id="dLinksList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
+          <div style="display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 6px; align-items: center;">
+            <input type="text" id="newLinkLabel" placeholder="Label (e.g. Candidate Portal)" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+            <input type="url" id="newLinkUrl" placeholder="https://portal.company.com/..." style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
+            <button type="button" id="addLinkBtn" class="action-btn" style="padding: 5px 10px;">Add Link</button>
+          </div>
+        </div>
+
+        <!-- CAPTURED NON-STANDARD APPLICATION QUESTIONS -->
+        <div
+          style="
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 10px;
+            "
+          >
+            <div
+              class="section-title"
+              style="
+                margin: 0;
+                font-size: 0.88rem;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+              "
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                ></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              Recorded Application Q&A Responses
+            </div>
+            <button
+              type="button"
+              id="dAddQABtn"
+              class="action-btn"
+              style="
+                padding: 3px 10px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: #b45309;
+                background: #fef3c7;
+                border: 1px solid #fde68a;
+                border-radius: 6px;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
+                transition: all 0.15s ease;
+              "
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Q&A
+            </button>
+          </div>
+
+          <div
+            id="dNewQAForm"
+            style="
+              display: none;
+              background: #fffbeb;
+              border: 1px dashed #f59e0b;
+              border-radius: 8px;
+              padding: 12px;
+              margin-bottom: 12px;
+            "
+          >
+            <div
+              style="
+                font-weight: 700;
+                font-size: 0.8rem;
+                margin-bottom: 6px;
+                color: #92400e;
+              "
+            >
+              Log Custom Question & Answer
+            </div>
+            <input
+              type="text"
+              id="dNewQAQuestion"
+              placeholder="Question text (e.g. Why are you interested in this role?)"
+              style="
+                width: 100%;
+                box-sizing: border-box;
+                padding: 6px 8px;
+                font-size: 0.8rem;
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                margin-bottom: 6px;
+                background: #ffffff;
+              "
+            />
+            <textarea
+              id="dNewQAAnswer"
+              rows="2"
+              placeholder="Answer text..."
+              style="
+                width: 100%;
+                box-sizing: border-box;
+                padding: 6px 8px;
+                font-size: 0.8rem;
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                margin-bottom: 8px;
+                background: #ffffff;
+              "
+            ></textarea>
+            <div style="display: flex; gap: 6px; justify-content: flex-end">
+              <button
+                type="button"
+                id="dCancelNewQABtn"
+                class="action-btn"
+                style="padding: 3px 10px; font-size: 0.75rem; cursor: pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                id="dSaveNewQABtn"
+                class="btn-primary-gold"
+                style="padding: 3px 12px; font-size: 0.75rem; cursor: pointer"
+              >
+                Save Q&A
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="dCustomQAList"
+            style="display: flex; flex-direction: column; gap: 8px"
+          ></div>
+        </div>
+
+        <!-- DELETE BUTTON -->
+        <div
+          style="
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: flex-start;
+          "
+        >
+          <button
+            type="button"
+            id="deleteAppBtn"
+            class="action-btn action-btn-danger"
+            style="
+              font-size: 0.8rem;
+              padding: 6px 14px;
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+            "
+          >
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path
+                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+              ></path>
+            </svg>
+            Delete Application Record
+          </button>
         </div>
       </div>
-      <button class="close-drawer-btn" id="closeDrawerBtn">&times;</button>
     </div>
 
-    <!-- Quick Status Bar -->
-    <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px;">
-      <div>
-        <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Status:</span>
-        <div style="margin-top: 2px;">
-          <select id="dStatusSelect" class="filter-select" style="padding: 5px 8px; font-size: 0.82rem;">
-            <option value="Saved">Saved / Bookmarked</option>
-            <option value="Applied">Applied</option>
-            <option value="Online Assessment (OA)">Online Assessment (OA)</option>
-            <option value="Recruiter Screen">Recruiter Screen</option>
-            <option value="Technical Interview">Technical Interview</option>
-            <option value="Final Round / Onsite">Final Round / Onsite</option>
-            <option value="Offer">Offer</option>
-            <option value="Rejected">Rejected</option>
-          </select>
+    
+<!-- EMAIL AUTO-SYNC & INBOX SCANNER MODAL -->
+<div class="center-modal-overlay" id="emailSyncModal" style="display: none;">
+  <div class="center-modal" style="max-width: 680px; width: 92%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        <h2 style="margin: 0; font-size: 1.15rem; color: var(--text-main)">Passive Email Auto-Scanner & Matcher</h2>
+      </div>
+      <button class="close-drawer-btn" id="closeEmailSyncModalBtn">&times;</button>
+    </div>
+
+    <!-- TABS: SETTINGS vs ACTIVITY LOGS -->
+    <div style="display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+      <button type="button" class="tab-btn active" id="emailTabSettingsBtn" style="padding: 5px 12px; font-size: 0.82rem; font-weight: 600; border-radius: 6px; border: none; background: #fef3c7; color: #92400e; cursor: pointer;">IMAP Settings</button>
+      <button type="button" class="tab-btn" id="emailTabLogsBtn" style="padding: 5px 12px; font-size: 0.82rem; font-weight: 500; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); cursor: pointer;">Sync Activity & Matched Events</button>
+    </div>
+
+    <!-- SETTINGS VIEW -->
+    <div id="emailSettingsView">
+      <form id="emailConfigForm">
+        <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+          <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45;">
+            <strong style="color: var(--text-main);">🔒 100% Local & Private:</strong> GRTS connects directly to your email provider over secure IMAP from your computer. <strong>No email bodies, headers, or credentials are ever transmitted to any hosted cloud database.</strong>
+          </div>
+          <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">
+            💡 <strong>Gmail Users:</strong> Standard Google passwords will not work. You must generate a 16-character <strong>App Password</strong> at <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color: var(--primary); text-decoration: underline;">myaccount.google.com/apppasswords</a> (requires 2-Step Verification enabled).
+          </div>
         </div>
-      </div>
-      <div id="dLinksContainer" style="display: flex; gap: 6px;"></div>
-    </div>
 
-    <!-- Details View Mode -->
-    <div id="roleDetailsViewMode" style="margin-bottom: 16px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-main);">Role Information</span>
-        <button type="button" id="editAppDetailsBtn" class="action-btn" style="padding: 2px 8px; font-size: 0.74rem;">Edit Details</button>
-      </div>
-      <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 12px; font-size: 0.82rem;">
-        <div id="dViewCompanyRole" style="font-weight: 700;">-</div>
-        <div id="dViewWorkplaceSchedule" style="color: var(--text-muted); margin-top: 2px;">-</div>
-        <div id="dViewTypeSalary" style="color: var(--text-muted); margin-top: 2px;">-</div>
-        <div id="dViewUrl" style="margin-top: 4px;">-</div>
-        <div id="dViewPriority" style="margin-top: 4px;">-</div>
-        <div id="dViewOaWrapper" style="display: none; margin-top: 4px; color: #c2410c; font-weight: 600;">OA Deadline: <span id="dViewOaExpiration">-</span></div>
-        <div id="dViewNotesWrapper" style="display: none; margin-top: 6px;"><div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">NOTES</div><div id="dViewNotes" style="white-space: pre-wrap;"></div></div>
-        <div style="margin-top: 8px;"><div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">JOB DESCRIPTION</div><div id="dViewJobDescription" style="max-height: 120px; overflow-y: auto; white-space: pre-wrap; font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;"></div></div>
-      </div>
-    </div>
-
-    <!-- Details Edit Mode -->
-    <div id="roleDetailsEditMode" style="display: none; margin-bottom: 16px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px;">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8rem;">
-        <div class="form-group"><label>Company Name</label><input type="text" id="dEditCompanyName" /></div>
-        <div class="form-group"><label>Job Title</label><input type="text" id="dEditJobTitle" /></div>
-        <div class="form-group"><label>Location</label><input type="text" id="dEditLocation" /></div>
-        <div class="form-group"><label>Workplace</label><select id="dEditWorkplace"><option value="Remote">Remote</option><option value="Hybrid">Hybrid</option><option value="Onsite">Onsite</option></select></div>
-        <div class="form-group"><label>Days in Office</label><input type="number" id="dEditDaysInOffice" min="0" max="5" /></div>
-        <div class="form-group"><label>Job Type</label><select id="dEditJobType"><option value="Full-time">Full-time</option><option value="Internship">Internship</option><option value="Contract">Contract</option><option value="Part-time">Part-time</option></select></div>
-        <div class="form-group"><label>Salary Range</label><input type="text" id="dEditSalary" /></div>
-        <div class="form-group"><label>Date Logged / Applied</label><input type="date" id="dEditDateApplied" /></div>
-        <div class="form-group"><label>OA Expiration</label><input type="date" id="dEditOaExpirationDate" /></div>
-        <div class="form-group"><label>Excitement (1-5)</label><select id="dEditPriority"><option value="1">1 - Low</option><option value="2">2 - Med-Low</option><option value="3">3 - Good</option><option value="4">4 - High</option><option value="5">5 - Dream Role</option></select></div>
-        <div class="form-group"><label>Job URL</label><input type="url" id="dEditUrl" /></div>
-      </div>
-      <div class="form-group" style="margin-top: 6px;"><label>Company Logo URL</label><input type="url" id="dEditCompanyLogo" /></div>
-      <div class="form-group" style="margin-top: 6px;"><label>Company Website</label><input type="url" id="dEditCompanyWebsite" /></div>
-      <div class="form-group" style="margin-top: 6px;"><label>Notes</label><textarea id="dEditNotes" rows="2"></textarea></div>
-      <div class="form-group" style="margin-top: 6px;"><label>Job Description</label><textarea id="dEditJobDescription" rows="4"></textarea></div>
-      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px;">
-        <button type="button" id="cancelAppDetailsBtn" class="action-btn">Cancel</button>
-        <button type="button" id="saveAppDetailsBtn" class="btn-primary-gold" style="padding: 4px 12px; font-size: 0.8rem;">Save Details</button>
-      </div>
-    </div>
-
-    <!-- COVER LETTER SECTION -->
-    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
-      <div class="section-title" style="margin-bottom: 8px;">Cover Letter</div>
-      <div id="dCoverLetterDisplay" style="font-size: 0.84rem; color: var(--text-muted); background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; min-height: 50px; max-height: 180px; overflow-y: auto; white-space: pre-wrap; margin-bottom: 8px;">No cover letter attached.</div>
-      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-        <button type="button" id="toggleCoverLetterEditBtn" class="action-btn">Edit Cover Letter</button>
-        <button type="button" id="copyCoverLetterBtn" class="action-btn">Copy Text</button>
-        <label class="action-btn" style="cursor: pointer; margin: 0;">
-          Upload File
-          <input type="file" id="uploadCoverLetterFile" accept=".pdf,.docx,.txt" style="display: none;" />
-        </label>
-        <span id="dCoverLetterFileName" style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;"></span>
-      </div>
-      <div id="dCoverLetterEditArea" style="display: none; margin-top: 10px;">
-        <textarea id="dCoverLetterTextarea" rows="4" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 0.82rem;" placeholder="Paste or type cover letter content..."></textarea>
-        <div style="display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end;">
-          <button type="button" id="cancelCoverLetterBtn" class="action-btn">Cancel</button>
-          <button type="button" id="saveCoverLetterBtn" class="btn-primary-gold" style="padding: 4px 12px; font-size: 0.8rem;">Save Cover Letter</button>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+          <div class="form-group">
+            <label>Email Provider Preset</label>
+            <select id="em_provider">
+              <option value="gmail" selected>Gmail (imap.gmail.com)</option>
+              <option value="outlook">Outlook / Hotmail (outlook.office365.com)</option>
+              <option value="yahoo">Yahoo Mail (imap.mail.yahoo.com)</option>
+              <option value="icloud">Apple iCloud (imap.mail.me.com)</option>
+              <option value="custom">Custom IMAP Server</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="em_address" required placeholder="your.name@gmail.com" />
+          </div>
         </div>
-      </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+          <div class="form-group">
+            <label>App Password * <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 400;">(16-character code)</span></label>
+            <input type="password" id="em_password" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label>Auto-Sync Status</label>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+              <input type="checkbox" id="em_auto_sync" checked style="width: 16px; height: 16px;" />
+              <label for="em_auto_sync" style="font-size: 0.82rem; cursor: pointer; margin: 0;">Passive Background Sync (Every 10 min)</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADVANCED IMAP HOST/PORT -->
+        <details style="margin-bottom: 14px; font-size: 0.8rem; color: var(--text-muted);">
+          <summary style="cursor: pointer; font-weight: 500; color: var(--text-main); margin-bottom: 6px;">Advanced IMAP Server Settings</summary>
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-top: 8px;">
+            <div class="form-group"><label>IMAP Host</label><input type="text" id="em_host" value="imap.gmail.com" /></div>
+            <div class="form-group"><label>Port</label><input type="number" id="em_port" value="993" /></div>
+            <div class="form-group"><label>SSL</label><select id="em_ssl"><option value="1">SSL (Yes)</option><option value="0">Plain (No)</option></select></div>
+          </div>
+        </details>
+
+        <div id="emailConnectionFeedback" style="display: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 12px; font-weight: 600;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+          <button type="button" id="testEmailBtn" class="action-btn" style="padding: 7px 14px; font-size: 0.82rem;">Test Connection</button>
+          <div style="display: flex; gap: 8px;">
+            <button type="submit" class="btn-primary-gold" style="padding: 7px 16px; font-size: 0.82rem;">Save Settings</button>
+            <button type="button" id="syncNowEmailBtn" class="btn-primary-gold" style="padding: 7px 16px; font-size: 0.82rem;">Sync Inbox Now</button>
+          </div>
+        </div>
+      </form>
     </div>
 
-    <!-- PORTALS & TRACKING LINKS -->
-    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
-      <div class="section-title" style="margin-bottom: 8px;">Portals & Additional Links</div>
-      <div id="dLinksList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
-      <div style="display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 6px; align-items: center;">
-        <input type="text" id="newLinkLabel" placeholder="Label (e.g. Candidate Portal)" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
-        <input type="url" id="newLinkUrl" placeholder="https://portal.company.com/..." style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
-        <button type="button" id="addLinkBtn" class="action-btn" style="padding: 5px 10px;">Add Link</button>
-      </div>
-    </div>
-
-    <!-- CONTACTS & PEOPLE TO REMEMBER -->
-    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
-      <div class="section-title" style="margin-bottom: 8px;">Contacts & People to Remember</div>
-      <div id="dContactsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;"></div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-        <input type="text" id="newContactName" placeholder="Contact Name *" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
-        <input type="text" id="newContactRole" placeholder="Role (e.g. Recruiter, HM)" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
-      </div>
-      <div style="display: grid; grid-template-columns: 1.5fr 1fr auto; gap: 6px; align-items: center;">
-        <input type="text" id="newContactNotes" placeholder="Notes (e.g. Discussed team setup)" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
-        <input type="email" id="newContactEmail" placeholder="email@company.com" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
-        <button type="button" id="addContactBtn" class="action-btn" style="padding: 5px 10px;">Add Person</button>
-      </div>
-    </div>
-
-    <!-- MILESTONES TIMELINE -->
-    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
-      <div class="section-title" style="margin-bottom: 8px;">Milestones & Interview History</div>
-      <div id="dTimelineList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;"></div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-        <select id="logEventType" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;">
-          <option value="Applied">Applied</option>
-          <option value="Online Assessment (OA)">Online Assessment (OA)</option>
-          <option value="Recruiter Screen">Recruiter Screen</option>
-          <option value="Technical Interview">Technical Interview</option>
-          <option value="System Design">System Design</option>
-          <option value="Coding Assessment">Coding Assessment</option>
-          <option value="Final Round / Onsite">Final Round / Onsite</option>
-          <option value="Offer Received">Offer Received</option>
-          <option value="Offer Accepted">Offer Accepted</option>
-          <option value="Rejected">Rejected</option>
-        </select>
-        <input type="date" id="logEventDate" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" />
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-        <select id="logOaPlatform" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;"><option value="CodeSignal">CodeSignal</option><option value="HackerRank">HackerRank</option><option value="LeetCode">LeetCode</option><option value="Other">Other Platform</option></select>
-        <input type="date" id="logOaExpirationDate" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" placeholder="OA Deadline" />
-      </div>
-      <div class="form-group"><input type="text" id="logMeetingLink" placeholder="Meeting / Assessment Link (https://...)" style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;" /></div>
-      <div class="form-group" style="margin-top: 4px;"><textarea id="logEventNotes" rows="2" placeholder="Notes, topics covered, difficulty..." style="padding: 5px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem;"></textarea></div>
-      <button type="button" id="saveMilestoneBtn" class="btn-primary-gold" style="margin-top: 6px; padding: 5px 12px; font-size: 0.8rem;">Log Milestone</button>
-    </div>
-
-    <!-- CUSTOM QUESTION RESPONSES -->
-    <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+    <!-- LOGS & ACTIVITY VIEW -->
+    <div id="emailLogsView" style="display: none;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <div class="section-title" style="margin: 0; font-size: 0.88rem;">Recorded Application Q&A Responses</div>
-        <button type="button" id="dAddQABtn" class="action-btn" style="padding: 3px 10px; font-size: 0.75rem; font-weight: 600; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; transition: all 0.15s ease;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          Add Q&A
-        </button>
+        <span style="font-size: 0.82rem; color: var(--text-muted);">Last Synced: <strong id="emailLastSyncText">Never</strong></span>
+        <button type="button" id="refreshLogsBtn" class="action-btn" style="padding: 4px 10px; font-size: 0.75rem;">Refresh Logs</button>
       </div>
-      <div id="dNewQAForm" style="display: none; background: #fffbeb; border: 1px dashed #f59e0b; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
-        <div style="font-weight: 700; font-size: 0.8rem; margin-bottom: 6px; color: #92400e;">Log Custom Question & Answer</div>
-        <input type="text" id="dNewQAQuestion" placeholder="Question text (e.g. Why are you interested in this role?)" style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 0.8rem; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 6px; background: #ffffff;" />
-        <textarea id="dNewQAAnswer" rows="2" placeholder="Answer text..." style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 0.8rem; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 8px; background: #ffffff;"></textarea>
-        <div style="display: flex; gap: 6px; justify-content: flex-end;">
-          <button type="button" id="dCancelNewQABtn" class="action-btn" style="padding: 3px 10px; font-size: 0.75rem; cursor: pointer;">Cancel</button>
-          <button type="button" id="dSaveNewQABtn" class="btn-primary-gold" style="padding: 3px 12px; font-size: 0.75rem; cursor: pointer;">Save Q&A</button>
-        </div>
+      <div id="emailLogsContainer" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; background: #fafafa;">
+        <div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.82rem;">No sync events recorded yet. Click "Sync Inbox Now" to begin.</div>
       </div>
-      <div id="dCustomQAList" style="display: flex; flex-direction: column; gap: 8px;"></div>
-    </div>
-
-    <!-- DELETE ACTION -->
-    <div style="border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 8px; display: flex; justify-content: flex-start;">
-      <button type="button" id="deleteAppBtn" class="action-btn action-btn-danger" style="font-size: 0.8rem; padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        Delete Application Record
-      </button>
     </div>
   </div>
 </div>
 
-<!-- TOAST NOTIFICATION CONTAINER -->
-<div id="toastNotification" class="grts-toast"></div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastNotification" class="grts-toast"></div>
+
+    <!-- Dashboard Modular JavaScript Architecture -->

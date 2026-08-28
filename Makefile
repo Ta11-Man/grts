@@ -1,4 +1,4 @@
-.PHONY: help install run start-bg stop status autostart-on autostart-off desktop-shortcut dev test test-server clean backup restore
+.PHONY: help install run start-bg stop status autostart-on autostart-off desktop-shortcut dev test test-server clean backup restore build-dashboard build zip
 
 PYTHON ?= python
 
@@ -14,6 +14,7 @@ help:
 	@echo   make run              - Start backend server in foreground with reload
 	@echo   make test             - Run test suite
 	@echo   make test-server      - Run local HTTP test fixtures server (port 8001)
+	@echo   make build-dashboard  - Recompile extension/dashboard.html from modular partials
 	@echo   make backup           - Create a safe atomic DB snapshot and SQL dump
 	@echo   make restore          - Restore DB from an available backup
 	@echo   make zip              - Package addon into a zip file for distribution
@@ -51,6 +52,11 @@ test:
 test-server:
 	$(PYTHON) -m http.server 8001 --directory tests
 
+build-dashboard:
+	$(PYTHON) scripts/build_dashboard_html.py
+
+build: build-dashboard
+
 backup:
 	$(PYTHON) scripts/backup.py
 
@@ -63,3 +69,4 @@ zip:
 clean:
 	@$(PYTHON) -c "import pathlib, shutil; [shutil.rmtree(p) for p in pathlib.Path('.').rglob('__pycache__')]"
 	rm grts-*.zip || true
+

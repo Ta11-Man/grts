@@ -1,29 +1,17 @@
-<!-- 2. KANBAN BOARD VIEW -->
 <div id="view-kanban" class="view-container">
-  <div class="kanban-board">
-    <div class="kanban-column" id="kcol-Saved">
-      <div class="kanban-column-header"><div class="kanban-column-title"><span class="status-indicator status-saved"></span> Bookmarked</div><span class="kanban-count" id="kcount-Saved">0</span></div>
-      <div class="kanban-cards" id="kcards-Saved"></div>
-    </div>
-    <div class="kanban-column" id="kcol-Applied">
-      <div class="kanban-column-header"><div class="kanban-column-title"><span class="status-indicator status-applied"></span> Applied</div><span class="kanban-count" id="kcount-Applied">0</span></div>
-      <div class="kanban-cards" id="kcards-Applied"></div>
-    </div>
-    <div class="kanban-column" id="kcol-Assessment">
-      <div class="kanban-column-header"><div class="kanban-column-title"><span class="status-indicator status-oa"></span> Screening / OA</div><span class="kanban-count" id="kcount-Assessment">0</span></div>
-      <div class="kanban-cards" id="kcards-Assessment"></div>
-    </div>
-    <div class="kanban-column" id="kcol-Interview">
-      <div class="kanban-column-header"><div class="kanban-column-title"><span class="status-indicator status-interview"></span> Interviewing</div><span class="kanban-count" id="kcount-Interview">0</span></div>
-      <div class="kanban-cards" id="kcards-Interview"></div>
-    </div>
-    <div class="kanban-column" id="kcol-Offer">
-      <div class="kanban-column-header"><div class="kanban-column-title"><span class="status-indicator status-offer"></span> Offer</div><span class="kanban-count" id="kcount-Offer">0</span></div>
-      <div class="kanban-cards" id="kcards-Offer"></div>
-    </div>
-    <div class="kanban-column" id="kcol-Rejected">
-      <div class="kanban-column-header"><div class="kanban-column-title"><span class="status-indicator status-rejected"></span> Rejected</div><span class="kanban-count" id="kcount-Rejected">0</span></div>
-      <div class="kanban-cards" id="kcards-Rejected"></div>
-    </div>
-  </div>
-</div>
+        <div
+          style="
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+          "
+        >
+          Drag and drop cards horizontally across stages to update your
+          application lifecycle.
+        </div>
+        <div class="kanban-board-wrapper">
+          <div class="kanban-board" id="kanbanBoardContainer"></div>
+        </div>
+      </div>
+
+      <!-- 3. ANALYTICS & STATISTICS VIEW -->

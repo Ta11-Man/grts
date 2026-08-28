@@ -605,4 +605,56 @@ async function initMasterProfileForm() {
       saveMsg.innerText = "Failed to save profile.";
     }
   });
+
+  initThemeSwitcher();
 }
+
+function applyTheme(themeChoice) {
+  let effectiveTheme = themeChoice;
+  if (themeChoice === "system") {
+    effectiveTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  document.documentElement.setAttribute("data-theme", effectiveTheme);
+  
+  ["light", "dark", "system"].forEach(t => {
+    const btn = document.getElementById(`themeBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+    if (btn) {
+      if (t === themeChoice) {
+        btn.style.background = "var(--card-bg)";
+        btn.style.color = "var(--text-main)";
+        btn.style.boxShadow = "var(--shadow-sm)";
+      } else {
+        btn.style.background = "transparent";
+        btn.style.color = "var(--text-muted)";
+        btn.style.boxShadow = "none";
+      }
+    }
+  });
+
+  try {
+    localStorage.setItem("grts_theme", themeChoice);
+    if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({ grts_theme: themeChoice });
+    }
+  } catch (e) {}
+}
+
+function initThemeSwitcher() {
+  const savedTheme = localStorage.getItem("grts_theme") || "light";
+  applyTheme(savedTheme);
+
+  document.querySelectorAll(".theme-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const theme = btn.getAttribute("data-theme");
+      if (theme) applyTheme(theme);
+    });
+  });
+
+  if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+      const current = localStorage.getItem("grts_theme");
+      if (current === "system") applyTheme("system");
+    });
+  }
+}
+

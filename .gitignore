@@ -1,4 +1,10 @@
-# Local runtime data
+# Local runtime data & databases
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
 backend/grts.db
 backend/grts.pid
 backend/grts_service.log
@@ -7,11 +13,19 @@ scout/scout_feed.json
 backend/us_heatmap.png
 backups/
 *.sql
+*.csv
+*.jsonl
+*.bak
 
-# Local configuration and credentials
-scout/config.local.yaml
+# Local configuration, secrets, and credentials
+*.env*
 backend/.env
+scout/config.local.yaml
 extension/autofill/config.local.js
+*.local.*
+credentials*.json
+token*.json
+email_config*.json
 
 # Python environments and generated files
 backend/env/
@@ -19,13 +33,21 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .pytest_cache/
+*.log
 
-# Captured ATS pages and uploads
+# Personal documents, resumes, and uploads
+*.pdf
+*.docx
+*.doc
+resumes/
+uploads/
+
+# Captured ATS pages and test fixtures
 tests/**/*.htm
 tests/**/*.html
 tests/**/*_files/
-*.pdf
-*.docx
+tests/**/*
+!tests/*.py
 
 # Local editor and OS files
 .vscode/
@@ -33,11 +55,6 @@ tests/**/*_files/
 .DS_Store
 Thumbs.db
 
-# How I made the icon
+# Design and build artifacts
 drawing.svg
-
-# This is a bunch of stuff I have no rights to distribute
-tests/**/*
-
-# if you run the package script, it generates zips
 *.zip

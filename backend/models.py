@@ -157,3 +157,49 @@ class UserProfileSchema(BaseModel):
     cover_letter_default: Optional[str] = ""
     autofill_enabled: Optional[bool] = False
     custom_fields: Optional[Dict[str, Any]] = None
+
+class EmailConfigSchema(BaseModel):
+    provider: Optional[str] = "gmail"
+    imap_host: Optional[str] = "imap.gmail.com"
+    imap_port: Optional[int] = 993
+    use_ssl: Optional[bool] = True
+    email_address: str
+    password: Optional[str] = None
+    auto_sync: Optional[bool] = True
+    sync_interval_mins: Optional[int] = 10
+
+class EmailTestRequestSchema(BaseModel):
+    imap_host: Optional[str] = "imap.gmail.com"
+    imap_port: Optional[int] = 993
+    use_ssl: Optional[bool] = True
+    email_address: str
+    password: Optional[str] = None
+
+class UserRegisterRequest(BaseModel):
+    email: str
+    password: str
+    promo_code: Optional[str] = None
+
+class UserLoginRequest(BaseModel):
+    email: str
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user_id: str
+    email: str
+    tier: str
+
+class PromoRedeemRequest(BaseModel):
+    code: str
+
+class UserQuotaResponse(BaseModel):
+    tier: str
+    total_applications: int
+    limit: Optional[int]
+    storage_bytes: int
+    storage_limit_bytes: int
+    is_quota_exceeded: bool
+
+
